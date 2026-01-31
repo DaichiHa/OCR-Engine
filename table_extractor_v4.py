@@ -16,19 +16,57 @@ def read_image_robust(path):
     stream.close()
     return img
 
-def extract_table_structure_v4(image_path, debug_dir):
+def extract_table_structure_v4(
+    image_path,
+    debug_dir,
+    clahe_clip_limit=2.0,
+    clahe_tile_grid_size=(8, 8),
+    morph_scale=30,
+    morph_open_iter=1,
+    morph_close_iter=1,
+):
     filename = os.path.basename(image_path)
     img = read_image_robust(image_path)
     if img is None:
         return 0, None
 
+    os.makedirs(debug_dir, exist_ok=True)
+
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    clahe = cv2.createCLAHE(
+        clipLimit=clahe_clip_limit, tileGridSize=clahe_tile_grid_size
+    )
+    enhanced = clahe.apply(gray)
+
+    img_width = img.shape[1]
+    img_height = img.shape[0]
+    morph_scale = max(1, morph_scale)
+    horizontal_size = max(10, img_width // morph_scale)
+    vertical_size = max(10, img_height // morph_scale)
+    horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (horizontal_size, 1))
+    vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, vertical_size))
+
+    horizontal = cv2.morphologyEx(
+        enhanced, cv2.MORPH_OPEN, horizontal_kernel, iterations=morph_open_iter
+    )
+    horizontal = cv2.morphologyEx(
+        horizontal, cv2.MORPH_CLOSE, horizontal_kernel, iterations=morph_close_iter
+    )
+    vertical = cv2.morphologyEx(
+        enhanced, cv2.MORPH_OPEN, vertical_kernel, iterations=morph_open_iter
+    )
+    vertical = cv2.morphologyEx(
+        vertical, cv2.MORPH_CLOSE, vertical_kernel, iterations=morph_close_iter
+    )
+    preprocessed = cv2.addWeighted(horizontal, 0.5, vertical, 0.5, 0)
+    preprocessed = cv2.normalize(preprocessed, None, 0, 255, cv2.NORM_MINMAX)
+    preprocessed = preprocessed.astype(np.uint8)
     
     # Create LSD
     lsd = cv2.createLineSegmentDetector(0)
     
     # Detect lines
-    lines, width, prec, nfa = lsd.detect(gray)
+    lines, width, prec, nfa = lsd.detect(preprocessed)
     
     # Draw detected raw lines for debug
     debug_raw = img.copy()
@@ -38,9 +76,6 @@ def extract_table_structure_v4(image_path, debug_dir):
     horizontal_lines = []
     vertical_lines = []
     
-    img_width = img.shape[1]
-    img_height = img.shape[0]
-
     if lines is not None:
         for line in lines:
             x1, y1, x2, y2 = line[0]
@@ -114,6 +149,17 @@ def extract_table_structure_v4(image_path, debug_dir):
     # Sort cells row by row, then col by col
     # We use a tolerance for 'same row' determination
     cells.sort(key=lambda c: (int(c[1] // 20), c[0]))
+
+    debug_preprocess_path = os.path.join(
+        debug_dir, f"debug_table_v4_preprocess_{filename}"
+    )
+    preprocess_extension = os.path.splitext(debug_preprocess_path)[1]
+    preprocess_result, encoded_preprocess = cv2.imencode(
+        preprocess_extension, preprocessed
+    )
+    if preprocess_result:
+        with open(debug_preprocess_path, "wb") as f:
+            f.write(encoded_preprocess)
 
     debug_path = os.path.join(debug_dir, f"debug_table_v4_{filename}")
     extension = os.path.splitext(debug_path)[1]
