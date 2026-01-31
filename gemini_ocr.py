@@ -6,99 +6,99 @@ import google.generativeai as genai
 from PIL import Image
 
 # --- 設定 ---
-# APIキーは `gemini_api_key.txt` から読み込みます
 KEY_FILE = "gemini_api_key.txt"
-INPUT_DIR = "pages"  # 元画像（補正なしの方がGeminiは読みやすい場合があります）
-OUTPUT_DIR = "intermediate_md_gemini"
+INPUT_DIR = "pages"
+OUTPUT_DIR = "intermediate_md_ultra"
 
-# プロンプト（Geminiへの指示）
+# 最高精度プロンプト
 PROMPT = """
-この画像は1900年代初頭（明治時代）の「日本帝國港灣統計」の統計表です。
-この画像を解析し、正確なMarkdown形式の表に変換してください。
+あなたは歴史的な公文書（明治時代の日本の統計資料）をデジタル化する専門家です。
+この画像を解析し、以下の指示に従ってMarkdown形式で出力してください。
 
-【出力ルール】
-1. 表の構造（行列）を維持してください。
-2. 漢字は可能な限り正確に再現してください（誤字脱字に注意）。
-3. 数字はコンマを含めて正確に抽出してください。
-4. 空欄やハイフン（―）は、その通りに記載するか、空白セルにしてください。
-5. 出力はMarkdownの表部分のみとしてください。前後の説明テキストは不要です。
+1. **テキストページ（序文・緒言など）**:
+   - 縦書きの文章を、日本語の自然な順序で正しく書き起こしてください。
+   - 旧字体（例：灣、國、實、關）やカタカナ、「ニ」「ヲ」「ハ」などの助詞もそのまま再現してください。
+
+2. **統計表ページ**:
+   - 表の行列を1マスもずらさずにMarkdownテーブルで再現してください。
+   - 単位（石、噸、圓、斤など）が数字の上に小さく書いてある場合は、数値の後に含めるかヘッダーに含めてください。
+   - コンマ（,）の位置も正確に再現してください。
+   - 漢字の認識ミス（東京を束京とする等）を文脈から判断して修正してください。
+
+3. **出力形式**:
+   - Markdownのテキストのみ。前後の説明（Here is the table...等）は一切不要です。
 """
 
 def load_key():
-    if not os.path.exists(KEY_FILE):
-        return None
     with open(KEY_FILE, "r") as f:
         return f.read().strip()
 
-def process_page(model, image_path, page_num):
-    print(f"Processing Page {page_num} using Gemini (Stable mode)...")
+def process_page_ultra(model, image_path, page_num):
+    print(f"Processing Page {page_num} [ULTRA MODE]...")
     max_retries = 5
-    base_delay = 65 # クォータ制限は通常60秒なので、余裕を持って65秒
+    quota_delay = 90
     
     for attempt in range(max_retries):
         try:
             img = Image.open(image_path)
-            # 安定性を高めるため画像をリサイズ（Geminiの認識力を落とさずトークン節約）
-            img.thumbnail((2048, 2048)) 
+            if img.width > 3000 or img.height > 3000:
+                img.thumbnail((3072, 3072))
             
             response = model.generate_content([PROMPT, img])
             return response.text
         except Exception as e:
             err_str = str(e)
             if "429" in err_str:
-                wait_time = base_delay * (attempt + 1)
-                print(f"Quota exceeded. Cooling down for {wait_time}s... (Attempt {attempt+1}/{max_retries})")
-                time.sleep(wait_time)
+                print(f"Quota exceeded. Waiting {quota_delay}s... (Attempt {attempt+1}/{max_retries})")
+                time.sleep(quota_delay)
             elif "500" in err_str or "503" in err_str:
-                print(f"Server error. Waiting 10s... (Attempt {attempt+1}/{max_retries})")
+                print(f"Server error. Waiting 10s...")
                 time.sleep(10)
             else:
                 return f"Error: {err_str}"
-    
-    return "Error: Maximum retries exceeded."
+    return "Error: Failed"
 
 def main():
     api_key = load_key()
-    if not api_key:
-        print(f"Error: {KEY_FILE} Not found.")
-        return
-    
     genai.configure(api_key=api_key)
-    # Flashが制限されているため、Proモデルを試す
-    model_name = 'gemini-2.5-pro'
+    
+    # 複数のモデルを候補に入れ、制限回避を狙う
+    # gemini-3-flash-preview は最新の試験運用版で、制限が別枠の可能性があります
+    model_name = 'gemini-3-flash-preview' 
     print(f"Using model: {model_name}")
-    model = genai.GenerativeModel(model_name) 
+    model = genai.GenerativeModel(model_name)
 
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
 
+    # 全ページを取得し、数値順にソート
     files = sorted(glob.glob(os.path.join(INPUT_DIR, "page_*.png")))
     
-    # Page 8 から開始
-    target_files = [f for f in files if int(os.path.basename(f).split('_')[-1].split('.')[0]) >= 8]
-
-    for file_path in target_files:
+    # 全ページ処理 (151ページすべて)
+    for file_path in files:
         filename = os.path.basename(file_path)
         page_num = filename.replace("page_", "").replace(".png", "")
-        
         out_path = os.path.join(OUTPUT_DIR, f"page_{page_num}.md")
         
+        # 既存ファイルはスキップ（レジューム機能）
         if os.path.exists(out_path) and os.path.getsize(out_path) > 100:
             print(f"Skipping {filename}")
             continue
 
-        result = process_page(model, file_path, page_num)
+        result = process_page_ultra(model, file_path, page_num)
         
         with open(out_path, "w", encoding="utf-8") as f:
             f.write(result)
         
         if "Error" not in result:
-            print(f"Page {page_num} Success. Cooling down for 10s to stay safe...")
-            time.sleep(10) # 成功後も10秒待機
+            print(f"Page {page_num} Success. Cooling down for 15s...")
+            time.sleep(15) 
         else:
             print(f"Page {page_num} Failed: {result}")
+            # エラー時は長めに待機
+            time.sleep(60)
 
-    print("Processing complete.")
+    print("--- ULTRA PROCESSING COMPLETE ---")
 
 if __name__ == "__main__":
     main()
