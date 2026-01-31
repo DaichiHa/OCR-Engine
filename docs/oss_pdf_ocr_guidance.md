@@ -78,6 +78,28 @@ qpdf ocr_*.pdf -- ocr_all.pdf
 
 ---
 
+## manifestの作り方（例）
+
+* **分割時にページ範囲を記録**しておくと復旧が速い
+* 25〜50ページ単位で切る運用なら、**開始/終了ページ**をCSVに出すだけで十分
+
+```powershell
+python - <<'PY'
+import csv
+
+pages = 500
+chunk = 50
+with open("manifest.csv", "w", newline="") as f:
+    writer = csv.writer(f)
+    writer.writerow(["chunk", "start_page", "end_page"])
+    for i, start in enumerate(range(1, pages + 1, chunk), 1):
+        end = min(start + chunk - 1, pages)
+        writer.writerow([f"{i:03d}", start, end])
+PY
+```
+
+---
+
 ## 抜けTop3
 
 * 縦書き最適psm設定の固定
