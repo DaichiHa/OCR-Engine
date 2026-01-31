@@ -27,6 +27,7 @@ def read_image_robust(path_or_image):
         logger.warning("Failed to decode image: %s", path_or_image)
     return img
 
+
 def extract_table_content(image_path, debug_dir=None):
     """
     Extracts table content from an image using Hybrid Line/Text approach.
