@@ -14,9 +14,12 @@ from ocr_text_utils import build_tesseract_config, normalize_kyuujitai
 
 
 def ocr_cell(
-    img_path,
+    full_gray,
     cell_box,
     margin=2,
+    lang="jpn",
+    psm=7,
+    oem=3,
     normalize_text=True,
     tesseract_config_dir=None,
     user_words_path=None,
@@ -27,41 +30,38 @@ def ocr_cell(
     """
     x, y, w, h = cell_box
 
-    # Load full image
-    full_img = read_image_robust(img_path)
-    if full_img is None:
+    if full_gray is None:
         return ""
 
     # Crop with slight margin removal to avoid grid lines
-    h_img, w_img = full_img.shape[:2]
+    h_img, w_img = full_gray.shape[:2]
     x1 = max(0, x + margin)
     y1 = max(0, y + margin)
     x2 = min(w_img, x + w - margin)
     y2 = min(h_img, y + h - margin)
 
-    cell_img = full_img[y1:y2, x1:x2]
+    cell_img = full_gray[y1:y2, x1:x2]
 
     if cell_img.size == 0:
         return ""
 
     # Convert to PIL for Tesseract
-    # Preprocessing: Grayscale -> Threshold
-    gray = cv2.cvtColor(cell_img, cv2.COLOR_BGR2GRAY)
+    # Preprocessing: Threshold
     # Simple Otsu is usually best for high-contrast text in cells
-    thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+    thresh = cv2.threshold(cell_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
     pil_img = Image.fromarray(thresh)
 
     # OCR Config: Assume single line of text (psm 7) or single word (psm 8)
     # Use Japanese model
-    base_config = r'--oem 3 --psm 7'
+    base_config = f'--oem {oem} --psm {psm}'
     config = build_tesseract_config(
         base_config,
         config_dir=tesseract_config_dir,
         user_words_path=user_words_path,
         user_patterns_path=user_patterns_path,
     )
-    text = pytesseract.image_to_string(pil_img, lang='jpn', config=config)
+    text = pytesseract.image_to_string(pil_img, lang=lang, config=config)
     cleaned_text = text.strip().replace('\n', ' ').replace('|', '')
 
     return normalize_kyuujitai(cleaned_text, enabled=normalize_text)
@@ -70,6 +70,9 @@ def ocr_cell(
 def process_page(
     image_path,
     output_dir,
+    lang="jpn",
+    psm=7,
+    oem=3,
     normalize_text=True,
     tesseract_config_dir=None,
     user_words_path=None,
@@ -86,6 +89,11 @@ def process_page(
 
     if not cells:
         return ""
+
+    full_img = read_image_robust(image_path)
+    if full_img is None:
+        return ""
+    full_gray = cv2.cvtColor(full_img, cv2.COLOR_BGR2GRAY)
 
     # Group into rows
     rows = []
@@ -116,8 +124,11 @@ def process_page(
         row_texts = []
         for cell in row_cells:
             text = ocr_cell(
-                image_path,
+                full_gray,
                 cell,
+                lang=lang,
+                psm=psm,
+                oem=oem,
                 normalize_text=normalize_text,
                 tesseract_config_dir=tesseract_config_dir,
                 user_words_path=user_words_path,
