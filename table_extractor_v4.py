@@ -116,6 +116,8 @@ def extract_table_structure_v4(image_path, debug_dir):
     cells.sort(key=lambda c: (int(c[1] // 20), c[0]))
 
     debug_path = os.path.join(debug_dir, f"debug_table_v4_{filename}")
+    if not os.path.splitext(debug_path)[1]:
+        debug_path += ".png"
     extension = os.path.splitext(debug_path)[1]
     result, encoded_img = cv2.imencode(extension, debug_grid)
     if result:
