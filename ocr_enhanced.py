@@ -6,6 +6,7 @@ Uses Tesseract OCR with image preprocessing for better accuracy
 import pytesseract
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 import os
+from ocr_text_utils import build_tesseract_config, normalize_kyuujitai
 
 def preprocess_image(img):
     """
@@ -31,7 +32,14 @@ def preprocess_image(img):
     
     return img
 
-def ocr_page_enhanced(image_path, preprocess=True):
+def ocr_page_enhanced(
+    image_path,
+    preprocess=True,
+    normalize_text=True,
+    tesseract_config_dir=None,
+    user_words_path=None,
+    user_patterns_path=None,
+):
     """
     Perform enhanced OCR on a single page image
     
@@ -60,10 +68,17 @@ def ocr_page_enhanced(image_path, preprocess=True):
         
         results = []
         for lang, config in configs:
-            text = pytesseract.image_to_string(img, lang=lang, config=config)
+            custom_config = build_tesseract_config(
+                config,
+                config_dir=tesseract_config_dir,
+                user_words_path=user_words_path,
+                user_patterns_path=user_patterns_path,
+            )
+            text = pytesseract.image_to_string(img, lang=lang, config=custom_config)
+            text = normalize_kyuujitai(text, enabled=normalize_text)
             results.append({
                 'lang': lang,
-                'config': config,
+                'config': custom_config,
                 'text': text,
                 'char_count': len(text.replace('\n', '').replace(' ', ''))
             })

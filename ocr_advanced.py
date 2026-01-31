@@ -8,6 +8,7 @@ import numpy as np
 import pytesseract
 from PIL import Image
 import os
+from ocr_text_utils import build_tesseract_config, normalize_kyuujitai
 
 def preprocess_image_advanced(image_path, debug_save_path=None):
     """
@@ -52,7 +53,15 @@ def preprocess_image_advanced(image_path, debug_save_path=None):
 
     return thresh
 
-def ocr_page_advanced(image_path, lang='jpn_vert', psm=5):
+def ocr_page_advanced(
+    image_path,
+    lang='jpn_vert',
+    psm=5,
+    normalize_text=True,
+    tesseract_config_dir=None,
+    user_words_path=None,
+    user_patterns_path=None,
+):
     """
     Perform OCR on a single page image with advanced settings
     """
@@ -70,9 +79,16 @@ def ocr_page_advanced(image_path, lang='jpn_vert', psm=5):
         # --oem 3: Default LSTM engine
         # --psm: Page segmentation mode passed as argument
         # -c preserve_interword_spaces=1: Keep spacing
-        custom_config = f'--oem 3 --psm {psm} -c preserve_interword_spaces=1'
-        
+        base_config = f'--oem 3 --psm {psm} -c preserve_interword_spaces=1'
+        custom_config = build_tesseract_config(
+            base_config,
+            config_dir=tesseract_config_dir,
+            user_words_path=user_words_path,
+            user_patterns_path=user_patterns_path,
+        )
+
         text = pytesseract.image_to_string(pil_img, lang=lang, config=custom_config)
+        text = normalize_kyuujitai(text, enabled=normalize_text)
         
         # Get confidence data
         data = pytesseract.image_to_data(pil_img, lang=lang, config=custom_config, output_type=pytesseract.Output.DICT)

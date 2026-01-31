@@ -1,0 +1,4 @@
+# Add custom patterns (one per line) to improve OCR.
+# Example:
+# \\d{4}年
+# \\d+\\s*港
