@@ -20,7 +20,7 @@ def extract_table_structure_v4(image_path, debug_dir):
     filename = os.path.basename(image_path)
     img = read_image_robust(image_path)
     if img is None:
-        return 0, None
+        return [], None
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
@@ -130,8 +130,8 @@ if __name__ == "__main__":
     
     print(f"Testing V4 (LSD) extraction on {test_page}...")
     try:
-        count, path = extract_table_structure_v4(test_page, debug_dir)
-        print(f"Detected {count} cells.")
+        cells, path = extract_table_structure_v4(test_page, debug_dir)
+        print(f"Detected {len(cells)} cells.")
         print(f"Saved debug to {path}")
     except Exception as e:
         print(f"Error: {e}")
