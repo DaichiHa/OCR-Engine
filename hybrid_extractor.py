@@ -5,7 +5,6 @@ Reusable function for table page processing.
 
 import cv2
 import numpy as np
-import os
 import pytesseract
 from PIL import Image
 
@@ -17,14 +16,83 @@ def read_image_robust(path):
     stream.close()
     return img
 
-def extract_table_content(image_path, debug_dir=None):
+def build_tesseract_config(psm, user_words_path=None, user_patterns_path=None, oem=3):
+    config = f"--oem {oem} --psm {psm}"
+    if user_words_path:
+        config += f" --user-words {user_words_path}"
+    if user_patterns_path:
+        config += f" --user-patterns {user_patterns_path}"
+    return config
+
+def compute_ocr_metrics(data, low_conf_threshold=70):
+    conf_values = []
+    for conf in data.get('conf', []):
+        try:
+            conf_value = float(conf)
+        except (TypeError, ValueError):
+            continue
+        if conf_value >= 0:
+            conf_values.append(conf_value)
+
+    if not conf_values:
+        return {'mean_conf': 0.0, 'low_ratio': 1.0, 'count': 0}
+
+    low_count = sum(1 for conf in conf_values if conf < low_conf_threshold)
+    mean_conf = float(np.mean(conf_values))
+    low_ratio = low_count / float(len(conf_values))
+    return {'mean_conf': mean_conf, 'low_ratio': low_ratio, 'count': len(conf_values)}
+
+def detect_table_regions(image, min_area_ratio=0.02, min_aspect_ratio=1.2):
+    if image is None:
+        return []
+
+    if len(image.shape) == 3 and image.shape[2] > 1:
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    else:
+        gray = image.copy()
+
+    bw = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+    h_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (40, 1))
+    v_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 40))
+    h_lines = cv2.dilate(cv2.erode(bw, h_kernel), h_kernel)
+    v_lines = cv2.dilate(cv2.erode(bw, v_kernel), v_kernel)
+    lines = cv2.bitwise_or(h_lines, v_lines)
+
+    contours, _ = cv2.findContours(lines, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if not contours:
+        return []
+
+    img_area = gray.shape[0] * gray.shape[1]
+    table_regions = []
+    for contour in contours:
+        x, y, w, h = cv2.boundingRect(contour)
+        area = w * h
+        if img_area == 0:
+            continue
+        if area / img_area < min_area_ratio:
+            continue
+        if h == 0:
+            continue
+        aspect_ratio = w / float(h)
+        if aspect_ratio < min_aspect_ratio:
+            continue
+        table_regions.append((x, y, w, h))
+
+    table_regions.sort(key=lambda box: (box[1], box[0]))
+    return table_regions
+
+def extract_table_content(image_path, debug_dir=None, table_region=None, user_words_path=None, user_patterns_path=None, return_metrics=False):
     """
     Extracts table content from an image using Hybrid Line/Text approach.
     Returns list of rows (list of strings).
     """
     img = read_image_robust(image_path)
     if img is None:
-        return []
+        return ([], {'mean_conf': 0.0, 'low_ratio': 1.0, 'count': 0}) if return_metrics else []
+
+    if table_region is not None:
+        x, y, w, h = table_region
+        img = img[y:y + h, x:x + w]
 
     if len(img.shape) == 3 and img.shape[2] > 1:
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -62,7 +130,7 @@ def extract_table_content(image_path, debug_dir=None):
 
     # 2. Detect Text
     # Use PSM 6 (Sparse text) or PSM 4 (Column data)
-    config = r'--oem 3 --psm 6'
+    config = build_tesseract_config(6, user_words_path, user_patterns_path)
     
     # Preprocess for Tesseract (Otsu)
     thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
@@ -71,7 +139,7 @@ def extract_table_content(image_path, debug_dir=None):
     try:
         data = pytesseract.image_to_data(pil_img, lang='jpn', config=config, output_type=pytesseract.Output.DICT)
     except:
-        return []
+        return ([], {'mean_conf': 0.0, 'low_ratio': 1.0, 'count': 0}) if return_metrics else []
 
     text_blocks = []
     n_boxes = len(data['level'])
@@ -120,15 +188,17 @@ def extract_table_content(image_path, debug_dir=None):
                     break
         table_data.append(row_cells)
         
+    if return_metrics:
+        return table_data, compute_ocr_metrics(data)
     return table_data
 
-def extract_vertical_text(image_path):
+def extract_vertical_text(image_path, user_words_path=None, user_patterns_path=None, return_metrics=False):
     """
     Simple function for vertical text pages (1-6)
     """
     img = read_image_robust(image_path)
     if img is None:
-        return ""
+        return ("", {'mean_conf': 0.0, 'low_ratio': 1.0, 'count': 0}) if return_metrics else ""
     
     if len(img.shape) == 3 and img.shape[2] > 1:
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -137,6 +207,9 @@ def extract_vertical_text(image_path):
     thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
     pil_img = Image.fromarray(thresh)
     
-    config = r'--oem 3 --psm 5' # Vertical text block
+    config = build_tesseract_config(5, user_words_path, user_patterns_path) # Vertical text block
     text = pytesseract.image_to_string(pil_img, lang='jpn_vert', config=config)
+    if return_metrics:
+        data = pytesseract.image_to_data(pil_img, lang='jpn_vert', config=config, output_type=pytesseract.Output.DICT)
+        return text, compute_ocr_metrics(data)
     return text
