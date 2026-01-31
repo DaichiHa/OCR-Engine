@@ -40,15 +40,17 @@ def ocr_cell(
     x2 = min(w_img, x + w - margin)
     y2 = min(h_img, y + h - margin)
 
-    cell_img = full_gray[y1:y2, x1:x2]
+    cell_gray = full_gray[y1:y2, x1:x2]
 
-    if cell_img.size == 0:
+    if cell_gray.size == 0:
         return ""
 
     # Convert to PIL for Tesseract
     # Preprocessing: Threshold
     # Simple Otsu is usually best for high-contrast text in cells
-    thresh = cv2.threshold(cell_img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+    if min(cell_gray.shape[:2]) < 25:
+        cell_gray = cv2.resize(cell_gray, None, fx=2.0, fy=2.0, interpolation=cv2.INTER_CUBIC)
+    thresh = cv2.threshold(cell_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
     pil_img = Image.fromarray(thresh)
 
@@ -117,13 +119,20 @@ def process_page(
     # Process Rows
     markdown_lines = []
 
+    cell_specs = []
     for row_idx, row_cells in enumerate(rows):
         # Sort by X within row (should already be sorted but safe to ensure)
         row_cells.sort(key=lambda c: c[0])
+        for col_idx, cell in enumerate(row_cells):
+            cell_specs.append((row_idx, col_idx, cell))
 
-        row_texts = []
-        for cell in row_cells:
-            text = ocr_cell(
+    max_workers = min(os.cpu_count() or 1, max(1, len(cell_specs)))
+    results = {row_idx: {} for row_idx in range(len(rows))}
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_map = {
+            executor.submit(
+                ocr_cell,
                 full_gray,
                 cell,
                 lang=lang,
@@ -133,9 +142,18 @@ def process_page(
                 tesseract_config_dir=tesseract_config_dir,
                 user_words_path=user_words_path,
                 user_patterns_path=user_patterns_path,
-            )
-            row_texts.append(text)
+            ): (row_idx, col_idx)
+            for row_idx, col_idx, cell in cell_specs
+        }
+        for future in concurrent.futures.as_completed(future_map):
+            row_idx, col_idx = future_map[future]
+            try:
+                results[row_idx][col_idx] = future.result()
+            except Exception:
+                results[row_idx][col_idx] = ""
 
+    for row_idx, row_cells in enumerate(rows):
+        row_texts = [results[row_idx].get(col_idx, "") for col_idx in range(len(row_cells))]
         line = "| " + " | ".join(row_texts) + " |"
         markdown_lines.append(line)
         print(f"    Row {row_idx}: {line[:50]}...")
