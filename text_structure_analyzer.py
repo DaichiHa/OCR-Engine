@@ -19,7 +19,7 @@ def read_image_robust(path):
     stream.close()
     return img
 
-def analyze_hybrid_structure(image_path, debug_dir):
+def analyze_hybrid_structure(image_path, debug_dir, vertical_right_to_left=False):
     filename = os.path.basename(image_path)
     img = read_image_robust(image_path)
     if img is None:
@@ -51,7 +51,11 @@ def analyze_hybrid_structure(image_path, debug_dir):
                 current = [vertical_lines[i][0]]
         cols.append(int(np.mean(current)))
     
+    if vertical_right_to_left:
+        cols = list(reversed(cols))
     print(f"Detected {len(cols)} columns at x={cols}")
+    if vertical_right_to_left:
+        print("Vertical right-to-left mode enabled: columns and boundaries will be reversed.")
 
     # 2. Detect Text Blocks using Tesseract (PSM 6: Sparse text)
     # We want bounding boxes for every word/character
@@ -101,7 +105,11 @@ def analyze_hybrid_structure(image_path, debug_dir):
     csv_rows = []
     
     # Add implicit boundaries: 0 and Width
-    boundaries = [0] + cols + [img.shape[1]]
+    if vertical_right_to_left:
+        boundaries = [img.shape[1]] + cols + [0]
+    else:
+        boundaries = [0] + cols + [img.shape[1]]
+    print(f"Column boundaries order: {boundaries}")
     
     for r_idx, row_blocks in enumerate(rows):
         # Create empty cells
@@ -112,7 +120,11 @@ def analyze_hybrid_structure(image_path, debug_dir):
             
             # Find which column bin this block belongs to
             for c_idx in range(len(boundaries) - 1):
-                if boundaries[c_idx] <= b_x_center < boundaries[c_idx+1]:
+                boundary_start = boundaries[c_idx]
+                boundary_end = boundaries[c_idx + 1]
+                lower_bound = min(boundary_start, boundary_end)
+                upper_bound = max(boundary_start, boundary_end)
+                if lower_bound <= b_x_center < upper_bound:
                     # Append text to that cell
                     if row_content[c_idx]:
                         row_content[c_idx] += " " + b['text']
@@ -120,6 +132,9 @@ def analyze_hybrid_structure(image_path, debug_dir):
                         row_content[c_idx] = b['text']
                     break
         
+        if vertical_right_to_left:
+            print(f"Row {r_idx} RTL order: {row_content}")
+
         csv_rows.append(row_content)
 
     # 5. Visualize
@@ -142,9 +157,14 @@ def analyze_hybrid_structure(image_path, debug_dir):
 if __name__ == "__main__":
     test_page = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_011.png"
     debug_dir = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages"
+    vertical_right_to_left = False
     
     print(f"Testing Hybrid Extraction on {test_page}...")
-    rows, path = analyze_hybrid_structure(test_page, debug_dir)
+    rows, path = analyze_hybrid_structure(
+        test_page,
+        debug_dir,
+        vertical_right_to_left=vertical_right_to_left,
+    )
     
     print(f"Generated {len(rows)} rows.")
     print("\nPreview:")
