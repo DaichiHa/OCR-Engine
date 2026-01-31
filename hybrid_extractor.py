@@ -4,10 +4,14 @@ Reusable function for table page processing.
 """
 
 import cv2
+import logging
 import numpy as np
 import os
 import pytesseract
 from PIL import Image
+
+logger = logging.getLogger(__name__)
+
 
 def read_image_robust(path_or_image):
     if isinstance(path_or_image, np.ndarray):
@@ -15,11 +19,12 @@ def read_image_robust(path_or_image):
     if isinstance(path_or_image, Image.Image):
         return np.array(path_or_image)
 
-    stream = open(path_or_image, "rb")
-    bytes = bytearray(stream.read())
-    numpyarray = np.asarray(bytes, dtype=np.uint8)
+    with open(path_or_image, "rb") as stream:
+        bytes_data = bytearray(stream.read())
+    numpyarray = np.asarray(bytes_data, dtype=np.uint8)
     img = cv2.imdecode(numpyarray, cv2.IMREAD_UNCHANGED)
-    stream.close()
+    if img is None:
+        logger.warning("Failed to decode image: %s", path_or_image)
     return img
 
 def extract_table_content(image_path, debug_dir=None):
