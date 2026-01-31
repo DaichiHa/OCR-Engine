@@ -9,6 +9,8 @@ import os
 import pytesseract
 from PIL import Image
 
+import ocr_box_utils
+
 def read_image_robust(path):
     stream = open(path, "rb")
     bytes = bytearray(stream.read())
@@ -17,7 +19,7 @@ def read_image_robust(path):
     stream.close()
     return img
 
-def extract_table_content(image_path, debug_dir=None):
+def extract_table_content(image_path, debug_dir=None, return_boxes=False, page=None, engine_label="tesseract-table"):
     """
     Extracts table content from an image using Hybrid Line/Text approach.
     Returns list of rows (list of strings).
@@ -77,9 +79,14 @@ def extract_table_content(image_path, debug_dir=None):
     pil_img = Image.fromarray(thresh)
     
     try:
-        data = pytesseract.image_to_data(pil_img, lang='jpn', config=config, output_type=pytesseract.Output.DICT)
-    except:
-        return []
+        data = pytesseract.image_to_data(
+            pil_img,
+            lang='jpn',
+            config=config,
+            output_type=pytesseract.Output.DICT,
+        )
+    except Exception:
+        return [] if not return_boxes else ([], [])
 
     text_blocks = []
     n_boxes = len(data['level'])
@@ -128,9 +135,14 @@ def extract_table_content(image_path, debug_dir=None):
                     break
         table_data.append(row_cells)
         
+    if return_boxes:
+        if page is None:
+            raise ValueError("page is required when return_boxes is True.")
+        boxes = ocr_box_utils.tesseract_data_to_boxes(data, page, engine_label)
+        return table_data, boxes
     return table_data
 
-def extract_vertical_text(image_path):
+def extract_vertical_text(image_path, return_boxes=False, page=None, engine_label="tesseract-vertical"):
     """
     Simple function for vertical text pages (1-6)
     """
@@ -152,4 +164,15 @@ def extract_vertical_text(image_path):
     
     config = r'--oem 3 --psm 5' # Vertical text block
     text = pytesseract.image_to_string(pil_img, lang='jpn_vert', config=config)
+    if return_boxes:
+        if page is None:
+            raise ValueError("page is required when return_boxes is True.")
+        boxes = ocr_box_utils.collect_tesseract_boxes(
+            pil_img,
+            page=page,
+            engine=engine_label,
+            config=config,
+            lang='jpn_vert',
+        )
+        return text, boxes
     return text

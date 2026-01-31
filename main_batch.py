@@ -3,10 +3,15 @@ Main Batch Processor for "日本帝國港灣統計"
 Iterates through all 151 pages and applies appropriate OCR strategy.
 """
 
-import os
-import hybrid_extractor
 import concurrent.futures
+import os
 import time
+
+import cv2
+import hybrid_extractor
+import ocr_advanced
+import ocr_box_utils
+import text_structure_analyzer
 
 def process_single_page_task(page_info):
     """
@@ -43,67 +48,146 @@ def process_single_page_task(page_info):
     except Exception as e:
         return page_num, f"\n## Page {page_num}\nError: {str(e)}\n", 0
 
-if __name__ == "__main__":
-    pages_dir = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages"
-    output_file = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\Full_Output_Draft.md"
-    
-    # Get all page files
+
+def format_table_rows(rows):
+    return "\n".join(["\t".join([str(c) for c in row]) for row in rows])
+
+
+def process_page_with_diagnostics(
+    page_num,
+    image_path,
+    low_conf_threshold,
+    wrinkle_density_threshold,
+    engine_iou_threshold,
+):
+    if 1 <= page_num <= 6:
+        text, primary_boxes, _ = ocr_advanced.ocr_page_with_boxes(
+            image_path,
+            page=page_num,
+            lang="jpn_vert",
+            psm=5,
+        )
+        secondary_text, secondary_boxes = hybrid_extractor.extract_vertical_text(
+            image_path,
+            return_boxes=True,
+            page=page_num,
+            engine_label="tesseract-vertical",
+        )
+        accepted_text = text
+    else:
+        rows, primary_boxes = hybrid_extractor.extract_table_content(
+            image_path,
+            return_boxes=True,
+            page=page_num,
+            engine_label="tesseract-table",
+        )
+        secondary_boxes = text_structure_analyzer.collect_tesseract_boxes(
+            image_path,
+            page=page_num,
+            engine_label="tesseract-structure",
+        )
+        accepted_text = format_table_rows(rows) if rows else ""
+
+    all_boxes = primary_boxes + secondary_boxes
+    mismatch_keys = set(
+        ocr_box_utils.find_engine_mismatches(
+            primary_boxes,
+            secondary_boxes,
+            iou_threshold=engine_iou_threshold,
+        )
+    )
+
+    img = hybrid_extractor.read_image_robust(image_path)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) if img is not None else None
+    edge_map = ocr_box_utils.compute_edge_map(gray) if gray is not None else None
+
+    diff_queue = []
+    for box in all_boxes:
+        flags = []
+        if box["conf"] < low_conf_threshold:
+            flags.append("low_conf")
+        key = (box["page"], box["engine"], box["block_id"])
+        if key in mismatch_keys:
+            flags.append("engine_mismatch")
+        if edge_map is not None and ocr_box_utils.is_wrinkle_suspect(
+            edge_map,
+            box["bbox"],
+            density_threshold=wrinkle_density_threshold,
+        ):
+            flags.append("wrinkle_suspect")
+        if flags:
+            diff_queue.append({**box, "flags": flags})
+
+    return accepted_text, all_boxes, diff_queue
+
+
+def run_batch_with_diagnostics(
+    pages_dir,
+    output_dir,
+    low_conf_threshold=60.0,
+    wrinkle_density_threshold=0.35,
+    engine_iou_threshold=0.5,
+    max_workers=4,
+):
     files = sorted([f for f in os.listdir(pages_dir) if f.lower().endswith('.png')])
-    
-    # Map filenames to page numbers (assuming page_XXX.png)
     page_list = []
     for f in files:
-        # Filter out debug images
         if f.startswith('debug_') or f.startswith('table_') or 'debug' in f:
             continue
-            
-        # Extract number from "page_001.png" or "page_1.png"
         try:
-            # Split by '_' and take the last part, remove extension
             num_str = f.split('_')[-1].split('.')[0]
             num = int(num_str)
             page_list.append((num, os.path.join(pages_dir, f)))
-        except:
+        except Exception:
             continue
-            
-    # Sort by page number
-    page_list.sort(key=lambda x: x[0])
-    
-    full_results = {}
-    
-    print(f"Starting batch processing for {len(page_list)} pages...")
-    
-    # Use ProcessPoolExecutor to bypass GIL for heavy OpenCV/Tesseract work
-    # But Windows multiprocessing requires careful pickling. 
-    # ThreadPoolExecutor is safer if modules are not perfectly picklable.
-    # Tesseract releases GIL, so threading is fine.
-    
-    max_workers = 4
-    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-        # Submit all tasks
-        future_to_page = {executor.submit(process_single_page_task, p): p for p in page_list}
-        
-        completed_count = 0
-        total_count = len(page_list)
-        
-        for future in concurrent.futures.as_completed(future_to_page):
-            page_info = future_to_page[future]
-            try:
-                p_num, text, dur = future.result()
-                full_results[p_num] = text
-                completed_count += 1
-                print(f"[{completed_count}/{total_count}] Page {p_num} processed in {dur:.2f}s")
-            except Exception as exc:
-                print(f"Page {page_info[0]} generated an exception: {exc}")
 
-    # Write final output sorted
-    with open(output_file, 'w', encoding='utf-8') as f:
-        f.write("# 日本帝國港灣統計 OCR Result\n")
-        f.write("Generated by Hybrid Structure-Aware OCR\n\n")
-        
-        keys = sorted(full_results.keys())
-        for k in keys:
-            f.write(full_results[k])
-            f.write("\n\n---\n\n")
-            
-    print(f"Processing complete. Saved to {output_file}")
+    page_list.sort(key=lambda x: x[0])
+    raw_lines = []
+    all_boxes = []
+    diff_queue = []
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_to_page = {
+            executor.submit(
+                process_page_with_diagnostics,
+                page_num,
+                image_path,
+                low_conf_threshold,
+                wrinkle_density_threshold,
+                engine_iou_threshold,
+            ): (page_num, image_path)
+            for page_num, image_path in page_list
+        }
+        for future in concurrent.futures.as_completed(future_to_page):
+            page_num, _ = future_to_page[future]
+            text, boxes, diffs = future.result()
+            raw_lines.append((page_num, text))
+            all_boxes.extend(boxes)
+            diff_queue.extend(diffs)
+
+    raw_lines.sort(key=lambda x: x[0])
+    raw_text_path = os.path.join(output_dir, "raw.txt")
+    boxes_path = os.path.join(output_dir, "boxes.jsonl")
+    diff_queue_path = os.path.join(output_dir, "diff_queue.jsonl")
+
+    with open(raw_text_path, "w", encoding="utf-8") as handle:
+        for page_num, text in raw_lines:
+            handle.write(f"## Page {page_num}\n")
+            handle.write(text)
+            handle.write("\n\n")
+
+    ocr_box_utils.write_jsonl(boxes_path, all_boxes)
+    ocr_box_utils.write_jsonl(diff_queue_path, diff_queue)
+
+    return raw_text_path, boxes_path, diff_queue_path
+
+if __name__ == "__main__":
+    pages_dir = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages"
+    output_dir = pages_dir
+    raw_text_path, boxes_path, diff_queue_path = run_batch_with_diagnostics(
+        pages_dir,
+        output_dir,
+    )
+    print(f"Processing complete. raw.txt: {raw_text_path}")
+    print(f"boxes.jsonl: {boxes_path}")
+    print(f"diff_queue.jsonl: {diff_queue_path}")

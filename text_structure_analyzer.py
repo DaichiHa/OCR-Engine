@@ -11,6 +11,8 @@ import math
 import pytesseract
 from PIL import Image
 
+import ocr_box_utils
+
 def read_image_robust(path):
     stream = open(path, "rb")
     bytes = bytearray(stream.read())
@@ -19,7 +21,7 @@ def read_image_robust(path):
     stream.close()
     return img
 
-def analyze_hybrid_structure(image_path, debug_dir):
+def analyze_hybrid_structure(image_path, debug_dir, return_boxes=False, page=None, engine_label="tesseract-structure"):
     filename = os.path.basename(image_path)
     img = read_image_robust(image_path)
     if img is None:
@@ -59,7 +61,12 @@ def analyze_hybrid_structure(image_path, debug_dir):
     
     custom_config = r'--oem 3 --psm 6'
     pil_img = Image.fromarray(gray)
-    data = pytesseract.image_to_data(pil_img, lang='jpn', config=custom_config, output_type=pytesseract.Output.DICT)
+    data = pytesseract.image_to_data(
+        pil_img,
+        lang='jpn',
+        config=custom_config,
+        output_type=pytesseract.Output.DICT,
+    )
     
     # Filter valid text blocks
     text_blocks = []
@@ -137,7 +144,28 @@ def analyze_hybrid_structure(image_path, debug_dir):
         with open(debug_path, "wb") as f:
             f.write(encoded_img)
 
+    if return_boxes:
+        if page is None:
+            raise ValueError("page is required when return_boxes is True.")
+        boxes = ocr_box_utils.tesseract_data_to_boxes(data, page, engine_label)
+        return csv_rows, debug_path, boxes
     return csv_rows, debug_path
+
+
+def collect_tesseract_boxes(image_path, page, engine_label="tesseract-structure"):
+    img = read_image_robust(image_path)
+    if img is None:
+        return []
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    pil_img = Image.fromarray(gray)
+    custom_config = r'--oem 3 --psm 6'
+    return ocr_box_utils.collect_tesseract_boxes(
+        pil_img,
+        page=page,
+        engine=engine_label,
+        config=custom_config,
+        lang='jpn',
+    )
 
 if __name__ == "__main__":
     test_page = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_011.png"

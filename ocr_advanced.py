@@ -9,6 +9,8 @@ import pytesseract
 from PIL import Image
 import os
 
+import ocr_box_utils
+
 def preprocess_image_advanced(image_path, debug_save_path=None):
     """
     Apply advanced preprocessing using OpenCV
@@ -82,6 +84,29 @@ def ocr_page_advanced(image_path, lang='jpn_vert', psm=5):
         return text, avg_conf, debug_path
     except Exception as e:
         return f"Error: {str(e)}", 0, None
+
+
+def ocr_page_with_boxes(image_path, page, lang='jpn_vert', psm=5):
+    """
+    Perform OCR and return text plus Tesseract boxes.
+    """
+    debug_filename = f"debug_preprocessed_{os.path.basename(image_path)}"
+    debug_path = os.path.join(os.path.dirname(image_path), debug_filename)
+
+    preprocessed_img = preprocess_image_advanced(image_path, debug_path)
+    pil_img = Image.fromarray(preprocessed_img)
+    custom_config = f'--oem 3 --psm {psm} -c preserve_interword_spaces=1'
+
+    text = pytesseract.image_to_string(pil_img, lang=lang, config=custom_config)
+    boxes = ocr_box_utils.collect_tesseract_boxes(
+        pil_img,
+        page=page,
+        engine="tesseract-advanced",
+        config=custom_config,
+        lang=lang,
+    )
+
+    return text, boxes, debug_path
 
 if __name__ == "__main__":
     # Test on Text Page (003) and Table Page (011)
