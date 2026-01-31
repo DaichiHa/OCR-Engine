@@ -4,12 +4,15 @@ Reusable function for table page processing.
 """
 
 import cv2
+import logging
 import numpy as np
 import os
 import pytesseract
 from PIL import Image
 
 import ocr_box_utils
+
+logger = logging.getLogger(__name__)
 
 def read_image_robust(path):
     stream = open(path, "rb")
@@ -85,7 +88,8 @@ def extract_table_content(image_path, debug_dir=None, return_boxes=False, page=N
             config=config,
             output_type=pytesseract.Output.DICT,
         )
-    except Exception:
+    except Exception as exc:
+        logger.exception("Failed to extract table content with Tesseract.", exc_info=exc)
         return [] if not return_boxes else ([], [])
 
     text_blocks = []
