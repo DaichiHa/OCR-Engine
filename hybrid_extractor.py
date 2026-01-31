@@ -26,7 +26,7 @@ def extract_table_content(image_path, debug_dir=None, return_boxes=False, page=N
     """
     img = read_image_robust(image_path)
     if img is None:
-        return []
+        return [] if not return_boxes else ([], [])
 
     if len(img.shape) == 3 and img.shape[2] > 1:
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -148,7 +148,7 @@ def extract_vertical_text(image_path, return_boxes=False, page=None, engine_labe
     """
     img = read_image_robust(image_path)
     if img is None:
-        return ""
+        return "" if not return_boxes else ("", [])
     
     if len(img.shape) == 3 and img.shape[2] > 1:
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
