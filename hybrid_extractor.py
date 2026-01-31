@@ -7,10 +7,7 @@ import cv2
 import numpy as np
 import os
 import pytesseract
-import logging
 from PIL import Image
-
-logger = logging.getLogger(__name__)
 
 def read_image_robust(path):
     stream = open(path, "rb")
@@ -81,8 +78,7 @@ def extract_table_content(image_path, debug_dir=None):
     
     try:
         data = pytesseract.image_to_data(pil_img, lang='jpn', config=config, output_type=pytesseract.Output.DICT)
-    except Exception as exc:
-        logger.exception("Failed to extract table content with Tesseract.", exc_info=exc)
+    except:
         return []
 
     text_blocks = []

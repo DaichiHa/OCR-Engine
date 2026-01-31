@@ -7,9 +7,6 @@ import os
 import hybrid_extractor
 import concurrent.futures
 import time
-import ocr_ensemble
-
-ENSEMBLE_ENABLED = os.getenv("OCR_ENSEMBLE", "0") == "1"
 
 def process_single_page_task(page_info):
     """
@@ -27,31 +24,18 @@ def process_single_page_task(page_info):
             
         else:
             # Table Mode
-            if ENSEMBLE_ENABLED:
-                output_dir = os.path.join(
-                    os.path.dirname(image_path),
-                    f"ensemble_{page_num:03d}",
-                )
-                try:
-                    ensemble_result = ocr_ensemble.process_image(image_path, output_dir)
-                    raw_lines = [line.text for line in ensemble_result["lines"]]
-                    lines = [f"\n\n## Page {page_num}"] + raw_lines
-                    result = "\n".join(lines)
-                except ImportError as exc:
-                    result = f"\n\n## Page {page_num}\n\nEnsemble OCR error: {exc}\n"
+            rows = hybrid_extractor.extract_table_content(image_path)
+            if not rows:
+                result = f"\n\n## Page {page_num}\n\n(No table data detected)\n"
             else:
-                rows = hybrid_extractor.extract_table_content(image_path)
-                if not rows:
-                    result = f"\n\n## Page {page_num}\n\n(No table data detected)\n"
-                else:
-                    lines = []
-                    lines.append(f"\n\n## Page {page_num}")
-                    # Construct Markdown Table
-                    for row_idx, row in enumerate(rows):
-                        # Clean up: Replace pipes with generic separator or escape them
-                        clean_row = [str(c).replace('|', '') for c in row]
-                        lines.append("| " + " | ".join(clean_row) + " |")
-                    result = "\n".join(lines)
+                lines = []
+                lines.append(f"\n\n## Page {page_num}")
+                # Construct Markdown Table
+                for row_idx, row in enumerate(rows):
+                    # Clean up: Replace pipes with generic separator or escape them
+                    clean_row = [str(c).replace('|', '') for c in row]
+                    lines.append("| " + " | ".join(clean_row) + " |")
+                result = "\n".join(lines)
         
         elapsed = time.time() - start_time
         return page_num, result, elapsed

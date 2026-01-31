@@ -20,7 +20,7 @@ def extract_table_structure_v4(image_path, debug_dir):
     filename = os.path.basename(image_path)
     img = read_image_robust(image_path)
     if img is None:
-        return [], None
+        return 0, None
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
@@ -116,8 +116,6 @@ def extract_table_structure_v4(image_path, debug_dir):
     cells.sort(key=lambda c: (int(c[1] // 20), c[0]))
 
     debug_path = os.path.join(debug_dir, f"debug_table_v4_{filename}")
-    if not os.path.splitext(debug_path)[1]:
-        debug_path += ".png"
     extension = os.path.splitext(debug_path)[1]
     result, encoded_img = cv2.imencode(extension, debug_grid)
     if result:
@@ -132,8 +130,8 @@ if __name__ == "__main__":
     
     print(f"Testing V4 (LSD) extraction on {test_page}...")
     try:
-        cells, path = extract_table_structure_v4(test_page, debug_dir)
-        print(f"Detected {len(cells)} cells.")
+        count, path = extract_table_structure_v4(test_page, debug_dir)
+        print(f"Detected {count} cells.")
         print(f"Saved debug to {path}")
     except Exception as e:
         print(f"Error: {e}")
