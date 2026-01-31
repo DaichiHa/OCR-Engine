@@ -9,8 +9,13 @@ import os
 import pytesseract
 from PIL import Image
 
-def read_image_robust(path):
-    stream = open(path, "rb")
+def read_image_robust(path_or_image):
+    if isinstance(path_or_image, np.ndarray):
+        return path_or_image
+    if isinstance(path_or_image, Image.Image):
+        return np.array(path_or_image)
+
+    stream = open(path_or_image, "rb")
     bytes = bytearray(stream.read())
     numpyarray = np.asarray(bytes, dtype=np.uint8)
     img = cv2.imdecode(numpyarray, cv2.IMREAD_UNCHANGED)
