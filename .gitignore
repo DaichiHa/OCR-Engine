@@ -1,0 +1,32 @@
+# API Keys and Secrets (CRITICAL: DO NOT REMOVE)
+api_key.txt
+openai_api_key.txt
+github_pat.txt
+service_account.json
+*.pem
+*.key
+
+# Intermediate files and raw images
+intermediate_md/
+intermediate_md_gamma/
+intermediate_md_strong/
+*.md
+!日本帝國港灣統計_Complete.md
+!日本帝國港灣統計_OCR.md
+!Full_Output_*.md
+!walkthrough.md
+!README.md
+!task.md
+!implementation_plan.md
+
+# Large artifacts
+*.pdf
+*.zip
+
+# Optional: Intermediate files if you want to keep repo clean
+# intermediate_md/
+# pages/
+
+# System files
+.DS_Store
+Thumbs.db
