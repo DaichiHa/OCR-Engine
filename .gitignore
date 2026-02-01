@@ -30,3 +30,14 @@ intermediate_md_strong/
 # System files
 .DS_Store
 Thumbs.db
+# local artifacts
+__pycache__/
+ops/__pycache__/
+*.bak_*
+*.bakq_*
+*.bak_fix_*
+*.bak_pre2_*
+*.bak_row_*
+*.bak_scrub_*
+*.bak_v2fix_*
+ops/patch_*.ps1
