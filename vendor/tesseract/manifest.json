@@ -1,0 +1,13 @@
+{
+  "source": "C:\\Program Files\\Tesseract-OCR",
+  "files": [
+    "C:\\Users\\User\\OCR-Engine\\vendor\\tesseract\\tesseract.exe",
+    "C:\\Users\\User\\OCR-Engine\\vendor\\tesseract\\tessdata\\chi_sim.traineddata",
+    "C:\\Users\\User\\OCR-Engine\\vendor\\tesseract\\tessdata\\chi_sim_vert.traineddata",
+    "C:\\Users\\User\\OCR-Engine\\vendor\\tesseract\\tessdata\\eng.traineddata",
+    "C:\\Users\\User\\OCR-Engine\\vendor\\tesseract\\tessdata\\jpn.traineddata",
+    "C:\\Users\\User\\OCR-Engine\\vendor\\tesseract\\tessdata\\jpn_vert.traineddata",
+    "C:\\Users\\User\\OCR-Engine\\vendor\\tesseract\\tessdata\\osd.traineddata",
+    "C:\\Users\\User\\OCR-Engine\\vendor\\tesseract\\tessdata\\rus.traineddata"
+  ]
+}
