@@ -1,3 +1,37 @@
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# IDEs and editors
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# pytest
+.pytest_cache/
+
+# Sensitive files
+.env
+secrets.env
 # API Keys and Secrets (CRITICAL: DO NOT REMOVE)
 api_key.txt
 openai_api_key.txt
