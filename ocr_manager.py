@@ -35,8 +35,15 @@ def ocr_cell(img_path, cell_box, margin=2):
         return ""
 
     # Convert to PIL for Tesseract
-    # Preprocessing: Grayscale -> Threshold
-    gray = cv2.cvtColor(cell_img, cv2.COLOR_BGR2GRAY)
+    # Preprocessing: handle different channel layouts then Grayscale -> Threshold
+    if cell_img.ndim == 2:
+        gray = cell_img
+    else:
+        if cell_img.shape[2] == 4:
+            cell_bgr = cv2.cvtColor(cell_img, cv2.COLOR_RGBA2BGR)
+        else:
+            cell_bgr = cell_img
+        gray = cv2.cvtColor(cell_bgr, cv2.COLOR_BGR2GRAY)
     # Simple Otsu is usually best for high-contrast text in cells
     thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
     

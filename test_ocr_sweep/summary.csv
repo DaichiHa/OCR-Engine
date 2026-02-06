@@ -1,0 +1,17 @@
+psm,oem,jp_rate,noise_rate,elapsed_s,md
+3,0,0,999,5.344,
+3,1,0,999,16.168,C:\Users\User\Downloads\OCR-Engine\test_ocr_sweep\psm3_oem1_py\mini_page_001_r1-1_ink0p010.md
+3,2,0,999,5.486,
+3,3,0,999,11.436,C:\Users\User\Downloads\OCR-Engine\test_ocr_sweep\psm3_oem3_py\mini_page_001_r1-1_ink0p010.md
+6,0,0,999,3.377,
+6,1,0,999,23.988,C:\Users\User\Downloads\OCR-Engine\test_ocr_sweep\psm6_oem1_py\mini_page_001_r1-1_ink0p010.md
+6,2,0,999,3.597,
+6,3,0,999,24.01,C:\Users\User\Downloads\OCR-Engine\test_ocr_sweep\psm6_oem3_py\mini_page_001_r1-1_ink0p010.md
+7,0,0,999,3.409,
+7,1,0,999,5.071,C:\Users\User\Downloads\OCR-Engine\test_ocr_sweep\psm7_oem1_py\mini_page_001_r1-1_ink0p010.md
+7,2,0,999,3.441,
+7,3,0,999,5.123,C:\Users\User\Downloads\OCR-Engine\test_ocr_sweep\psm7_oem3_py\mini_page_001_r1-1_ink0p010.md
+11,0,0,999,3.383,
+11,1,0,999,19.6,C:\Users\User\Downloads\OCR-Engine\test_ocr_sweep\psm11_oem1_py\mini_page_001_r1-1_ink0p010.md
+11,2,0,999,3.459,
+11,3,0,999,19.481,C:\Users\User\Downloads\OCR-Engine\test_ocr_sweep\psm11_oem3_py\mini_page_001_r1-1_ink0p010.md

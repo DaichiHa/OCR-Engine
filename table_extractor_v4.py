@@ -22,7 +22,18 @@ def extract_table_structure_v4(image_path, debug_dir):
     if img is None:
         return 0, None
 
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # Handle various image channel layouts robustly
+    # keep a BGR copy for drawing/debugging and obtain a gray image for processing
+    if img.ndim == 2:
+        gray = img
+        bgr = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+    else:
+        # RGBA -> BGR, otherwise assume BGR
+        if img.shape[2] == 4:
+            bgr = cv2.cvtColor(img, cv2.COLOR_RGBA2BGR)
+        else:
+            bgr = img.copy()
+        gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
     
     # Create LSD
     lsd = cv2.createLineSegmentDetector(0)
@@ -30,16 +41,16 @@ def extract_table_structure_v4(image_path, debug_dir):
     # Detect lines
     lines, width, prec, nfa = lsd.detect(gray)
     
-    # Draw detected raw lines for debug
-    debug_raw = img.copy()
+    # Draw detected raw lines for debug (use BGR copy)
+    debug_raw = bgr.copy()
     lsd.drawSegments(debug_raw, lines)
 
     # Filter Lines
     horizontal_lines = []
     vertical_lines = []
     
-    img_width = img.shape[1]
-    img_height = img.shape[0]
+    img_width = bgr.shape[1]
+    img_height = bgr.shape[0]
 
     if lines is not None:
         for line in lines:
@@ -87,8 +98,8 @@ def extract_table_structure_v4(image_path, debug_dir):
     # Filter Grid - Remove edges if necessary or just keep all
     # Usually the first/last detected line is the border.
     
-    # Visualize Grid
-    debug_grid = img.copy()
+    # Visualize Grid (use BGR copy)
+    debug_grid = bgr.copy()
     for r in rows:
         cv2.line(debug_grid, (0, r), (img_width, r), (0, 0, 255), 2)
     for c in cols:
