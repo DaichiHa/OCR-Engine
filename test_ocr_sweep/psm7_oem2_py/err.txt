@@ -1,0 +1,26 @@
+Traceback (most recent call last):
+  File "C:\Users\User\Downloads\OCR-Engine\ops\mini_runner.py", line 239, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\User\Downloads\OCR-Engine\ops\mini_runner.py", line 188, in main
+    txt = pytesseract.image_to_string(im, lang=args.lang, config="")
+  File "C:\Users\User\Downloads\OCR-Engine\ops\mini_runner.py", line 126, in wrapped
+    t1=scrub(orig(img, **kw))
+             ~~~~^^^^^^^^^^^
+  File "C:\Users\User\Downloads\OCR-Engine\.venv\Lib\site-packages\pytesseract\pytesseract.py", line 486, in image_to_string
+    return {
+           ~
+    ...<2 lines>...
+        Output.STRING: lambda: run_and_get_output(*args),
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    }[output_type]()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Users\User\Downloads\OCR-Engine\.venv\Lib\site-packages\pytesseract\pytesseract.py", line 489, in <lambda>
+    Output.STRING: lambda: run_and_get_output(*args),
+                           ~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\User\Downloads\OCR-Engine\.venv\Lib\site-packages\pytesseract\pytesseract.py", line 352, in run_and_get_output
+    run_tesseract(**kwargs)
+    ~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\User\Downloads\OCR-Engine\.venv\Lib\site-packages\pytesseract\pytesseract.py", line 284, in run_tesseract
+    raise TesseractError(proc.returncode, get_errors(error_string))
+pytesseract.pytesseract.TesseractError: (1, "read_params_file: Can't open txt Error: Tesseract (legacy) engine requested, but components are not present in C:\\Users\\User\\Downloads\\OCR-Engine\\vendor\\tesseract/tessdata/jpn.traineddata!! Failed loading language 'jpn' read_params_file: Can't open txt Error: Tesseract (legacy) engine requested, but components are not present in C:\\Users\\User\\Downloads\\OCR-Engine\\vendor\\tesseract/tessdata/eng.traineddata!! Failed loading language 'eng' Tesseract couldn't load any languages! Could not initialize tesseract. ObjectCache(00007ff96ae76600)::~ObjectCache(): WARNING! LEAK! object 000002023eb6d860 still has count 1 (id C:\\Users\\User\\Downloads\\OCR-Engine\\vendor\\tesseract/tessdata/jpn.traineddatalstm-punc-dawg) ObjectCache(00007ff96ae76600)::~ObjectCache(): WARNING! LEAK! object 000002023fa332a0 still has count 1 (id C:\\Users\\User\\Downloads\\OCR-Engine\\vendor\\tesseract/tessdata/jpn.traineddatalstm-word-dawg) ObjectCache(00007ff96ae76600)::~ObjectCache(): WARNING! LEAK! object 000002023ebd5e00 still has count 1 (id C:\\Users\\User\\Downloads\\OCR-Engine\\vendor\\tesseract/tessdata/jpn.traineddatalstm-number-dawg)")

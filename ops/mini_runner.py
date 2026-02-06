@@ -5,14 +5,21 @@ import os, re, argparse, hashlib, io, contextlib
 from PIL import Image
 import numpy as np
 import cv2
+import unicodedata
 import pytesseract
+
+# If repository bundles a tesseract binary, prefer it so tests run without system install
+_repo_root = _pl.Path(__file__).resolve().parents[1]
+_bundled_tess = str(_repo_root / "vendor" / "tesseract" / "tesseract.exe")
+if os.path.exists(_bundled_tess):
+    pytesseract.pytesseract.tesseract_cmd = _bundled_tess
 
 # ---- knobs (env) ----
 INK_MIN   = float(os.getenv("INK_MIN","0.010"))
 SOBEL_TH  = float(os.getenv("SOBEL_TH","1.25"))   # gy/gx > th => vertical-ish
 HK_DIV    = float(os.getenv("HK_DIV","6.0"))      # bigger => shorter kernel
 VK_DIV    = float(os.getenv("VK_DIV","4.0"))      # smaller => longer vertical kernel (remove v-lines)
-TIMEOUT   = float(os.getenv("TESS_TIMEOUT","0.8"))
+TIMEOUT   = float(os.getenv("TESS_TIMEOUT","8.0"))
 
 def preprocess(pil_img):
     arr=np.array(pil_img)
@@ -20,7 +27,7 @@ def preprocess(pil_img):
     elif arr.shape[2]==4: gray=cv2.cvtColor(arr, cv2.COLOR_RGBA2GRAY)
     else: gray=cv2.cvtColor(arr, cv2.COLOR_RGB2GRAY)
 
-    gray=cv2.resize(gray,None,fx=3.0,fy=3.0,interpolation=cv2.INTER_CUBIC)
+    gray=cv2.resize(gray,None,fx=2.0,fy=2.0,interpolation=cv2.INTER_CUBIC)
     gray=cv2.GaussianBlur(gray,(3,3),0)
     th=cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,35,11)
     if th.mean()<127: th=255-th
@@ -61,14 +68,49 @@ def digit_score(s):
     p=sum(c in ".,-()%" for c in s)
     return d*2.0 + p*0.5
 
+def postprocess_text(s):
+    if not s:
+        return s
+    # Unicode normalize to NFKC (convert fullwidth to ascii where appropriate)
+    s = unicodedata.normalize('NFKC', s)
+    # Replace common punctuation and long dash
+    s = s.replace('　', ' ').replace('。', '.').replace('、', ',').replace('ー', '-')
+    # Remove control characters
+    s = re.sub(r'[\x00-\x1f\x7f]', '', s)
+
+    # If the string contains digits, fix common OCR confusions around numbers
+    digits = sum(c.isdigit() for c in s)
+    if digits > 0:
+        s = re.sub(r'[O〇Ｏ]', '0', s)
+        s = re.sub(r'[lI|¡]', '1', s)
+        # keep only reasonable characters for mixed numeric fields
+        s = re.sub(r"[^0-9A-Za-z\u3040-\u30ff\u3400-\u9fff,().%\- \n]", '', s)
+    else:
+        # general cleanup: remove odd control punctuation
+        s = re.sub(r"[^0-9A-Za-z\u3040-\u30ff\u3400-\u9fff,().%\- \n]", '', s)
+
+    # collapse whitespace
+    s = re.sub(r'\s+', ' ', s).strip()
+    return s
+
 def patch_tesseract(lang_main):
     orig=pytesseract.image_to_string
     def wrapped(img, **kw):
         if isinstance(img, Image.Image):
             img=preprocess(img)
         cfg=kw.get("config","")
-        cfg=re.sub(r"--psm\s+\d+","--psm 7",cfg)
-        if "--psm" not in cfg: cfg=(cfg+" --psm 7").strip()
+        # Allow overriding PSM/OEM via env vars for sweep testing
+        env_psm = os.getenv("TESS_PSM")
+        env_oem = os.getenv("TESS_OEM")
+        if env_psm:
+            # remove existing --psm and set to env value
+            cfg = re.sub(r"--psm\s+\d+","", cfg).strip()
+            cfg = (cfg + f" --psm {env_psm}").strip()
+        else:
+            cfg=re.sub(r"--psm\s+\d+","--psm 7",cfg)
+            if "--psm" not in cfg: cfg=(cfg+" --psm 7").strip()
+        if env_oem:
+            cfg = (cfg + f" --oem {env_oem}").strip()
         cfg=(cfg+" -c preserve_interword_spaces=1").strip()
 
         # Sobel vertical detection => jpn_vert
@@ -82,14 +124,20 @@ def patch_tesseract(lang_main):
         kw["lang"]=use_lang
         kw.setdefault("timeout", TIMEOUT)
         t1=scrub(orig(img, **kw))
+        t1 = postprocess_text(t1)
 
         # digits 2-pass (stronger)
-        kw2=dict(kw)
-        kw2["lang"]="eng"
-        kw2["config"]=cfg+" -c tessedit_char_whitelist=0123456789.,-()%"
+        # optionally run a numeric whitelist second pass; disable via env `TESS_DIGIT_2PASS=0`
+        if os.getenv("TESS_DIGIT_2PASS","1") == "1":
+            kw2=dict(kw)
+            kw2["lang"]="eng"
+            kw2["config"]=cfg+" -c tessedit_char_whitelist=0123456789.,-()%"
 
-        t2=scrub(orig(img, **kw2))
-        return t2 if digit_score(t2) > digit_score(t1) else t1
+            t2=scrub(orig(img, **kw2))
+            t2 = postprocess_text(t2)
+            return t2 if digit_score(t2) > digit_score(t1) else t1
+        else:
+            return t1
 
     pytesseract.image_to_string=wrapped
 
@@ -123,6 +171,7 @@ def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--page", required=True)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--page-only", action='store_true', help="Run OCR on whole page only (no table extraction)")
     ap.add_argument("--row-min", type=int, default=1)
     ap.add_argument("--row-max", type=int, default=1)
     ap.add_argument("--lang", default="jpn+eng")
@@ -131,13 +180,25 @@ def main():
     out=_pl.Path(args.out); out.mkdir(parents=True, exist_ok=True)
     patch_tesseract(args.lang)
 
-    import ocr_manager as m
-    try_slice_rows(m, args.row_min, args.row_max)
+    # allow skipping table extraction and run full-page OCR for speed comparison
+    if args.page_only:
+        # do a single-page OCR and produce markdown-like output
+        from PIL import Image as PILImage
+        im = PILImage.open(args.page)
+        txt = pytesseract.image_to_string(im, lang=args.lang, config="")
+        txt = postprocess_text(scrub(txt))
+        md = "\n" + txt
+        buf=io.StringIO()
+        buf.write(f"PAGE-ONLY OCR\n")
+        buf.write(str(txt))
+    else:
+        import ocr_manager as m
+        try_slice_rows(m, args.row_min, args.row_max)
 
-    buf=io.StringIO()
-    with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
-        md=m.process_page(args.page, str(out))
-    md=md if isinstance(md,str) else ""
+        buf=io.StringIO()
+        with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
+            md=m.process_page(args.page, str(out))
+        md=md if isinstance(md,str) else ""
 
     stem=_pl.Path(args.page).stem
     ink=os.getenv("INK_MIN","0.010").replace(".","p")
