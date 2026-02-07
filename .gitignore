@@ -41,3 +41,4 @@ ops/__pycache__/
 *.bak_scrub_*
 *.bak_v2fix_*
 ops/patch_*.ps1
+# Local environment files (keep secrets out of VCS)
