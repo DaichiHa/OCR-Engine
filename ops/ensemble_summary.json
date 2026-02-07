@@ -1,0 +1,47 @@
+{
+  "page_001.png": {
+    "preproc": "c:\\Users\\User\\Downloads\\OCR-Engine\\test_preproc\\page_001.png",
+    "easy_out": "c:\\Users\\User\\Downloads\\OCR-Engine\\ops\\easyocr_outputs_page_001",
+    "merge_out": "c:\\Users\\User\\Downloads\\OCR-Engine\\ops\\ensemble_merge_page_001",
+    "before": {
+      "jp_rate2_fix": 0.0,
+      "noise_rate2_fix": 0.0,
+      "chars": 5
+    },
+    "after": {
+      "jp_rate2_fix": 0.0,
+      "noise_rate2_fix": 0.0,
+      "chars": 5
+    }
+  },
+  "page_010.png": {
+    "preproc": "c:\\Users\\User\\Downloads\\OCR-Engine\\test_preproc\\page_010.png",
+    "easy_out": "c:\\Users\\User\\Downloads\\OCR-Engine\\ops\\easyocr_outputs_page_010",
+    "merge_out": "c:\\Users\\User\\Downloads\\OCR-Engine\\ops\\ensemble_merge_page_010",
+    "before": {
+      "jp_rate2_fix": 0.1099,
+      "noise_rate2_fix": 0.1034,
+      "chars": 619
+    },
+    "after": {
+      "jp_rate2_fix": 0.1107,
+      "noise_rate2_fix": 0.0961,
+      "chars": 614
+    }
+  },
+  "page_100.png": {
+    "preproc": "c:\\Users\\User\\Downloads\\OCR-Engine\\test_preproc\\page_100.png",
+    "easy_out": "c:\\Users\\User\\Downloads\\OCR-Engine\\ops\\easyocr_outputs_page_100",
+    "merge_out": "c:\\Users\\User\\Downloads\\OCR-Engine\\ops\\ensemble_merge_page_100",
+    "before": {
+      "jp_rate2_fix": 0.0656,
+      "noise_rate2_fix": 0.1027,
+      "chars": 3125
+    },
+    "after": {
+      "jp_rate2_fix": 0.0676,
+      "noise_rate2_fix": 0.1035,
+      "chars": 3034
+    }
+  }
+}
