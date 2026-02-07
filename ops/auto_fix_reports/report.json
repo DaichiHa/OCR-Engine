@@ -1,0 +1,49 @@
+{
+  "pages": [
+    {
+      "page": "page_001",
+      "source": "ops\\merge_page_001\\merged_post.md",
+      "before": {
+        "chars": 5,
+        "jp_rate2_fix": 0.2,
+        "noise_rate2_fix": 0.0
+      },
+      "after": {
+        "chars": 5,
+        "jp_rate2_fix": 0.2,
+        "noise_rate2_fix": 0.0
+      },
+      "out_fixed": "C:\\Users\\User\\Downloads\\OCR-Engine\\ops\\auto_fix_reports\\page_001\\merged_auto.md"
+    },
+    {
+      "page": "page_010",
+      "source": "ops\\merge_page_010\\merged_post.md",
+      "before": {
+        "chars": 607,
+        "jp_rate2_fix": 0.093904,
+        "noise_rate2_fix": 0.049423
+      },
+      "after": {
+        "chars": 607,
+        "jp_rate2_fix": 0.093904,
+        "noise_rate2_fix": 0.049423
+      },
+      "out_fixed": "C:\\Users\\User\\Downloads\\OCR-Engine\\ops\\auto_fix_reports\\page_010\\merged_auto.md"
+    },
+    {
+      "page": "page_100",
+      "source": "ops\\baseline_page_100\\mini_page_{page_tag.replace(\"page_\",\"\")}_r1-1_ink0p010.md",
+      "before": {
+        "chars": 0,
+        "jp_rate2_fix": 0.0,
+        "noise_rate2_fix": 0.0
+      },
+      "after": {
+        "chars": 0,
+        "jp_rate2_fix": 0.0,
+        "noise_rate2_fix": 0.0
+      },
+      "out_fixed": "C:\\Users\\User\\Downloads\\OCR-Engine\\ops\\auto_fix_reports\\page_100\\merged_auto.md"
+    }
+  ]
+}

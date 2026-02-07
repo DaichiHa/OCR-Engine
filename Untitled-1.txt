@@ -1,0 +1,4 @@
+git log --oneline origin/feat/roi-mini-loop...sync-from-local
+git diff --name-status origin/feat/roi-mini-loop...sync-from-local
+
+gh pr create --base main --head sync-from-local --title "Sync local" --body "同期: ローカルからの変更"
