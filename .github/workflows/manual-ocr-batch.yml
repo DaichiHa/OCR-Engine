@@ -29,17 +29,7 @@ jobs:
       - name: Run OCR batch (if runtime available)
         shell: bash
         run: |
-          python - <<'PY'
-import importlib,sys
-spec = importlib.util.find_spec('rapidocr_onnxruntime')
-if spec is None:
-    print('rapidocr_onnxruntime not installed — skipping OCR run')
-    sys.exit(0)
-else:
-    print('rapidocr_onnxruntime found — running ops/run_rapidocr_batch.py')
-    import runpy
-    runpy.run_path('ops/run_rapidocr_batch.py', run_name='__main__')
-PY
+          python ops/run_rapidocr_action.py
 
       - name: Collect OCR artifacts
         uses: actions/upload-artifact@v4
