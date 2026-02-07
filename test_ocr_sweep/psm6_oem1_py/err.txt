@@ -1,0 +1,44 @@
+Traceback (most recent call last):
+  File "C:\Users\User\Downloads\OCR-Engine\.venv\Lib\site-packages\pytesseract\pytesseract.py", line 148, in timeout_manager
+    _, error_string = proc.communicate(timeout=seconds)
+                      ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 1220, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\AppData\Local\Python\pythoncore-3.14-64\Lib\subprocess.py", line 1663, in _communicate
+    raise TimeoutExpired(self.args, orig_timeout)
+subprocess.TimeoutExpired: Command '['C:\\Users\\User\\Downloads\\OCR-Engine\\vendor\\tesseract\\tesseract.exe', 'C:\\Users\\User\\AppData\\Local\\Temp\\tess_7kdjzmup_input.PNG', 'C:\\Users\\User\\AppData\\Local\\Temp\\tess_7kdjzmup', '-l', 'jpn+eng', '--psm', '6', '--oem', '1', '-c', 'preserve_interword_spaces=1', 'txt']' timed out after 30.0 seconds
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\User\Downloads\OCR-Engine\ops\mini_runner.py", line 239, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\User\Downloads\OCR-Engine\ops\mini_runner.py", line 188, in main
+    txt = pytesseract.image_to_string(im, lang=args.lang, config="")
+  File "C:\Users\User\Downloads\OCR-Engine\ops\mini_runner.py", line 126, in wrapped
+    t1=scrub(orig(img, **kw))
+             ~~~~^^^^^^^^^^^
+  File "C:\Users\User\Downloads\OCR-Engine\.venv\Lib\site-packages\pytesseract\pytesseract.py", line 486, in image_to_string
+    return {
+           ~
+    ...<2 lines>...
+        Output.STRING: lambda: run_and_get_output(*args),
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    }[output_type]()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Users\User\Downloads\OCR-Engine\.venv\Lib\site-packages\pytesseract\pytesseract.py", line 489, in <lambda>
+    Output.STRING: lambda: run_and_get_output(*args),
+                           ~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\User\Downloads\OCR-Engine\.venv\Lib\site-packages\pytesseract\pytesseract.py", line 352, in run_and_get_output
+    run_tesseract(**kwargs)
+    ~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\User\Downloads\OCR-Engine\.venv\Lib\site-packages\pytesseract\pytesseract.py", line 282, in run_tesseract
+    with timeout_manager(proc, timeout) as error_string:
+         ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\User\AppData\Local\Python\pythoncore-3.14-64\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "C:\Users\User\Downloads\OCR-Engine\.venv\Lib\site-packages\pytesseract\pytesseract.py", line 152, in timeout_manager
+    raise RuntimeError('Tesseract process timeout')
+RuntimeError: Tesseract process timeout
