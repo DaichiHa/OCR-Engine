@@ -1,12 +1,19 @@
 {
-  "editor.formatOnSave": true,
-  "files.autoSave": "afterDelay",
-  "files.autoSaveDelay": 1000,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.tabSize": 2,
-  "files.eol": "\n",
-  "editor.bracketPairColorization.enabled": true,
-  "prettier.tabWidth": 2,
-  "prettier.useTabs": false,
-  "prettier.endOfLine": "lf"
+  "chat.agent.enabled": true,
+  "github.copilot.chat.agent.autoFix": true,
+  "chat.agent.maxRequests": 50,
+
+  "chat.tools.terminal.enableAutoApprove": true,
+  "chat.tools.terminal.autoApprove": {
+    "pytest": true,
+    "python": true,
+    "/^python\\s+-m\\s+pytest\\b/i": true,
+    "ruff": true,
+    "mypy": true,
+    "npm": true,
+    "pnpm": true
+  },
+
+  "chat.tools.global.autoApprove": false
 }
+
