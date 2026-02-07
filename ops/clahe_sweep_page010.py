@@ -73,11 +73,13 @@ else:
     preprocess_python = miniconda_py if Path(miniconda_py).exists() else sys.executable
 
 src = Path(f'C:/Users/User/Downloads/PDF/_img/page_{page}.png')
-combos = [
-    (1.5, 8, 0),
-    (2.5, 8, 8),
-    (4.0, 4, 8),
-]
+from itertools import product
+
+# broader grid of CLAHE combos: (clip, tile, denoise_h)
+clip_vals = [1.5, 2.5, 4.0]
+tile_vals = [4, 8, 16]
+denoise_vals = [0, 8, 12]
+combos = list(product(clip_vals, tile_vals, denoise_vals))
 results = []
 for i,(clip,tile,denoise) in enumerate(combos, start=1):
     out = Path(f'ops/page_010_clahe_{i}.png')
