@@ -1,0 +1,2 @@
+test_tblocrmin_min0_page_050\mini_page_050_r1-1_ink0p010.md
+jp_rate2_fix= 0.0814 noise_rate2_fix= 0.0 INK_MIN= 0.010
