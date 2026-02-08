@@ -74,8 +74,21 @@ else:
 
 src = Path(f'C:/Users/User/Downloads/PDF/_img/page_{page}.png')
 if not src.exists():
-    print(f'Input image not found: {src} -- skipping CLAHE sweep in CI environment')
-    sys.exit(0)
+    print(f'Input image not found: {src} -- creating synthetic sample for CI')
+    try:
+        from PIL import Image, ImageDraw
+        # create a simple white sample image with page label
+        img_w, img_h = 1200, 1600
+        img = Image.new('RGB', (img_w, img_h), color='white')
+        draw = ImageDraw.Draw(img)
+        text = f'SAMPLE PAGE {page}'
+        draw.text((40, 40), text, fill='black')
+        src.parent.mkdir(parents=True, exist_ok=True)
+        img.save(src)
+        print('Wrote synthetic sample image to', src)
+    except Exception as e:
+        print('Failed to create sample image:', e)
+        sys.exit(0)
 from itertools import product
 
 # broader grid of CLAHE combos: (clip, tile, denoise_h)
