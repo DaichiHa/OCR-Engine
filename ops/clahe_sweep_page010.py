@@ -73,6 +73,9 @@ else:
     preprocess_python = miniconda_py if Path(miniconda_py).exists() else sys.executable
 
 src = Path(f'C:/Users/User/Downloads/PDF/_img/page_{page}.png')
+if not src.exists():
+    print(f'Input image not found: {src} -- skipping CLAHE sweep in CI environment')
+    sys.exit(0)
 from itertools import product
 
 # broader grid of CLAHE combos: (clip, tile, denoise_h)
