@@ -12,11 +12,11 @@ def _make_fallback_ocr():
     try:
         # prefer paddleocr if available
         from paddleocr import PaddleOCR
-        pocr = PaddleOCR(use_angle_cls=False, lang='japan')
+        pocr = PaddleOCR(use_textline_orientation=False, lang='japan')
 
         class PaddleWrapper:
             def __call__(self, img_path):
-                res = pocr.ocr(img_path, cls=False)
+                res = pocr.ocr(img_path)
                 dets = []
                 for line in res:
                     for item in line:
