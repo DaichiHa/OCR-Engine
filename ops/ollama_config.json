@@ -1,0 +1,7 @@
+{
+  "host": "http://127.0.0.1:11434",
+  "model": "llama2:latest",
+  "timeout": 30,
+  "use_cli": true,
+  "cli_path": "C:\\Users\\User\\AppData\\Local\\Programs\\Ollama\\ollama.exe"
+}

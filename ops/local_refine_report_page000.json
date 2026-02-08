@@ -1,0 +1,82 @@
+[
+  {
+    "idx": 1,
+    "box": [
+      3329,
+      470,
+      3652,
+      3459
+    ],
+    "orig_text": "6 8∠ 9 S t ε z L",
+    "orig_score": 0.5962504148483276,
+    "crop": "ops\\local_refine\\crop_1.png",
+    "rapid": {
+      "text": "23E",
+      "score": 0.5115567892789841
+    },
+    "ppocr": {
+      "text": "23",
+      "score": 0.73248690366745
+    }
+  },
+  {
+    "idx": 2,
+    "box": [
+      7081,
+      3312,
+      7242,
+      3475
+    ],
+    "orig_text": "筒",
+    "orig_score": 0.6667413115501404,
+    "crop": "ops\\local_refine\\crop_2.png",
+    "rapid": {
+      "text": null,
+      "score": null
+    },
+    "ppocr": {
+      "text": null,
+      "score": null
+    }
+  },
+  {
+    "idx": 3,
+    "box": [
+      7470,
+      7241,
+      7647,
+      7388
+    ],
+    "orig_text": "第",
+    "orig_score": 0.6105678081512451,
+    "crop": "ops\\local_refine\\crop_3.png",
+    "rapid": {
+      "text": null,
+      "score": null
+    },
+    "ppocr": {
+      "text": null,
+      "score": null
+    }
+  },
+  {
+    "idx": 4,
+    "box": [
+      4936,
+      7503,
+      5160,
+      7746
+    ],
+    "orig_text": "册",
+    "orig_score": 0.5920326113700867,
+    "crop": "ops\\local_refine\\crop_4.png",
+    "rapid": {
+      "text": null,
+      "score": null
+    },
+    "ppocr": {
+      "text": null,
+      "score": null
+    }
+  }
+]

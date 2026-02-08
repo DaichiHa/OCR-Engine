@@ -1,0 +1,51 @@
+{
+  "executables": {
+    "tesseract": {
+      "path": "C:\\Program Files\\Tesseract-OCR\\tesseract.exe",
+      "version_probe": "tesseract v5.5.0.20241111"
+    },
+    "ollama": {
+      "path": "C:\\Users\\User\\AppData\\Local\\Programs\\Ollama\\ollama.EXE",
+      "version_probe": "ollama version is 0.15.6"
+    },
+    "conda": {
+      "path": "C:\\Users\\User\\Miniconda3\\Library\\bin\\conda.BAT",
+      "version_probe": "conda 25.11.1"
+    },
+    "python": {
+      "path": "C:\\Users\\User\\Miniconda3\\python.EXE",
+      "version_probe": "Python 3.13.11"
+    },
+    "pip": {
+      "path": "C:\\Users\\User\\Miniconda3\\Scripts\\pip.EXE",
+      "version_probe": "pip 25.3 from C:\\Users\\User\\Miniconda3\\Lib\\site-packages\\pip (python 3.13)"
+    },
+    "git": {
+      "path": "C:\\Program Files\\Git\\cmd\\git.EXE",
+      "version_probe": "git version 2.52.0.windows.1"
+    },
+    "docker": {
+      "path": null
+    }
+  },
+  "packages": {
+    "paddleocr": {
+      "installed": false
+    },
+    "paddle": {
+      "installed": false
+    },
+    "onnxruntime": {
+      "installed": false
+    },
+    "pytesseract": {
+      "installed": false
+    },
+    "rapidfuzz": {
+      "installed": false
+    },
+    "transformers": {
+      "installed": false
+    }
+  }
+}

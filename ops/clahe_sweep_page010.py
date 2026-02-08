@@ -1,6 +1,7 @@
 import subprocess
 import argparse
 import sys
+import os
 from pathlib import Path
 try:
     from rapidocr_onnxruntime import RapidOCR
@@ -61,6 +62,7 @@ else:
 def _parse_args():
     p = argparse.ArgumentParser()
     p.add_argument('--page', default='010', help='page id (e.g. 000, 010)')
+    p.add_argument('--smoke', action='store_true', help='run a fast smoke test (limit combos)')
     p.add_argument('--preprocess-python', default=None, help='python executable to run preprocess script')
     return p.parse_args()
 
@@ -95,31 +97,53 @@ else:
             print('Failed to create sample image:', e)
             sys.exit(0)
 print('Using input image:', src)
+# CI-specific workaround: when running on GitHub Actions, try to disable oneDNN/mkldnn
+# to avoid runtime NotImplementedError originating from Paddle/PaddleX oneDNN integration.
+if os.environ.get('GITHUB_ACTIONS', '').lower() == 'true':
+    os.environ.setdefault('FLAGS_use_mkldnn', '0')
+    os.environ.setdefault('PADDLE_WITH_ONEDNN', '0')
+    os.environ.setdefault('PADDLE_DISABLE_ONEDNN', '1')
+    os.environ.setdefault('PADDLE_WITH_MKL', '0')
+    print('Detected CI environment: set Paddle/OneDNN disable env vars')
 from itertools import product
+from postprocess_and_score import process_and_score
+import pytesseract
+from PIL import Image
 
-# broader grid of CLAHE combos: (clip, tile, denoise_h)
+# broader grid of SR scales + CLAHE combos: (scale, clip, tile, denoise_h)
+scales = [2, 3]
 clip_vals = [1.5, 2.5, 4.0]
 tile_vals = [4, 8, 16]
 denoise_vals = [0, 8, 12]
-combos = list(product(clip_vals, tile_vals, denoise_vals))
+combos = list(product(scales, clip_vals, tile_vals, denoise_vals))
+# smoke: limit the number of combos to keep runs fast
+if args.smoke:
+    combos = combos[:2]
 results = []
-for i,(clip,tile,denoise) in enumerate(combos, start=1):
+for i,combo in enumerate(combos, start=1):
+    scale, clip, tile, denoise = combo
     out = Path(f'ops/page_010_clahe_{i}.png')
     cmd = [
         preprocess_python,
         'ops/preprocess_sr_clahe.py',
         '--in', str(src),
         '--out', str(out),
-        '--scale', '2',
+        '--scale', str(scale),
         '--clahe-clip', str(clip),
         '--clahe-tile', str(tile),
-        '--denoise-h', str(denoise)
+        '--denoise-h', str(denoise),
+        '--deskew',
+        '--binarize'
     ]
     print('Running:', ' '.join(cmd))
     subprocess.run(cmd, check=True)
     print('Preprocessed ->', out)
     # RapidOCR inference (normalize various return shapes)
-    res = ocr(str(out))
+    try:
+        res = ocr(str(out))
+    except Exception as e:
+        print('OCR engine failed on', out, '->', repr(e))
+        res = []
     def _normalize_res(r):
         if r is None:
             return []
@@ -148,9 +172,18 @@ for i,(clip,tile,denoise) in enumerate(combos, start=1):
                     continue
             f.write(str(text) + '\n')
     print('Wrote rapid txt:', txt_path)
-    # Postprocess KPI
-    summary = run_rule_pipeline(str(txt_path), str(out.with_suffix('.clean.txt')))
-    results.append({'combo':(clip,tile,denoise),'summary':summary})
+    # Postprocess KPI for rapid output
+    _, summary_rapid = process_and_score(str(txt_path))
+    # Also run Tesseract (PSM 11) as an additional engine and score it
+    tess_path = out.with_suffix('.tess.psm11.txt')
+    try:
+        tess_txt = pytesseract.image_to_string(Image.open(out), lang='jpn', config='--psm 11 --oem 3')
+    except Exception:
+        tess_txt = ''
+    with open(tess_path, 'w', encoding='utf-8') as f:
+        f.write(tess_txt)
+    _, summary_tess = process_and_score(str(tess_path))
+    results.append({'combo':(scale,clip,tile,denoise),'rapid':summary_rapid,'tesseract_psm11':summary_tess})
 
 # write results
 import json

@@ -1,0 +1,128 @@
+[
+  {
+    "idx": 1,
+    "name": "page_010_clahe_1",
+    "params": {
+      "scale": 2,
+      "clahe_clip": 1.5,
+      "clahe_tile": 4,
+      "denoise_h": 0,
+      "deskew": false,
+      "binarize": false
+    },
+    "tesseract": {
+      "error": "parse_failed",
+      "raw": "WROTE ops\\page_010_clahe_1.tess.tiled.psm11.clean.txt\n{\n  \"in\": \"ops\\\\page_010_clahe_1.tess.tiled.psm11.normalized.txt\",\n  \"out\": \"ops\\\\page_010_clahe_1.tess.tiled.psm11.clean.txt\",\n  \"before_jp_rate2_fix\": 0.3959731543624161,\n  \"before_noise_rate2_fix\": 0.2008,\n  \"after_jp_rate2_fix\": 0.39464882943143814,\n  \"after_noise_rate2_fix\": 0.13902053712480253\n}\nops\\page_010_clahe_1.tess.tiled.psm11.txt -> normalized: ops\\page_010_clahe_1.tess.tiled.psm11.normalized.txt\nsummary: {'in': 'ops\\\\page_010_clahe_1.tess.tiled.psm11.normalized.txt', 'out': 'ops\\\\page_010_clahe_1.tess.tiled.psm11.clean.txt', 'before_jp_rate2_fix': 0.3959731543624161, 'before_noise_rate2_fix': 0.2008, 'after_jp_rate2_fix': 0.39464882943143814, 'after_noise_rate2_fix': 0.13902053712480253}\n"
+    },
+    "ensemble": {
+      "raw": "Wrote ensemble: ops\\page_010_clahe_1.rapid.normalized.ensemble.txt\nWROTE ops\\page_010_clahe_1.rapid.normalized.ensemble.clean.txt\n{\n  \"in\": \"ops\\\\page_010_clahe_1.rapid.normalized.ensemble.normalized.txt\",\n  \"out\": \"ops\\\\page_010_clahe_1.rapid.normalized.ensemble.clean.txt\",\n  \"before_jp_rate2_fix\": 0.3506944444444444,\n  \"before_noise_rate2_fix\": 0.15083056478405316,\n  \"after_jp_rate2_fix\": 0.3506944444444444,\n  \"after_noise_rate2_fix\": 0.11675461741424802\n}\nops\\page_010_clahe_1.rapid.normalized.ensemble.txt -> normalized: ops\\page_010_clahe_1.rapid.normalized.ensemble.normalized.txt\nsummary: {'in': 'ops\\\\page_010_clahe_1.rapid.normalized.ensemble.normalized.txt', 'out': 'ops\\\\page_010_clahe_1.rapid.normalized.ensemble.clean.txt', 'before_jp_rate2_fix': 0.3506944444444444, 'before_noise_rate2_fix': 0.15083056478405316, 'after_jp_rate2_fix': 0.3506944444444444, 'after_noise_rate2_fix': 0.11675461741424802}\n\n"
+    },
+    "assist": {
+      "error": "no_ollama",
+      "message": "Ollama not available (CLI or HTTP)"
+    }
+  },
+  {
+    "idx": 2,
+    "name": "page_010_clahe_2",
+    "params": {
+      "scale": 2,
+      "clahe_clip": 1.5,
+      "clahe_tile": 4,
+      "denoise_h": 0,
+      "deskew": false,
+      "binarize": true
+    },
+    "tesseract": {
+      "error": "parse_failed",
+      "raw": "WROTE ops\\page_010_clahe_2.tess.tiled.psm11.clean.txt\n{\n  \"in\": \"ops\\\\page_010_clahe_2.tess.tiled.psm11.normalized.txt\",\n  \"out\": \"ops\\\\page_010_clahe_2.tess.tiled.psm11.clean.txt\",\n  \"before_jp_rate2_fix\": 0.4158757549611734,\n  \"before_noise_rate2_fix\": 0.1848808545603944,\n  \"after_jp_rate2_fix\": 0.4162348877374784,\n  \"after_noise_rate2_fix\": 0.12091503267973856\n}\nops\\page_010_clahe_2.tess.tiled.psm11.txt -> normalized: ops\\page_010_clahe_2.tess.tiled.psm11.normalized.txt\nsummary: {'in': 'ops\\\\page_010_clahe_2.tess.tiled.psm11.normalized.txt', 'out': 'ops\\\\page_010_clahe_2.tess.tiled.psm11.clean.txt', 'before_jp_rate2_fix': 0.4158757549611734, 'before_noise_rate2_fix': 0.1848808545603944, 'after_jp_rate2_fix': 0.4162348877374784, 'after_noise_rate2_fix': 0.12091503267973856}\n"
+    },
+    "ensemble": {
+      "raw": "Wrote ensemble: ops\\page_010_clahe_2.rapid.normalized.ensemble.txt\nWROTE ops\\page_010_clahe_2.rapid.normalized.ensemble.clean.txt\n{\n  \"in\": \"ops\\\\page_010_clahe_2.rapid.normalized.ensemble.normalized.txt\",\n  \"out\": \"ops\\\\page_010_clahe_2.rapid.normalized.ensemble.clean.txt\",\n  \"before_jp_rate2_fix\": 0.3648745519713262,\n  \"before_noise_rate2_fix\": 0.14675767918088736,\n  \"after_jp_rate2_fix\": 0.3659237958303379,\n  \"after_noise_rate2_fix\": 0.10211027910142954\n}\nops\\page_010_clahe_2.rapid.normalized.ensemble.txt -> normalized: ops\\page_010_clahe_2.rapid.normalized.ensemble.normalized.txt\nsummary: {'in': 'ops\\\\page_010_clahe_2.rapid.normalized.ensemble.normalized.txt', 'out': 'ops\\\\page_010_clahe_2.rapid.normalized.ensemble.clean.txt', 'before_jp_rate2_fix': 0.3648745519713262, 'before_noise_rate2_fix': 0.14675767918088736, 'after_jp_rate2_fix': 0.3659237958303379, 'after_noise_rate2_fix': 0.10211027910142954}\n\n"
+    },
+    "assist": {
+      "error": "no_ollama",
+      "message": "Ollama not available (CLI or HTTP)"
+    }
+  },
+  {
+    "idx": 3,
+    "name": "page_010_clahe_3",
+    "params": {
+      "scale": 2,
+      "clahe_clip": 1.5,
+      "clahe_tile": 4,
+      "denoise_h": 0,
+      "deskew": true,
+      "binarize": false
+    },
+    "tesseract": {
+      "error": "parse_failed",
+      "raw": "WROTE ops\\page_010_clahe_3.tess.tiled.psm11.clean.txt\n{\n  \"in\": \"ops\\\\page_010_clahe_3.tess.tiled.psm11.normalized.txt\",\n  \"out\": \"ops\\\\page_010_clahe_3.tess.tiled.psm11.clean.txt\",\n  \"before_jp_rate2_fix\": 0.4180064308681672,\n  \"before_noise_rate2_fix\": 0.17619783616692428,\n  \"after_jp_rate2_fix\": 0.4173354735152488,\n  \"after_noise_rate2_fix\": 0.10991544965411222\n}\nops\\page_010_clahe_3.tess.tiled.psm11.txt -> normalized: ops\\page_010_clahe_3.tess.tiled.psm11.normalized.txt\nsummary: {'in': 'ops\\\\page_010_clahe_3.tess.tiled.psm11.normalized.txt', 'out': 'ops\\\\page_010_clahe_3.tess.tiled.psm11.clean.txt', 'before_jp_rate2_fix': 0.4180064308681672, 'before_noise_rate2_fix': 0.17619783616692428, 'after_jp_rate2_fix': 0.4173354735152488, 'after_noise_rate2_fix': 0.10991544965411222}\n"
+    },
+    "assist": {
+      "error": "no_ollama",
+      "message": "Ollama not available (CLI or HTTP)"
+    }
+  },
+  {
+    "idx": 4,
+    "name": "page_010_clahe_4",
+    "params": {
+      "scale": 2,
+      "clahe_clip": 1.5,
+      "clahe_tile": 4,
+      "denoise_h": 0,
+      "deskew": true,
+      "binarize": true
+    },
+    "tesseract": {
+      "error": "parse_failed",
+      "raw": "WROTE ops\\page_010_clahe_4.tess.tiled.psm11.clean.txt\n{\n  \"in\": \"ops\\\\page_010_clahe_4.tess.tiled.psm11.normalized.txt\",\n  \"out\": \"ops\\\\page_010_clahe_4.tess.tiled.psm11.clean.txt\",\n  \"before_jp_rate2_fix\": 0.3915966386554622,\n  \"before_noise_rate2_fix\": 0.1639477977161501,\n  \"after_jp_rate2_fix\": 0.39028475711892796,\n  \"after_noise_rate2_fix\": 0.1026677445432498\n}\nops\\page_010_clahe_4.tess.tiled.psm11.txt -> normalized: ops\\page_010_clahe_4.tess.tiled.psm11.normalized.txt\nsummary: {'in': 'ops\\\\page_010_clahe_4.tess.tiled.psm11.normalized.txt', 'out': 'ops\\\\page_010_clahe_4.tess.tiled.psm11.clean.txt', 'before_jp_rate2_fix': 0.3915966386554622, 'before_noise_rate2_fix': 0.1639477977161501, 'after_jp_rate2_fix': 0.39028475711892796, 'after_noise_rate2_fix': 0.1026677445432498}\n"
+    },
+    "assist": {
+      "error": "no_ollama",
+      "message": "Ollama not available (CLI or HTTP)"
+    }
+  },
+  {
+    "idx": 5,
+    "name": "page_010_clahe_5",
+    "params": {
+      "scale": 2,
+      "clahe_clip": 1.5,
+      "clahe_tile": 4,
+      "denoise_h": 8,
+      "deskew": false,
+      "binarize": false
+    },
+    "tesseract": {
+      "error": "parse_failed",
+      "raw": "WROTE ops\\page_010_clahe_5.tess.tiled.psm11.clean.txt\n{\n  \"in\": \"ops\\\\page_010_clahe_5.tess.tiled.psm11.normalized.txt\",\n  \"out\": \"ops\\\\page_010_clahe_5.tess.tiled.psm11.clean.txt\",\n  \"before_jp_rate2_fix\": 0.4067495559502664,\n  \"before_noise_rate2_fix\": 0.19341216216216217,\n  \"after_jp_rate2_fix\": 0.40638864241348716,\n  \"after_noise_rate2_fix\": 0.12824811399832356\n}\nops\\page_010_clahe_5.tess.tiled.psm11.txt -> normalized: ops\\page_010_clahe_5.tess.tiled.psm11.normalized.txt\nsummary: {'in': 'ops\\\\page_010_clahe_5.tess.tiled.psm11.normalized.txt', 'out': 'ops\\\\page_010_clahe_5.tess.tiled.psm11.clean.txt', 'before_jp_rate2_fix': 0.4067495559502664, 'before_noise_rate2_fix': 0.19341216216216217, 'after_jp_rate2_fix': 0.40638864241348716, 'after_noise_rate2_fix': 0.12824811399832356}\n"
+    },
+    "assist": {
+      "error": "no_ollama",
+      "message": "Ollama not available (CLI or HTTP)"
+    }
+  },
+  {
+    "idx": 6,
+    "name": "page_010_clahe_6",
+    "params": {
+      "scale": 2,
+      "clahe_clip": 1.5,
+      "clahe_tile": 4,
+      "denoise_h": 8,
+      "deskew": false,
+      "binarize": true
+    },
+    "tesseract": {
+      "error": "parse_failed",
+      "raw": "WROTE ops\\page_010_clahe_6.tess.tiled.psm11.clean.txt\n{\n  \"in\": \"ops\\\\page_010_clahe_6.tess.tiled.psm11.normalized.txt\",\n  \"out\": \"ops\\\\page_010_clahe_6.tess.tiled.psm11.clean.txt\",\n  \"before_jp_rate2_fix\": 0.38235294117647056,\n  \"before_noise_rate2_fix\": 0.20032976092333057,\n  \"after_jp_rate2_fix\": 0.38169257340241797,\n  \"after_noise_rate2_fix\": 0.1263243683781581\n}\nops\\page_010_clahe_6.tess.tiled.psm11.txt -> normalized: ops\\page_010_clahe_6.tess.tiled.psm11.normalized.txt\nsummary: {'in': 'ops\\\\page_010_clahe_6.tess.tiled.psm11.normalized.txt', 'out': 'ops\\\\page_010_clahe_6.tess.tiled.psm11.clean.txt', 'before_jp_rate2_fix': 0.38235294117647056, 'before_noise_rate2_fix': 0.20032976092333057, 'after_jp_rate2_fix': 0.38169257340241797, 'after_noise_rate2_fix': 0.1263243683781581}\n"
+    },
+    "assist": {
+      "error": "no_ollama",
+      "message": "Ollama not available (CLI or HTTP)"
+    }
+  }
+]
