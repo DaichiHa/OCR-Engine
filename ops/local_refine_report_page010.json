@@ -1,0 +1,462 @@
+[
+  {
+    "idx": 1,
+    "box": [
+      8619,
+      2367,
+      8875,
+      2562
+    ],
+    "orig_text": "入)",
+    "orig_score": 0.6181719899177551,
+    "crop": "ops\\local_refine\\crop_1.png",
+    "rapid": {
+      "text": null,
+      "score": null
+    },
+    "ppocr": {
+      "text": null,
+      "score": null
+    }
+  },
+  {
+    "idx": 2,
+    "box": [
+      10246,
+      2368,
+      10502,
+      2546
+    ],
+    "orig_text": "（幢",
+    "orig_score": 0.6838310956954956,
+    "crop": "ops\\local_refine\\crop_2.png",
+    "rapid": {
+      "text": "（检",
+      "score": 0.7582539319992065
+    },
+    "ppocr": {
+      "text": null,
+      "score": null
+    }
+  },
+  {
+    "idx": 3,
+    "box": [
+      10608,
+      2381,
+      10849,
+      2576
+    ],
+    "orig_text": "（H",
+    "orig_score": 0.5696704387664795,
+    "crop": "ops\\local_refine\\crop_3.png",
+    "rapid": {
+      "text": "出)",
+      "score": 0.6340456604957581
+    },
+    "ppocr": {
+      "text": "HI",
+      "score": 0.7103320360183716
+    }
+  },
+  {
+    "idx": 4,
+    "box": [
+      10328,
+      2621,
+      10601,
+      2800
+    ],
+    "orig_text": "1億",
+    "orig_score": 0.5466843247413635,
+    "crop": "ops\\local_refine\\crop_4.png",
+    "rapid": {
+      "text": "他",
+      "score": 0.5156282186508179
+    },
+    "ppocr": {
+      "text": null,
+      "score": null
+    }
+  },
+  {
+    "idx": 5,
+    "box": [
+      7594,
+      2638,
+      7787,
+      2769
+    ],
+    "orig_text": "3龙",
+    "orig_score": 0.6746803522109985,
+    "crop": "ops\\local_refine\\crop_5.png",
+    "rapid": {
+      "text": "3",
+      "score": 0.7287273406982422
+    },
+    "ppocr": {
+      "text": null,
+      "score": null
+    }
+  },
+  {
+    "idx": 6,
+    "box": [
+      9414,
+      2791,
+      9832,
+      2954
+    ],
+    "orig_text": "水Japan",
+    "orig_score": 0.6359574198722839,
+    "crop": "ops\\local_refine\\crop_6.png",
+    "rapid": {
+      "text": "Japan",
+      "score": 0.8819928646087647
+    },
+    "ppocr": {
+      "text": "JApnn",
+      "score": 0.5120566487312317
+    }
+  },
+  {
+    "idx": 7,
+    "box": [
+      9393,
+      2994,
+      9839,
+      3201
+    ],
+    "orig_text": "Hussia",
+    "orig_score": 0.6761540770530701,
+    "crop": "ops\\local_refine\\crop_7.png",
+    "rapid": {
+      "text": "Russia",
+      "score": 0.9530175824960073
+    },
+    "ppocr": {
+      "text": "Hussia",
+      "score": 0.8757515549659729
+    }
+  },
+  {
+    "idx": 8,
+    "box": [
+      9397,
+      3494,
+      9849,
+      3673
+    ],
+    "orig_text": "帖Ohhors",
+    "orig_score": 0.5557425618171692,
+    "crop": "ops\\local_refine\\crop_8.png",
+    "rapid": {
+      "text": "他thars",
+      "score": 0.5975649952888489
+    },
+    "ppocr": {
+      "text": "SDUIMI",
+      "score": 0.516231894493103
+    }
+  },
+  {
+    "idx": 9,
+    "box": [
+      9394,
+      3740,
+      9824,
+      3962
+    ],
+    "orig_text": "水 Jan",
+    "orig_score": 0.7265268564224243,
+    "crop": "ops\\local_refine\\crop_9.png",
+    "rapid": {
+      "text": "*Japnn",
+      "score": 0.6250120773911476
+    },
+    "ppocr": {
+      "text": "本",
+      "score": 0.5037868022918701
+    }
+  },
+  {
+    "idx": 10,
+    "box": [
+      8967,
+      3835,
+      9208,
+      3966
+    ],
+    "orig_text": "11",
+    "orig_score": 0.6106327772140503,
+    "crop": "ops\\local_refine\\crop_10.png",
+    "rapid": {
+      "text": "1",
+      "score": 0.502690315246582
+    },
+    "ppocr": {
+      "text": "-",
+      "score": 0.7024149894714355
+    }
+  },
+  {
+    "idx": 11,
+    "box": [
+      9065,
+      4096,
+      10097,
+      4324
+    ],
+    "orig_text": "英吉(i Bicin",
+    "orig_score": 0.5604844093322754,
+    "crop": "ops\\local_refine\\crop_11.png",
+    "rapid": {
+      "text": "英",
+      "score": 0.9731925129890442
+    },
+    "ppocr": {
+      "text": "英古利ritin",
+      "score": 0.6746888160705566
+    }
+  },
+  {
+    "idx": 12,
+    "box": [
+      9397,
+      4481,
+      9849,
+      4643
+    ],
+    "orig_text": "他()thcrs",
+    "orig_score": 0.6184746026992798,
+    "crop": "ops\\local_refine\\crop_12.png",
+    "rapid": {
+      "text": "他thcrs",
+      "score": 0.855573832988739
+    },
+    "ppocr": {
+      "text": ")thcrs",
+      "score": 0.7779368758201599
+    }
+  },
+  {
+    "idx": 13,
+    "box": [
+      9159,
+      4781,
+      9239,
+      4878
+    ],
+    "orig_text": "日",
+    "orig_score": 0.7141364812850952,
+    "crop": "ops\\local_refine\\crop_13.png",
+    "rapid": {
+      "text": null,
+      "score": null
+    },
+    "ppocr": {
+      "text": null,
+      "score": null
+    }
+  },
+  {
+    "idx": 14,
+    "box": [
+      9080,
+      5340,
+      9902,
+      5502
+    ],
+    "orig_text": "北米合来国1.S.A.",
+    "orig_score": 0.7316578030586243,
+    "crop": "ops\\local_refine\\crop_14.png",
+    "rapid": {
+      "text": "11.",
+      "score": 0.9580168525377909
+    },
+    "ppocr": {
+      "text": "北米价国11.S.A.",
+      "score": 0.7821584939956665
+    }
+  },
+  {
+    "idx": 15,
+    "box": [
+      9374,
+      5720,
+      9775,
+      5883
+    ],
+    "orig_text": "本Japmn",
+    "orig_score": 0.5677430033683777,
+    "crop": "ops\\local_refine\\crop_15.png",
+    "rapid": {
+      "text": "Japan",
+      "score": 0.9029683828353882
+    },
+    "ppocr": {
+      "text": "本Jan",
+      "score": 0.5772523283958435
+    }
+  },
+  {
+    "idx": 16,
+    "box": [
+      9370,
+      5959,
+      9821,
+      6122
+    ],
+    "orig_text": "Russin",
+    "orig_score": 0.6570805907249451,
+    "crop": "ops\\local_refine\\crop_16.png",
+    "rapid": {
+      "text": "Hussin",
+      "score": 0.7764157553513845
+    },
+    "ppocr": {
+      "text": "Hussih",
+      "score": 0.8033251166343689
+    }
+  },
+  {
+    "idx": 17,
+    "box": [
+      9031,
+      6055,
+      9965,
+      6266
+    ],
+    "orig_text": "英吉科CtBritain",
+    "orig_score": 0.6632668375968933,
+    "crop": "ops\\local_refine\\crop_17.png",
+    "rapid": {
+      "text": "H",
+      "score": 0.9784144163131714
+    },
+    "ppocr": {
+      "text": "英Ht.rituin",
+      "score": 0.7026990056037903
+    }
+  },
+  {
+    "idx": 18,
+    "box": [
+      9370,
+      6452,
+      9821,
+      6615
+    ],
+    "orig_text": "他()thcrs",
+    "orig_score": 0.7388841509819031,
+    "crop": "ops\\local_refine\\crop_18.png",
+    "rapid": {
+      "text": "他thcrs",
+      "score": 0.9026996195316315
+    },
+    "ppocr": {
+      "text": "地hcrs",
+      "score": 0.6923614740371704
+    }
+  },
+  {
+    "idx": 19,
+    "box": [
+      9049,
+      7071,
+      9920,
+      7234
+    ],
+    "orig_text": "英吉利GBritin",
+    "orig_score": 0.6775639057159424,
+    "crop": "ops\\local_refine\\crop_19.png",
+    "rapid": {
+      "text": "利（",
+      "score": 0.8092199563980103
+    },
+    "ppocr": {
+      "text": "英吉利Hritin",
+      "score": 0.6753460168838501
+    }
+  },
+  {
+    "idx": 20,
+    "box": [
+      8967,
+      7381,
+      9278,
+      7615
+    ],
+    "orig_text": "其",
+    "orig_score": 0.7351512908935547,
+    "crop": "ops\\local_refine\\crop_20.png",
+    "rapid": {
+      "text": "其",
+      "score": 0.9801226258277893
+    },
+    "ppocr": {
+      "text": "-",
+      "score": 0.5320649147033691
+    }
+  },
+  {
+    "idx": 21,
+    "box": [
+      9357,
+      7422,
+      9792,
+      7601
+    ],
+    "orig_text": "他()thcrs",
+    "orig_score": 0.6676253080368042,
+    "crop": "ops\\local_refine\\crop_21.png",
+    "rapid": {
+      "text": "他（thcrs",
+      "score": 0.8533306206975665
+    },
+    "ppocr": {
+      "text": "他thcrs",
+      "score": 0.7770950198173523
+    }
+  },
+  {
+    "idx": 22,
+    "box": [
+      7573,
+      7542,
+      7668,
+      7622
+    ],
+    "orig_text": "300",
+    "orig_score": 0.738328754901886,
+    "crop": "ops\\local_refine\\crop_22.png",
+    "rapid": {
+      "text": "30",
+      "score": 0.9957372546195984
+    },
+    "ppocr": {
+      "text": null,
+      "score": null
+    }
+  },
+  {
+    "idx": 23,
+    "box": [
+      9745,
+      7598,
+      10114,
+      7806
+    ],
+    "orig_text": "Milion",
+    "orig_score": 0.7351236343383789,
+    "crop": "ops\\local_refine\\crop_23.png",
+    "rapid": {
+      "text": "Million",
+      "score": 0.9112001614911216
+    },
+    "ppocr": {
+      "text": "-",
+      "score": 0.567672073841095
+    }
+  }
+]

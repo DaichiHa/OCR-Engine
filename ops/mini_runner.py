@@ -10,8 +10,16 @@ import pytesseract
 
 # If repository bundles a tesseract binary, prefer it so tests run without system install
 _repo_root = _pl.Path(__file__).resolve().parents[1]
+# prefer configured tesseract (paths_config.json), else repo-bundled, else system
 _bundled_tess = str(_repo_root / "vendor" / "tesseract" / "tesseract.exe")
-if os.path.exists(_bundled_tess):
+try:
+    from .paths_loader import get_path
+    tpath = get_path('tesseract')
+except Exception:
+    tpath = None
+if tpath and os.path.exists(tpath):
+    pytesseract.pytesseract.tesseract_cmd = tpath
+elif os.path.exists(_bundled_tess):
     pytesseract.pytesseract.tesseract_cmd = _bundled_tess
 
 # ---- knobs (env) ----
