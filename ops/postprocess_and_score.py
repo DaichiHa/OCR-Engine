@@ -1,6 +1,11 @@
 import re
 from pathlib import Path
-from postprocess_langchain import run_rule_pipeline
+try:
+    from postprocess_langchain import run_rule_pipeline
+except Exception:
+    # when executed as a package (python -m ops.postprocess_and_score)
+    # the module may be available under the ops package
+    from ops.postprocess_langchain import run_rule_pipeline
 
 # simple normalization helpers
 FW_TO_HW = str.maketrans({
