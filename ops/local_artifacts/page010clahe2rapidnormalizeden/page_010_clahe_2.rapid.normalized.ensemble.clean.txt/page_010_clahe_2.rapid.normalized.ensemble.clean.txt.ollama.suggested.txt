@@ -1,2 +1,0 @@
-[LM disabled] Ollama CLI/HTTP disabled via ops/ollama_config.json.
-No suggestions applied.

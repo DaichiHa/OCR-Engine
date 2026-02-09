@@ -1,8 +1,0 @@
-4. W i
-
-Values of Exports
-
-(& A)
-| Imports
-
-I % 1 &

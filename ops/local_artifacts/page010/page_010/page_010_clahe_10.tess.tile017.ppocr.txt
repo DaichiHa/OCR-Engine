@@ -1,6 +1,0 @@
-4. ®
-
-Values of Exports
-(& A)
-Imports
-e 208 1@

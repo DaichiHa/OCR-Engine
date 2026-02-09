@@ -1,3 +1,29 @@
+# Ignore generated OCR artifacts produced by ops/ smoke tests
+# Images and CLAHE outputs
+ops/*.png
+ops/*_clahe*.png
+ops/*_big_sample.png
+ops/*_sample.png
+
+# Tesseract tile images and per-tile txt
+ops/*.tess.tile*.png
+ops/*.tess.tile*.tess.txt
+
+# Tiled/merged tesseract outputs and derived text
+ops/*.tess.tiled.*.txt
+ops/*tess.txt
+
+# Postprocess artifacts
+ops/*.normalized.txt
+ops/*.clean.txt
+
+# temp and local artifacts
+ops/tmp/
+ops/local_artifacts/
+
+# Python virtualenvs
+.venv/
+venv/
 # API Keys and Secrets (CRITICAL: DO NOT REMOVE)
 api_key.txt
 openai_api_key.txt
