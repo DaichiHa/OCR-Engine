@@ -28,7 +28,7 @@ for mf, rf, hg in product(merge_factors, row_factors, h_gaps):
     print(f"--- RUN mf={mf} rf={rf} hg={hg} -> {outdir} ---")
     cmd = [py, os.path.join('ops', 'mini_runner.py'), '--page', r"C:\Users\User\Downloads\PDF\_img\page_001.png", '--out', outdir, '--lang', 'jpn']
     try:
-        proc = subprocess.run(cmd, env=env, stdout=open(os.path.join(outdir, 'out.txt'), 'w', encoding='utf-8'), stderr=open(os.path.join(outdir, 'err.txt'), 'w', encoding='utf-8'), timeout=240)
+        proc = subprocess.run(cmd, env=env, stdout=open(os.path.join(outdir, 'out.txt'), 'w', encoding='utf-8'), stderr=open(os.path.join(outdir, 'err.txt'), 'w', encoding='utf-8'), timeout=90)
     except subprocess.TimeoutExpired:
         print('TIMEOUT')
         continue

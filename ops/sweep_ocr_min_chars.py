@@ -28,7 +28,7 @@ for minc in min_chars_list:
         env['TESS_OEM'] = '3'
         cmd = [py, 'ops\mini_runner.py', '--page', img, '--out', outdir, '--lang', 'jpn']
         try:
-            proc = subprocess.run(cmd, env=env, stdout=open(os.path.join(outdir,'out.txt'),'w',encoding='utf-8'), stderr=open(os.path.join(outdir,'err.txt'),'w',encoding='utf-8'), timeout=240)
+            proc = subprocess.run(cmd, env=env, stdout=open(os.path.join(outdir,'out.txt'),'w',encoding='utf-8'), stderr=open(os.path.join(outdir,'err.txt'),'w',encoding='utf-8'), timeout=90)
         except subprocess.TimeoutExpired:
             print(f"TIMEOUT min={minc} page={p}")
             results.append((minc, p, None))

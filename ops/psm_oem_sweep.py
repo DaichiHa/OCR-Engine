@@ -33,7 +33,12 @@ for psm in PSMS:
         cmd = [sys.executable, os.path.join(ROOT, 'ops', 'mini_runner.py'), '--page', IMG, '--out', outdir, '--page-only', '--lang', 'jpn+eng']
         start = time.time()
         with open(os.path.join(outdir, 'out.txt'), 'wb') as fout, open(os.path.join(outdir, 'err.txt'), 'wb') as ferr:
-            proc = subprocess.run(cmd, env=env, stdout=fout, stderr=ferr)
+            try:
+                proc = subprocess.run(cmd, env=env, stdout=fout, stderr=ferr, timeout=120)
+            except subprocess.TimeoutExpired:
+                # record a long-running timeout and continue
+                proc = None
+                ferr.write(b'TimeoutExpired')
         elapsed = round(time.time() - start, 3)
 
         # find MD

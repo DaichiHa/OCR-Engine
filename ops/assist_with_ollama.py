@@ -57,11 +57,39 @@ def main():
         return 0
 
     cfg = load_config()
+    # If LM usage is disabled in config, skip invocation and write a note file.
+    if not cfg.get('use_cli', True) and not cfg.get('host'):
+        out_path = infile.with_suffix(infile.suffix + '.ollama.suggested.txt')
+        note = (
+            "[LM disabled] Ollama CLI/HTTP disabled via ops/ollama_config.json.\n"
+            "No suggestions applied.\n"
+        )
+        out_path.write_text(note, encoding='utf-8')
+        print(json.dumps({'status':'skipped', 'out': str(out_path), 'candidates': len(candidates)}))
+        return 0
+
     prompt = build_prompt(candidates)
     res = generate(prompt, cfg)
     if not res:
-        print(json.dumps({'error':'no_ollama', 'message':'Ollama not available (CLI or HTTP)'}))
+        # capture failure to dedicated err file for visibility
+        err_path = infile.with_suffix(infile.suffix + '.ollama.err.txt')
+        err_path.write_text('No response from Ollama (CLI or HTTP)\n', encoding='utf-8')
+        print(json.dumps({'error':'no_ollama', 'message':'Ollama not available (CLI or HTTP)', 'err': str(err_path)}))
         return 3
+
+    # if the CLI returned an error message string (e.g. "Error: unknown flag: --prompt"),
+    # write it to an .ollama.err.txt and produce a small user-facing note as the suggested output.
+    if isinstance(res, str) and re.search(r'error:|unknown flag|traceback', res, re.I):
+        err_path = infile.with_suffix(infile.suffix + '.ollama.err.txt')
+        err_path.write_text(res, encoding='utf-8')
+        note = (
+            f"[LM invocation failed] See {err_path.name} for raw output.\n"
+            "No suggestions were applied. Please check local Ollama CLI/API compatibility."
+        )
+        out_path = infile.with_suffix(infile.suffix + '.ollama.suggested.txt')
+        out_path.write_text(note, encoding='utf-8')
+        print(json.dumps({'status':'lm_error', 'err': str(err_path), 'out': str(out_path)}))
+        return 4
 
     # naive split by lines — user can review
     out_lines = [l.strip() for l in res.splitlines() if l.strip()]

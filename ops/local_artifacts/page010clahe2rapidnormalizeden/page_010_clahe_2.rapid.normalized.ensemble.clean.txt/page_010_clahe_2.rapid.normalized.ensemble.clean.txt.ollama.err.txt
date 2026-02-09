@@ -1,0 +1,1 @@
+No response from Ollama (CLI or HTTP)

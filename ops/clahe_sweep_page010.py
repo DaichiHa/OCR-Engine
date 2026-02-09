@@ -137,7 +137,7 @@ for i,combo in enumerate(combos, start=1):
     ]
     print('Running:', ' '.join(cmd))
     try:
-        subprocess.run(cmd, check=True, timeout=300)
+        subprocess.run(cmd, check=True, timeout=90)
         print('Preprocessed ->', out)
     except subprocess.TimeoutExpired:
         print('Preprocess timeout for', out, 'skipping this combo')

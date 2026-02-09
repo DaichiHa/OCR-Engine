@@ -1,0 +1,10 @@
+{
+  "count_files": 3,
+  "files": [
+    "local_artifacts_summary.json",
+    "merged_summary.json",
+    "summary.json"
+  ],
+  "out_json": "merged_jsons\\combined.json",
+  "out_jsonl": "merged_jsons\\combined.jsonl"
+}
