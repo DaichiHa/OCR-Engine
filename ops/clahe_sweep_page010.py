@@ -136,8 +136,18 @@ for i,combo in enumerate(combos, start=1):
         '--binarize'
     ]
     print('Running:', ' '.join(cmd))
-    subprocess.run(cmd, check=True)
-    print('Preprocessed ->', out)
+    try:
+        subprocess.run(cmd, check=True, timeout=300)
+        print('Preprocessed ->', out)
+    except subprocess.TimeoutExpired:
+        print('Preprocess timeout for', out, 'skipping this combo')
+        continue
+    except subprocess.CalledProcessError as e:
+        print('Preprocess failed for', out, '->', e)
+        continue
+    except Exception as e:
+        print('Preprocess error for', out, '->', e)
+        continue
     # RapidOCR inference (normalize various return shapes)
     try:
         res = ocr(str(out))

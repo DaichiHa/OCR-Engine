@@ -75,14 +75,23 @@ for p in root.iterdir():
         # If target exists, add suffix
         if target.exists():
             i = 1
-            while True:
+            max_attempts = 10000
+            while i <= max_attempts:
                 alt = archive_dir / f"{p.stem}.{i}{p.suffix}"
                 if not alt.exists():
                     target = alt
                     break
                 i += 1
-        shutil.move(str(p), str(target))
-        moved.append({'src': str(p), 'dest': str(target)})
+            else:
+                # fallback to timestamp suffix if name space is exhausted
+                import time
+                target = archive_dir / f"{p.stem}.{int(time.time())}{p.suffix}"
+        try:
+            shutil.move(str(p), str(target))
+            moved.append({'src': str(p), 'dest': str(target)})
+        except Exception as e:
+            # record error and continue; don't let a single locked file stop the archive
+            moved.append({'src': str(p), 'dest': str(target), 'error': str(e)})
 
 # Write summary
 summary = root / 'archive' / 'page_010_archive_summary.json'
