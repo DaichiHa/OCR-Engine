@@ -11,7 +11,6 @@ Usage:
 The script creates a `.bak-applysafe` backup for each modified file.
 """
 import argparse
-import os
 import re
 import subprocess
 from pathlib import Path
