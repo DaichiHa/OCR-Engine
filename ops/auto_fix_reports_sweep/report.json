@@ -1,0 +1,64 @@
+{
+  "pages": [
+    {
+      "page": "page_000_pre3x",
+      "source": "ops\\merge_page_000_pre3x\\merged_post.md",
+      "before": {
+        "chars": 293,
+        "jp_rate2_fix": 0.296928,
+        "noise_rate2_fix": 0.122867
+      },
+      "after": {
+        "chars": 293,
+        "jp_rate2_fix": 0.296928,
+        "noise_rate2_fix": 0.122867
+      },
+      "out_fixed": "ops\\auto_fix_reports_sweep\\page_000_pre3x\\merged_auto.md"
+    },
+    {
+      "page": "page_010_pre3x",
+      "source": "ops\\merge_page_010_pre3x\\merged_post.md",
+      "before": {
+        "chars": 701,
+        "jp_rate2_fix": 0.262482,
+        "noise_rate2_fix": 0.101284
+      },
+      "after": {
+        "chars": 700,
+        "jp_rate2_fix": 0.262857,
+        "noise_rate2_fix": 0.101429
+      },
+      "out_fixed": "ops\\auto_fix_reports_sweep\\page_010_pre3x\\merged_auto.md"
+    },
+    {
+      "page": "page_000_pre2x",
+      "source": "ops\\merge_page_000_pre2x\\merged_post.md",
+      "before": {
+        "chars": 338,
+        "jp_rate2_fix": 0.372781,
+        "noise_rate2_fix": 0.053254
+      },
+      "after": {
+        "chars": 337,
+        "jp_rate2_fix": 0.373887,
+        "noise_rate2_fix": 0.053412
+      },
+      "out_fixed": "ops\\auto_fix_reports_sweep\\page_000_pre2x\\merged_auto.md"
+    },
+    {
+      "page": "page_010_pre2x",
+      "source": "ops\\merge_page_010_pre2x\\merged_post.md",
+      "before": {
+        "chars": 690,
+        "jp_rate2_fix": 0.326087,
+        "noise_rate2_fix": 0.06087
+      },
+      "after": {
+        "chars": 689,
+        "jp_rate2_fix": 0.32656,
+        "noise_rate2_fix": 0.060958
+      },
+      "out_fixed": "ops\\auto_fix_reports_sweep\\page_010_pre2x\\merged_auto.md"
+    }
+  ]
+}

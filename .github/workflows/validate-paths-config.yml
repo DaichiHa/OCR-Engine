@@ -1,0 +1,46 @@
+name: Validate ops/paths_config.json
+
+on:
+  pull_request:
+    paths:
+      - 'ops/paths_config.json'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate JSON syntax and required keys
+        run: |
+          python - <<'PY'
+          import json,sys,os,re
+          p='ops/paths_config.json'
+          if not os.path.exists(p):
+              print('ERROR: file not found:',p)
+              sys.exit(1)
+          try:
+              data=json.load(open(p))
+          except Exception as e:
+              print('ERROR: invalid JSON:',e)
+              sys.exit(2)
+          required=['tesseract','ollama','python']
+          missing=[k for k in required if k not in data or not isinstance(data[k],str) or not data[k].strip()]
+          if missing:
+              print('ERROR: Missing or empty keys:',missing)
+              sys.exit(3)
+          # Basic absolute-path heuristic: contains a slash or Windows drive
+          bad=[]
+          for k in required:
+              v=data[k]
+              if '${' in v or '}}' in v:
+                  bad.append((k,'templated value'))
+                  continue
+              if not (('/' in v) or (re.match(r'^[A-Za-z]:\\',v)) or (v.startswith('\\'))):
+                  bad.append((k,'not-looking-like-absolute-path'))
+          if bad:
+              print('ERROR: Keys with suspicious values:')
+              for k,msg in bad:
+                  print(' -',k,':',msg)
+              sys.exit(4)
+          print('OK: ops/paths_config.json present and required keys look valid:',', '.join(required))
+          PY
