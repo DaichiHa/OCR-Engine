@@ -9,6 +9,23 @@ try:
     from rapidocr_onnxruntime import RapidOCR
 except Exception:
     RapidOCR = None
+    
+from itertools import product
+import json
+
+try:
+    import pytesseract
+    from PIL import Image
+except Exception:
+    pytesseract = None
+    Image = None
+
+# lightweight postprocess scoring helper (imported early to avoid E402 later)
+try:
+    from postprocess_and_score import process_and_score
+except Exception:
+    # allow import failure during quick static checks; runtime will fail if used
+    process_and_score = None
 
 
 # Fallback wrapper that mimics RapidOCR minimal output shape
@@ -148,11 +165,6 @@ if os.environ.get("GITHUB_ACTIONS", "").lower() == "true":
     os.environ.setdefault("PADDLE_DISABLE_ONEDNN", "1")
     os.environ.setdefault("PADDLE_WITH_MKL", "0")
     print("Detected CI environment: set Paddle/OneDNN disable env vars")
-from itertools import product
-
-import pytesseract
-from PIL import Image
-from postprocess_and_score import process_and_score
 
 
 def _normalize_text(text: str) -> str:
@@ -262,9 +274,7 @@ for i, combo in enumerate(combos, start=1):
         }
     )
 
-# write results
-import json
-
-with open("ops/clahe_sweep_page010_results.json", "w", encoding="utf-8") as f:
-    json.dump(results, f, ensure_ascii=False, indent=2)
-print("WROTE ops/clahe_sweep_page010_results.json")
+    # write results
+    with open("ops/clahe_sweep_page010_results.json", "w", encoding="utf-8") as f:
+        json.dump(results, f, ensure_ascii=False, indent=2)
+    print("WROTE ops/clahe_sweep_page010_results.json")
