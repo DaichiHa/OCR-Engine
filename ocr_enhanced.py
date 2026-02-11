@@ -97,7 +97,12 @@ if __name__ == "__main__":
 
     output_lines = []
     for i, result in enumerate(results):
-        header = f"\n{'='*70}\nConfig {i+1}: lang={result.get('lang', 'N/A')}, psm={result.get('config', 'N/A')}\nCharacters: {result.get('char_count', 0)}\n{'='*70}\n"
+        header = (
+            "\n" + "=" * 70 + "\n"
+            + f"Config {i+1}: lang={result.get('lang', 'N/A')}, psm={result.get('config', 'N/A')}\n"
+            + f"Characters: {result.get('char_count', 0)}\n"
+            + "=" * 70 + "\n"
+        )
         print(header)
         print(result.get("text", result.get("error", "Unknown error"))[:500])
         output_lines.append(header)

@@ -101,13 +101,14 @@ def main():
 
             with open(args.in_path, "r", encoding="utf-8") as f:
                 src = f.read()
+            prompt_text = (
+                "You are a specialist in correcting OCR output from Showa-era Japanese statistical tables.\n"
+                "Correct OCR errors, normalize old kanji to modern equivalents, fix numbers and punctuation, and preserve layout.\n"
+                "Return only the corrected text.\n\nInput:\n{text}\n\nCorrected:"
+            )
             prompt = PromptTemplate(
                 _input_variables=["text"],
-                _template=(
-                    "You are a specialist in correcting OCR output from Showa-era Japanese statistical tables. "
-                    "Correct OCR errors, normalize old kanji to modern equivalents, fix numbers and punctuation, and preserve layout. "
-                    "Return only the corrected text.\n\nInput:\n{text}\n\nCorrected:"
-                ),
+                _template=prompt_text,
             )
             llm = OpenAI(temperature=0)
             chain = LLMChain(llm=llm, prompt=prompt)

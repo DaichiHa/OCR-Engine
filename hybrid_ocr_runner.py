@@ -208,7 +208,10 @@ class HybridOCRRunner:
         if self.use_gemini and self.gemini_requests_count < self.max_gemini_requests:
             try:
                 logger.info(
-                    f"Processing {page_name} with Gemini (request {self.gemini_requests_count + 1}/{self.max_gemini_requests})..."
+                    "Processing %s with Gemini (request %d/%d)...",
+                    page_name,
+                    self.gemini_requests_count + 1,
+                    self.max_gemini_requests,
                 )
                 gemini_start = time.time()
 
@@ -245,7 +248,10 @@ class HybridOCRRunner:
                 }
 
                 logger.info(
-                    f"Gemini nano processing completed in {gemini_time:.2f}s ({self.gemini_requests_count}/{self.max_gemini_requests} used)"
+                    "Gemini nano processing completed in %.2fs (%d/%d used)",
+                    gemini_time,
+                    self.gemini_requests_count,
+                    self.max_gemini_requests,
                 )
 
             except Exception as e:
@@ -256,7 +262,9 @@ class HybridOCRRunner:
                 }
         elif self.use_gemini:
             logger.warning(
-                f"Gemini nano quota exhausted ({self.gemini_requests_count}/{self.max_gemini_requests}), skipping"
+                "Gemini nano quota exhausted (%d/%d), skipping",
+                self.gemini_requests_count,
+                self.max_gemini_requests,
             )
 
         return results
