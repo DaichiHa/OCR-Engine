@@ -1,8 +1,8 @@
-
 import os
 import time
-from PIL import Image
+
 import google.generativeai as genai
+from PIL import Image
 
 # --- 極限・品質重視・単一ページ抽出 (4分割タイル・スキャン) ---
 KEY_FILE = "gemini_api_key.txt"
@@ -26,16 +26,19 @@ EXTREME_PROMPT = """
 これは日本の国益に関わる重要なデジタルアーカイブ作業である。一画一字に魂を込めよ。
 """
 
+
 def load_key():
     with open(KEY_FILE, "r") as f:
         return f.read().strip()
 
+
 def process_extreme_one_page():
-    if not os.path.exists(OUTPUT_DIR): os.makedirs(OUTPUT_DIR)
-    
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
+
     genai.configure(api_key=load_key())
     # 8Bモデルは制限が非常に緩く、タイル分割と組み合わせれば高精度が期待できる
-    model = genai.GenerativeModel('gemini-1.5-flash-8b')
+    model = genai.GenerativeModel("gemini-1.5-flash-8b")
 
     img_path = os.path.join(INPUT_DIR, TARGET_PAGE)
     img = Image.open(img_path)
@@ -45,10 +48,10 @@ def process_extreme_one_page():
     # これによりAIの視界が4倍に拡大され、微細な数字も鮮明に認識される
     mid_x, mid_y = width // 2, height // 2
     tiles = [
-        (0, 0, mid_x, mid_y),       # TL
-        (mid_x, 0, width, mid_y),   # TR
+        (0, 0, mid_x, mid_y),  # TL
+        (mid_x, 0, width, mid_y),  # TR
         (0, mid_y, mid_x, height),  # BL
-        (mid_x, mid_y, width, height) # BR
+        (mid_x, mid_y, width, height),  # BR
     ]
     tile_names = ["Top-Left", "Top-Right", "Bottom-Left", "Bottom-Right"]
 
@@ -60,9 +63,9 @@ def process_extreme_one_page():
     for i, box in enumerate(tiles):
         name = tile_names[i]
         print(f"[{time.strftime('%H:%M:%S')}] Scanning {name}...")
-        
+
         tile_img = img.crop(box)
-        
+
         success = False
         while not success:
             try:
@@ -78,7 +81,9 @@ def process_extreme_one_page():
                 time.sleep(180)
 
     # 4つの断片を一つのMDに統合
-    final_path = os.path.join(OUTPUT_DIR, f"{TARGET_PAGE.replace('.png', '')}_EXTREME.md")
+    final_path = os.path.join(
+        OUTPUT_DIR, f"{TARGET_PAGE.replace('.png', '')}_EXTREME.md"
+    )
     with open(final_path, "w", encoding="utf-8") as f:
         f.write(f"# {TARGET_PAGE} EXTREME QUALITY RECONSTRUCTION\n\n")
         for name in tile_names:
@@ -87,6 +92,7 @@ def process_extreme_one_page():
             f.write("\n")
 
     print(f"\n--- EXTREME TEST COMPLETE: {final_path} ---")
+
 
 if __name__ == "__main__":
     process_extreme_one_page()

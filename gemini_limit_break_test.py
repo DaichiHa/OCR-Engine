@@ -1,6 +1,6 @@
-
 import os
 import time
+
 import google.generativeai as genai
 from PIL import Image
 
@@ -28,15 +28,18 @@ LIMIT_BREAK_PROMPT = """
 人間が読むための文書ではなく、100年後の歴史家が解析するための「完全なる原典の複製データ」を出力せよ。
 """
 
+
 def load_key():
     with open(KEY_FILE, "r") as f:
         return f.read().strip()
 
+
 def process_limit_break():
-    if not os.path.exists(OUTPUT_DIR): os.makedirs(OUTPUT_DIR)
-    
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
+
     genai.configure(api_key=load_key())
-    model = genai.GenerativeModel('gemini-2.0-flash-001') # 視覚最強モデル
+    model = genai.GenerativeModel("gemini-2.0-flash-001")  # 視覚最強モデル
 
     img_path = os.path.join(INPUT_DIR, TARGET_PAGE)
     img = Image.open(img_path)
@@ -45,21 +48,21 @@ def process_limit_break():
     # --- 限界突破手法 1: タイルスキャン (上下分割) ---
     # 全体だと潰れる文字も、分割することでAIの視界内で巨大化する
     print(f"Starting Tile-Scan for {TARGET_PAGE}...")
-    
+
     # 上半分
     upper_box = (0, 0, width, height // 2)
     upper_img = img.crop(upper_box)
-    
+
     # 下半分
     lower_box = (0, height // 2, width, height)
     lower_img = img.crop(lower_box)
 
     results = []
-    
+
     for i, part in enumerate([upper_img, lower_img]):
         part_name = "Upper" if i == 0 else "Lower"
         print(f"Scanning {part_name} half...")
-        
+
         # 429回避のためのリトライ
         success = False
         while not success:
@@ -69,19 +72,20 @@ def process_limit_break():
                 results.append(response.text)
                 success = True
                 print(f"Success: {part_name} segment scanned.")
-                time.sleep(10) # セグメント間は短く冷却
-            except Exception as e:
-                print(f"Quota Hit during segment scan. Waiting 60s...")
+                time.sleep(10)  # セグメント間は短く冷却
+            except Exception:
+                print("Quota Hit during segment scan. Waiting 60s...")
                 time.sleep(60)
 
     # 論理的結合
     final_output = "\n\n".join(results)
     out_path = os.path.join(OUTPUT_DIR, TARGET_PAGE.replace(".png", ".md"))
-    
+
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(final_output)
-    
+
     print(f"--- Limit-Break Test Complete: {out_path} ---")
+
 
 if __name__ == "__main__":
     process_limit_break()

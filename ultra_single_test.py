@@ -1,6 +1,6 @@
-
 import os
 import time
+
 import google.generativeai as genai
 from PIL import Image
 
@@ -28,16 +28,18 @@ PROMPT = """
    - Markdownのテキストのみ。前後の説明は一切不要です。
 """
 
+
 def load_key():
     with open(KEY_FILE, "r") as f:
         return f.read().strip()
 
+
 def main():
     api_key = load_key()
     genai.configure(api_key=api_key)
-    
+
     # 最新かつ安定している001番を指定
-    model = genai.GenerativeModel('gemini-2.0-flash-001')
+    model = genai.GenerativeModel("gemini-2.0-flash-001")
 
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
@@ -45,9 +47,9 @@ def main():
     # 1ページ目のみ指定
     target_page = "page_001.png"
     file_path = os.path.join(INPUT_DIR, target_page)
-    
+
     print(f"Testing Ultra Mode on {target_page}...")
-    
+
     try:
         img = Image.open(file_path)
         # Quotaエラーを避けるためのリトライ処理
@@ -62,7 +64,7 @@ def main():
                     time.sleep(30)
                 else:
                     raise e
-        
+
         if response:
             out_path = os.path.join(OUTPUT_DIR, "page_001.md")
             with open(out_path, "w", encoding="utf-8") as f:
@@ -73,9 +75,10 @@ def main():
             print("----------------------")
         else:
             print("Failed to get response.")
-            
+
     except Exception as e:
         print(f"Error during test: {e}")
+
 
 if __name__ == "__main__":
     main()

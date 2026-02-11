@@ -3,9 +3,11 @@ Table Structure Extractor for Japanese Historical Statistics
 detects grid lines and extracts cells for individual OCR
 """
 
+import os
+
 import cv2
 import numpy as np
-import os
+
 
 def extract_table_structure(image_path, debug_dir):
     """
@@ -23,9 +25,9 @@ def extract_table_structure(image_path, debug_dir):
         stream.close()
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    
+
     # Binary thresholding (inverted) - try simple Otsu first for better global line detection
-    # thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
+    # thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
     #                              cv2.THRESH_BINARY_INV, 11, 2)
     thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
 
@@ -36,27 +38,39 @@ def extract_table_structure(image_path, debug_dir):
     # Detect Horizontal Lines
     # Kernel length proportional to image width - make it smaller to catch shorter lines
     horizontal_kernel_len = np.array(img).shape[1] // 50
-    horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (horizontal_kernel_len, 1))
-    detect_horizontal = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, horizontal_kernel, iterations=2)
-    
+    horizontal_kernel = cv2.getStructuringElement(
+        cv2.MORPH_RECT, (horizontal_kernel_len, 1)
+    )
+    detect_horizontal = cv2.morphologyEx(
+        thresh, cv2.MORPH_OPEN, horizontal_kernel, iterations=2
+    )
+
     # Detect Vertical Lines
     vertical_kernel_len = np.array(img).shape[0] // 50
-    vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, vertical_kernel_len))
-    detect_vertical = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, vertical_kernel, iterations=2)
+    vertical_kernel = cv2.getStructuringElement(
+        cv2.MORPH_RECT, (1, vertical_kernel_len)
+    )
+    detect_vertical = cv2.morphologyEx(
+        thresh, cv2.MORPH_OPEN, vertical_kernel, iterations=2
+    )
 
     # Combine lines
     table_mask = cv2.addWeighted(detect_horizontal, 0.5, detect_vertical, 0.5, 0.0)
-    table_mask = cv2.threshold(table_mask, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+    table_mask = cv2.threshold(table_mask, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[
+        1
+    ]
 
     # Find Contours (Cells)
-    contours, hierarchy = cv2.findContours(table_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(
+        table_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
+    )
 
     # Filter contours by size to remove noise
     cells = []
-    min_area = 100 # Adjust based on resolution
-    
+    min_area = 100  # Adjust based on resolution
+
     debug_img = img.copy()
-    
+
     for c in contours:
         area = cv2.contourArea(c)
         if area > min_area:
@@ -76,12 +90,13 @@ def extract_table_structure(image_path, debug_dir):
 
     return len(cells), debug_path
 
+
 if __name__ == "__main__":
     test_page = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_011.png"
     debug_dir = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages"
-    
+
     print(f"Extracting table from {test_page}...")
     count, debug_path = extract_table_structure(test_page, debug_dir)
-    
+
     print(f"Detected {count} cells.")
     print(f"Debug image saved to: {debug_path}")

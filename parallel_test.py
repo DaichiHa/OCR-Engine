@@ -1,15 +1,15 @@
-
+import concurrent.futures
 import os
 import time
-import concurrent.futures
+
 import google.generativeai as genai
 from PIL import Image
 
 # --- 設定 ---
 KEY_FILE = "gemini_api_key.txt"
 INPUT_DIR = "pages"
-OUTPUT_DIR = "test_parallel_ultra" # 別フォルダ
-MAX_WORKERS = 5 # 並列数（5推奨）
+OUTPUT_DIR = "test_parallel_ultra"  # 別フォルダ
+MAX_WORKERS = 5  # 並列数（5推奨）
 
 # 最高精度プロンプト
 PROMPT = """
@@ -30,29 +30,31 @@ PROMPT = """
    - Markdownのテキストのみ。
 """
 
+
 def load_key():
     with open(KEY_FILE, "r") as f:
         return f.read().strip()
 
+
 def process_page_parallel(task):
     image_path, out_path, model_name, page_num = task
     print(f"Starting {page_num} using {model_name}...")
-    
+
     genai.configure(api_key=load_key())
     model = genai.GenerativeModel(model_name)
-    
+
     max_retries = 3
     for attempt in range(max_retries):
         try:
             img = Image.open(image_path)
             # トークン節約と安定性のためのリサイズ
             img.thumbnail((2560, 2560))
-            
+
             response = model.generate_content([PROMPT, img])
-            
+
             with open(out_path, "w", encoding="utf-8") as f:
                 f.write(response.text)
-            
+
             print(f"Done Page {page_num}")
             return True
         except Exception as e:
@@ -65,6 +67,7 @@ def process_page_parallel(task):
                 return False
     return False
 
+
 def main():
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
@@ -72,10 +75,10 @@ def main():
     # テスト対象ページ (P8-P12の5ページ分)
     pages_to_test = ["008", "009", "010", "011", "012"]
     tasks = []
-    
+
     # モデル分散ルーチン
     models = ["gemini-3-flash-preview", "gemini-2.5-flash"]
-    
+
     for i, p_num in enumerate(pages_to_test):
         img_path = os.path.join(INPUT_DIR, f"page_{p_num}.png")
         out_path = os.path.join(OUTPUT_DIR, f"page_{p_num}.md")
@@ -85,12 +88,13 @@ def main():
 
     print(f"Starting parallel small test ({MAX_WORKERS} workers)...")
     start_time = time.time()
-    
+
     with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         executor.map(process_page_parallel, tasks)
 
     end_time = time.time()
     print(f"Test Complete in {end_time - start_time:.2f}s")
+
 
 if __name__ == "__main__":
     main()

@@ -1,8 +1,8 @@
-
-import os
-import glob
-import time
 import concurrent.futures
+import glob
+import os
+import time
+
 import google.generativeai as genai
 from PIL import Image
 
@@ -10,8 +10,10 @@ from PIL import Image
 KEY_FILE = "gemini_api_key.txt"
 INPUT_DIR = "pages"
 OUTPUT_DIR = "intermediate_md_ultra_final"
-MAX_WORKERS = 2 # 2本並列
-INTERVAL = 90 # 各スレッドが処理後に置くインターバル（並列時は長めに設定して干渉を防ぐ）
+MAX_WORKERS = 2  # 2本並列
+INTERVAL = (
+    90  # 各スレッドが処理後に置くインターバル（並列時は長めに設定して干渉を防ぐ）
+)
 
 # 利用可能なモデル（系統を分けてクォータ分散を狙う）
 MODELS = ["gemini-2.0-flash", "gemini-3-flash-preview"]
@@ -33,35 +35,39 @@ PROMPT = """
    - Markdownの本文のみ。
 """
 
+
 def load_key():
     with open(KEY_FILE, "r") as f:
         return f.read().strip()
 
+
 def process_page_twin(task):
     img_path, out_path, model_name, page_num = task
-    
+
     # スキップ判定
     if os.path.exists(out_path) and os.path.getsize(out_path) > 100:
         return True
 
     print(f"[{time.strftime('%H:%M:%S')}] Starting Page {page_num} on {model_name}")
-    
+
     api_key = load_key()
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel(model_name)
-    
+
     max_retries = 3
     for attempt in range(max_retries):
         try:
             img = Image.open(img_path)
             img.thumbnail((3072, 3072))
-            
+
             response = model.generate_content([PROMPT, img])
-            
+
             with open(out_path, "w", encoding="utf-8") as f:
                 f.write(response.text)
-            
-            print(f"[{time.strftime('%H:%M:%S')}] Success: Page {page_num} ({model_name})")
+
+            print(
+                f"[{time.strftime('%H:%M:%S')}] Success: Page {page_num} ({model_name})"
+            )
             time.sleep(INTERVAL)
             return True
         except Exception as e:
@@ -75,13 +81,14 @@ def process_page_twin(task):
                 time.sleep(10)
     return False
 
+
 def main():
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
 
     all_files = sorted(glob.glob(os.path.join(INPUT_DIR, "page_*.png")))
     tasks = []
-    
+
     for i, file_path in enumerate(all_files):
         filename = os.path.basename(file_path)
         page_num = filename.replace("page_", "").replace(".png", "")
@@ -90,11 +97,12 @@ def main():
         tasks.append((file_path, out_path, model_name, page_num))
 
     print(f"--- TWIN-ENGINE ULTRA FILLER START (Workers: {MAX_WORKERS}) ---")
-    
+
     with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         executor.map(process_page_twin, tasks)
 
     print("--- PROCESS FINISHED ---")
+
 
 if __name__ == "__main__":
     main()

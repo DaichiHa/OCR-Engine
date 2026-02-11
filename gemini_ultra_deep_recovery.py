@@ -1,6 +1,6 @@
-
 import os
 import time
+
 import google.generativeai as genai
 from PIL import Image
 
@@ -10,11 +10,11 @@ INPUT_DIR = "pages"
 OUTPUT_DIR = "intermediate_md_ultra_final"
 
 # 成功時は少し速めに、失敗時は深く休む
-SUCCESS_INTERVAL = 45 
+SUCCESS_INTERVAL = 45
 QUOTA_WAIT = 600  # 429時は10分(600秒)休んでAPIを完全にリセットする
 
 # 確実に存在し、安定しているモデルを指定
-MODEL_NAME = 'gemini-2.5-flash'
+MODEL_NAME = "gemini-2.5-flash"
 
 ULTRA_PRECISION_PROMPT = """
 あなたは歴史的統計資料のデジタル化専門プログラムです。
@@ -32,9 +32,11 @@ ULTRA_PRECISION_PROMPT = """
 これはデジタルアーカイブのマスターデータとなる。歴史的価値を損なわないよう、一字一句を正確に複製せよ。
 """
 
+
 def load_key():
     with open(KEY_FILE, "r") as f:
         return f.read().strip()
+
 
 def main():
     if not os.path.exists(OUTPUT_DIR):
@@ -42,13 +44,13 @@ def main():
 
     api_key = load_key()
     genai.configure(api_key=api_key)
-    
+
     # 1ページから151ページまでの全リストを作成
     all_target_pages = [f"page_{i:03}.png" for i in range(1, 152)]
-    
-    print(f"--- [ULTRA-PRECISION DEEP RECOVERY] ---")
+
+    print("--- [ULTRA-PRECISION DEEP RECOVERY] ---")
     print(f"Model: {MODEL_NAME} | Quota Wait: {QUOTA_WAIT}s")
-    
+
     # モデルの機嫌を伺うため、最初は少し長めに待機してからスタート
     print("Initial 10s breathing...")
     time.sleep(10)
@@ -57,16 +59,16 @@ def main():
         img_path = os.path.join(INPUT_DIR, filename)
         if not os.path.exists(img_path):
             continue
-            
+
         md_filename = filename.replace(".png", ".md")
         out_path = os.path.join(OUTPUT_DIR, md_filename)
-        
+
         # スキップ
         if os.path.exists(out_path) and os.path.getsize(out_path) > 100:
             continue
-            
+
         page_num = filename.replace("page_", "").replace(".png", "")
-        
+
         success = False
         while not success:
             print(f"[{time.strftime('%H:%M:%S')}] Processing Gap: Page {page_num}...")
@@ -74,9 +76,9 @@ def main():
                 model = genai.GenerativeModel(MODEL_NAME)
                 img = Image.open(img_path)
                 img.thumbnail((3072, 3072))
-                
+
                 response = model.generate_content([ULTRA_PRECISION_PROMPT, img])
-                
+
                 if response.text and len(response.text) > 10:
                     with open(out_path, "w", encoding="utf-8") as f:
                         f.write(response.text)
@@ -84,7 +86,7 @@ def main():
                     success = True
                     time.sleep(SUCCESS_INTERVAL)
                 else:
-                    print(f"   -> Empty response. Waiting 30s...")
+                    print("   -> Empty response. Waiting 30s...")
                     time.sleep(30)
             except Exception as e:
                 err_str = str(e)
@@ -96,7 +98,8 @@ def main():
                     print(f"   [Error] {err_str[:150]}. Waiting 60s...")
                     time.sleep(60)
 
-    print(f"--- [COMPLETED] ---")
+    print("--- [COMPLETED] ---")
+
 
 if __name__ == "__main__":
     main()
