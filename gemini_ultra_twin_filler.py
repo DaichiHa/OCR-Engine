@@ -46,9 +46,7 @@ def process_page_twin(task):
     if os.path.exists(out_path) and os.path.getsize(out_path) > 100:
         return True
 
-    print(
-        f"[{time.strftime('%H:%M:%S')}] Starting Page {page_num} on {model_name}"
-    )
+    print(f"[{time.strftime('%H:%M:%S')}] Starting Page {page_num} on {model_name}")
 
     api_key = load_key()
     genai.configure(api_key=api_key)
@@ -65,18 +63,14 @@ def process_page_twin(task):
             with open(out_path, "w", encoding="utf-8") as f:
                 f.write(response.text)
 
-            print(
-                f"[{time.strftime('%H:%M:%S')}] Success: Page {page_num} ({model_name})"
-            )
+            print(f"[{time.strftime('%H:%M:%S')}] Success: Page {page_num} ({model_name})")
             time.sleep(INTERVAL)
             return True
         except Exception as e:
             err_msg = str(e)
             if "429" in err_msg or "402" in err_msg:
                 wait = 120 + (attempt * 60)
-                print(
-                    f"[Limit] Page {page_num} ({model_name}). Cooling {wait}s..."
-                )
+                print(f"[Limit] Page {page_num} ({model_name}). Cooling {wait}s...")
                 time.sleep(wait)
             else:
                 print(f"[Error] Page {page_num}: {err_msg}")
@@ -100,9 +94,7 @@ def main():
 
     print(f"--- TWIN-ENGINE ULTRA FILLER START (Workers: {MAX_WORKERS}) ---")
 
-    with concurrent.futures.ThreadPoolExecutor(
-        max_workers=MAX_WORKERS
-    ) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         executor.map(process_page_twin, tasks)
 
     print("--- PROCESS FINISHED ---")

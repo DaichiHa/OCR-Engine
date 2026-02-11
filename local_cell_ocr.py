@@ -19,32 +19,22 @@ def process_cell_ocr():
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # 二値化 (線を強調)
-    thresh = cv2.threshold(
-        gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU
-    )[1]
+    thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
 
     # 横線の検出
     horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (40, 1))
-    detect_horizontal = cv2.morphologyEx(
-        thresh, cv2.MORPH_OPEN, horizontal_kernel, iterations=2
-    )
+    detect_horizontal = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, horizontal_kernel, iterations=2)
 
     # 縦線の検出
     vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 40))
-    detect_vertical = cv2.morphologyEx(
-        thresh, cv2.MORPH_OPEN, vertical_kernel, iterations=2
-    )
+    detect_vertical = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, vertical_kernel, iterations=2)
 
     # 罫線の結合
-    table_mask = cv2.addWeighted(
-        detect_horizontal, 0.5, detect_vertical, 0.5, 0
-    )
+    table_mask = cv2.addWeighted(detect_horizontal, 0.5, detect_vertical, 0.5, 0)
     table_mask = cv2.threshold(table_mask, 0, 255, cv2.THRESH_BINARY)[1]
 
     # セルの輪郭を抽出
-    contours, _ = cv2.findContours(
-        table_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
-    )
+    contours, _ = cv2.findContours(table_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     # 矩形情報の取得
     rects = [cv2.boundingRect(c) for c in contours]
@@ -74,14 +64,10 @@ def process_cell_ocr():
             # セル画像を切り出し
             cell = gray[y : y + h, x : x + w]
             # 認識精度向上のための余白追加
-            cell = cv2.copyMakeBorder(
-                cell, 10, 10, 10, 10, cv2.BORDER_CONSTANT, value=255
-            )
+            cell = cv2.copyMakeBorder(cell, 10, 10, 10, 10, cv2.BORDER_CONSTANT, value=255)
 
             # OCR実行
-            text = pytesseract.image_to_string(
-                cell, config=TESS_CONFIG
-            ).strip()
+            text = pytesseract.image_to_string(cell, config=TESS_CONFIG).strip()
             # 改行やパイプをエスケープ
             clean_text = text.replace("\n", " ").replace("|", "\\|")
             row_text.append(clean_text)

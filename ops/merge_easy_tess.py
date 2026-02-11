@@ -23,9 +23,7 @@ def iou(boxA, boxB):
 
 def tess_words(img_path):
     im = Image.open(img_path)
-    data = pytesseract.image_to_data(
-        im, output_type=pytesseract.Output.DICT, lang="jpn+eng"
-    )
+    data = pytesseract.image_to_data(im, output_type=pytesseract.Output.DICT, lang="jpn+eng")
     words = []
     n = len(data["text"])
     for i in range(n):
@@ -36,11 +34,7 @@ def tess_words(img_path):
         t = int(data["top"][i])
         w = int(data["width"][i])
         h = int(data["height"][i])
-        conf = (
-            float(data["conf"][i])
-            if data["conf"][i] not in (None, "")
-            else -1.0
-        )
+        conf = float(data["conf"][i]) if data["conf"][i] not in (None, "") else -1.0
         box = [left, t, left + w, t + h]
         words.append({"box": box, "text": txt, "conf": conf, "source": "tess"})
     return words
@@ -120,11 +114,7 @@ def layout_to_text(items):
     # sort by top then left
     items_sorted = sorted(items, key=lambda x: (x["box"][1], x["box"][0]))
     # compute median height
-    heights = [
-        b["box"][3] - b["box"][1]
-        for b in items_sorted
-        if (b["box"][3] - b["box"][1]) > 0
-    ]
+    heights = [b["box"][3] - b["box"][1] for b in items_sorted if (b["box"][3] - b["box"][1]) > 0]
     med_h = sorted(heights)[len(heights) // 2] if heights else 20
     lines = []
     cur_line = []

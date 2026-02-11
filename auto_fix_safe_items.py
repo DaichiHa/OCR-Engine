@@ -23,7 +23,6 @@ def should_skip(path: Path) -> bool:
 
 
 def transform_text(text: str) -> (str, bool):
-    _orig = text
     changed = False
 
     # 1) Rename lambda parameter `l` -> `line` (simple pattern)
@@ -46,9 +45,7 @@ def transform_text(text: str) -> (str, bool):
 
     # 4) Prefix obviously-unused assignment targets with _ if name not used elsewhere
     # Find simple assignments at line start: name = ...
-    assigns = re.findall(
-        r"^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=", text, flags=re.MULTILINE
-    )
+    assigns = re.findall(r"^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=", text, flags=re.MULTILINE)
     for name in set(assigns):
         # ignore common magic or single-underscore names
         if name.startswith("_") or name in ("__all__",):

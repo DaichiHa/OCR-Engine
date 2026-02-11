@@ -71,9 +71,7 @@ def process_page_hyper(task):
             if "429" in str(e):
                 # モデルごとのクォータに当たった場合は少し長めに待機
                 wait = 45  # 429時は固定で45秒（リセットを待つ）
-                print(
-                    f"[Limit] Page {page_num} on {model_name} (429). Waiting {wait}s..."
-                )
+                print(f"[Limit] Page {page_num} on {model_name} (429). Waiting {wait}s...")
                 time.sleep(wait)
             else:
                 print(f"[Error] Page {page_num} on {model_name}: {e}")
@@ -96,15 +94,11 @@ def main():
         model_name = MODEL_POOL[i % len(MODEL_POOL)]
         tasks.append((img_path, out_path, model_name, p_num))
 
-    print(
-        f"Starting Hyper-Parallel Test (Workers: {MAX_WORKERS}, Models: {len(MODEL_POOL)})"
-    )
+    print(f"Starting Hyper-Parallel Test (Workers: {MAX_WORKERS}, Models: {len(MODEL_POOL)})")
     overall_start = time.time()
 
     # 並列実行
-    with concurrent.futures.ThreadPoolExecutor(
-        max_workers=MAX_WORKERS
-    ) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         executor.map(process_page_hyper, tasks)
 
     overall_dur = time.time() - overall_start

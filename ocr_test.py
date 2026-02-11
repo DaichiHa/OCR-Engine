@@ -27,9 +27,7 @@ def ocr_page(image_path, lang="jpn_vert+jpn"):
         # OCR configuration for best accuracy
         custom_config = r"--oem 3 --psm 6"
 
-        text = pytesseract.image_to_string(
-            img, lang=lang, config=custom_config
-        )
+        text = pytesseract.image_to_string(img, lang=lang, config=custom_config)
         return text
     except Exception as e:
         return f"Error: {str(e)}"
@@ -37,9 +35,7 @@ def ocr_page(image_path, lang="jpn_vert+jpn"):
 
 if __name__ == "__main__":
     # Test with page 3 (緒言 - Introduction)
-    test_page = (
-        r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_003.png"
-    )
+    test_page = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_003.png"
 
     print("=" * 60)
     print("OCR Test - Page 003 (緒言)")
@@ -49,9 +45,7 @@ if __name__ == "__main__":
     print(result)
 
     # Save result to file for review
-    output_file = (
-        r"c:\Users\User\Downloads\日本帝國港灣統計_0001\ocr_test_result.txt"
-    )
+    output_file = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\ocr_test_result.txt"
     with open(output_file, "w", encoding="utf-8") as f:
         f.write(result)
 

@@ -41,9 +41,7 @@ def extract_tables_to_csv(md_file, output_dir):
                 csv_filename = f"{page_num}_table_{table_count}.csv"
                 csv_path = os.path.join(output_dir, csv_filename)
 
-                with open(
-                    csv_path, "w", encoding="utf-8", newline=""
-                ) as csvfile:
+                with open(csv_path, "w", encoding="utf-8", newline="") as csvfile:
                     writer = csv.writer(csvfile)
                     writer.writerows(table_buffer)
 
@@ -62,9 +60,7 @@ def extract_tables_to_csv(md_file, output_dir):
 
 
 if __name__ == "__main__":
-    md_path = (
-        r"C:\Users\User\Documents\Obsidian Vault\my-db\日本帝國港灣統計.md"
-    )
+    md_path = r"C:\Users\User\Documents\Obsidian Vault\my-db\日本帝國港灣統計.md"
     out_dir = r"C:\Users\User\Documents\Obsidian Vault\my-db\csv_data"
 
     if os.path.exists(md_path):

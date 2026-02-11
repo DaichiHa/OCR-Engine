@@ -28,20 +28,14 @@ def main():
         print(json.dumps({"error": "missing input", "in": str(infile)}))
         return 2
 
-    out = (
-        Path(args.outfile)
-        if args.outfile
-        else infile.with_name(infile.stem + ".resized" + infile.suffix)
-    )
+    out = Path(args.outfile) if args.outfile else infile.with_name(infile.stem + ".resized" + infile.suffix)
 
     with Image.open(infile) as im:
         w, h = im.size
         pixels = w * h
         if pixels <= args.max_pixels:
             im.save(out)
-            print(
-                json.dumps({"out": str(out), "w": w, "h": h, "pixels": pixels})
-            )
+            print(json.dumps({"out": str(out), "w": w, "h": h, "pixels": pixels}))
             return 0
 
         scale = (args.max_pixels / float(pixels)) ** 0.5
@@ -50,9 +44,7 @@ def main():
         nh = max(1, int(h * scale))
         rim = im.resize((nw, nh), Image.LANCZOS)
         rim.save(out)
-        print(
-            json.dumps({"out": str(out), "w": nw, "h": nh, "pixels": nw * nh})
-        )
+        print(json.dumps({"out": str(out), "w": nw, "h": nh, "pixels": nw * nh}))
         return 0
 
 

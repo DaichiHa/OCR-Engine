@@ -50,9 +50,7 @@ def find_py_files(root: Path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--commit", action="store_true", help="git add + commit modified files"
-    )
+    parser.add_argument("--commit", action="store_true", help="git add + commit modified files")
     parser.add_argument(
         "--message",
         _default="chore(lint): convert bare except to except Exception",

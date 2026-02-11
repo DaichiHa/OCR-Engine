@@ -3,12 +3,7 @@ import urllib.request
 from pathlib import Path
 
 # Load token
-tok = json.loads(
-    Path(__file__)
-    .resolve()
-    .parent.joinpath(".secrets", "oauth_token.json")
-    .read_text(encoding="utf-8")
-)
+tok = json.loads(Path(__file__).resolve().parent.joinpath(".secrets", "oauth_token.json").read_text(encoding="utf-8"))
 access = tok["response"].get("access_token")
 if not access:
     print("no access token")
@@ -17,9 +12,7 @@ if not access:
 owner = "DaichiHa"
 repo = "OCR-Engine"
 url = f"https://api.github.com/repos/{owner}/{repo}/issues"
-body = json.dumps(
-    {"title": "Test issue from demo", "body": "This is a permissions test."}
-).encode("utf-8")
+body = json.dumps({"title": "Test issue from demo", "body": "This is a permissions test."}).encode("utf-8")
 req = urllib.request.Request(
     url,
     _data=body,

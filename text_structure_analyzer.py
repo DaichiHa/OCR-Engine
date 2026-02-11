@@ -37,12 +37,8 @@ def analyze_hybrid_structure(image_path, debug_dir):
     if lines is not None:
         for line in lines:
             x1, y1, x2, y2 = line[0]
-            if (
-                abs(x1 - x2) < 5 and abs(y1 - y2) > 50
-            ):  # Verticalish and long enough
-                vertical_lines.append(
-                    ((x1 + x2) / 2, min(y1, y2), max(y1, y2))
-                )
+            if abs(x1 - x2) < 5 and abs(y1 - y2) > 50:  # Verticalish and long enough
+                vertical_lines.append(((x1 + x2) / 2, min(y1, y2), max(y1, y2)))
 
     # Cluster Vertical Lines (Columns)
     vertical_lines.sort(key=lambda x: x[0])
@@ -83,9 +79,7 @@ def analyze_hybrid_structure(image_path, debug_dir):
                 data["width"][i],
                 data["height"][i],
             )
-            text_blocks.append(
-                {"x": x, "y": y, "w": w, "h": h, "text": data["text"][i]}
-            )
+            text_blocks.append({"x": x, "y": y, "w": w, "h": h, "text": data["text"][i]})
 
     # 3. Assign Text to Rows based on Y-coordinate clustering
     # Sort by Y center

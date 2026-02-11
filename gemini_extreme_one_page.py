@@ -81,9 +81,7 @@ def process_extreme_one_page():
                 time.sleep(180)
 
     # 4つの断片を一つのMDに統合
-    final_path = os.path.join(
-        OUTPUT_DIR, f"{TARGET_PAGE.replace('.png', '')}_EXTREME.md"
-    )
+    final_path = os.path.join(OUTPUT_DIR, f"{TARGET_PAGE.replace('.png', '')}_EXTREME.md")
     with open(final_path, "w", encoding="utf-8") as f:
         f.write(f"# {TARGET_PAGE} EXTREME QUALITY RECONSTRUCTION\n\n")
         for name in tile_names:

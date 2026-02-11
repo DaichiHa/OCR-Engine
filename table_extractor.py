@@ -29,9 +29,7 @@ def extract_table_structure(image_path, debug_dir):
     # Binary thresholding (inverted) - try simple Otsu first for better global line detection
     # thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
     #                              cv2.THRESH_BINARY_INV, 11, 2)
-    thresh = cv2.threshold(
-        gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU
-    )[1]
+    thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
 
     # Check content
     white_pixels = cv2.countNonZero(thresh)
@@ -40,34 +38,20 @@ def extract_table_structure(image_path, debug_dir):
     # Detect Horizontal Lines
     # Kernel length proportional to image width - make it smaller to catch shorter lines
     horizontal_kernel_len = np.array(img).shape[1] // 50
-    horizontal_kernel = cv2.getStructuringElement(
-        cv2.MORPH_RECT, (horizontal_kernel_len, 1)
-    )
-    detect_horizontal = cv2.morphologyEx(
-        thresh, cv2.MORPH_OPEN, horizontal_kernel, iterations=2
-    )
+    horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (horizontal_kernel_len, 1))
+    detect_horizontal = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, horizontal_kernel, iterations=2)
 
     # Detect Vertical Lines
     vertical_kernel_len = np.array(img).shape[0] // 50
-    vertical_kernel = cv2.getStructuringElement(
-        cv2.MORPH_RECT, (1, vertical_kernel_len)
-    )
-    detect_vertical = cv2.morphologyEx(
-        thresh, cv2.MORPH_OPEN, vertical_kernel, iterations=2
-    )
+    vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, vertical_kernel_len))
+    detect_vertical = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, vertical_kernel, iterations=2)
 
     # Combine lines
-    table_mask = cv2.addWeighted(
-        detect_horizontal, 0.5, detect_vertical, 0.5, 0.0
-    )
-    table_mask = cv2.threshold(
-        table_mask, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
-    )[1]
+    table_mask = cv2.addWeighted(detect_horizontal, 0.5, detect_vertical, 0.5, 0.0)
+    table_mask = cv2.threshold(table_mask, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
     # Find Contours (Cells)
-    contours, hierarchy = cv2.findContours(
-        table_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
-    )
+    contours, hierarchy = cv2.findContours(table_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     # Filter contours by size to remove noise
     cells = []
@@ -82,9 +66,7 @@ def extract_table_structure(image_path, debug_dir):
             # Filter out very thin/long boxes that might be lines themselves
             if w > 10 and h > 10:
                 cells.append((x, y, w, h))
-                cv2.rectangle(
-                    debug_img, (x, y), (x + w, y + h), (0, 0, 255), 2
-                )
+                cv2.rectangle(debug_img, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
     # Save debug image
     debug_path = os.path.join(debug_dir, f"table_debug_{name}")

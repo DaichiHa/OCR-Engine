@@ -72,18 +72,14 @@ def merge_files(manual_file, intermediate_dir, output_file):
         out.write(manual_content)
         out.write("\n\n" + "=" * 50 + "\n")
         out.write("## 統計データ (自動OCR処理分)\n")
-        out.write(
-            "※以下のデータは自動処理により抽出されたものです。誤認識を含みます。\n"
-        )
+        out.write("※以下のデータは自動処理により抽出されたものです。誤認識を含みます。\n")
         out.write("=" * 50 + "\n\n")
 
         for block in ocr_content_blocks:
             out.write(block)
             out.write("\n\n---\n\n")
 
-    print(
-        f"Merged Manual Intro + {len(ocr_content_blocks)} OCR Pages into {output_file}"
-    )
+    print(f"Merged Manual Intro + {len(ocr_content_blocks)} OCR Pages into {output_file}")
 
     # Merge sequential directories
     output_path = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\日本帝國港灣統計_Ultra_Gemini.md"

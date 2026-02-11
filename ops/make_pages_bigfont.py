@@ -25,8 +25,7 @@ for i in pages:
     im = Image.new("RGB", (1200, 1600), "white")
     d = ImageDraw.Draw(im)
     lines = [
-        f"Page {i:03d} - Sample OCR test line {j+1}: The quick brown fox jumps over 13 lazy dogs."
-        for j in range(12)
+        f"Page {i:03d} - Sample OCR test line {j+1}: The quick brown fox jumps over 13 lazy dogs." for j in range(12)
     ]
     y = 60
     for line in lines:

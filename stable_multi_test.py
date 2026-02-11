@@ -65,9 +65,7 @@ def main():
     # テスト対象ページ (P24-P29: 2回分のバッチ)
     test_pages = [f"{i:03}" for i in range(24, 30)]
 
-    print(
-        f"--- Stable Multi-Model Test (Batch Size: {BATCH_SIZE}, Cooldown: {COOLDOWN}s) ---"
-    )
+    print(f"--- Stable Multi-Model Test (Batch Size: {BATCH_SIZE}, Cooldown: {COOLDOWN}s) ---")
     start_time = time.time()
 
     # 3ページずつのバッチ処理
@@ -81,20 +79,14 @@ def main():
 
         print(f"\n[Batch] Starting Batch {i//BATCH_SIZE + 1}...")
 
-        with concurrent.futures.ThreadPoolExecutor(
-            max_workers=BATCH_SIZE
-        ) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=BATCH_SIZE) as executor:
             executor.map(process_page_stable, tasks)
 
         if i + BATCH_SIZE < len(test_pages):
-            print(
-                f"[Wait] Cooling down for {COOLDOWN}s to reset ALL models' quotas..."
-            )
+            print(f"[Wait] Cooling down for {COOLDOWN}s to reset ALL models' quotas...")
             time.sleep(COOLDOWN)
 
-    print(
-        f"\n--- Multi-Model Test Complete in {time.time() - start_time:.2f}s ---"
-    )
+    print(f"\n--- Multi-Model Test Complete in {time.time() - start_time:.2f}s ---")
 
 
 if __name__ == "__main__":

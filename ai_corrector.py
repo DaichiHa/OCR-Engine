@@ -54,18 +54,14 @@ def main():
 
     api_key = load_key()
     if not api_key.startswith("sk-"):
-        print(
-            "Error: Invalid OpenAI API key format in openai_api_key.txt. Should start with 'sk-'."
-        )
+        print("Error: Invalid OpenAI API key format in openai_api_key.txt. Should start with 'sk-'.")
         return
 
     client = OpenAI(api_key=api_key)
 
     files = sorted(glob.glob(os.path.join(INPUT_DIR, "page_*.md")))
 
-    print(
-        f"Starting AI correction for {len(files)} pages using GPT-4o-mini..."
-    )
+    print(f"Starting AI correction for {len(files)} pages using GPT-4o-mini...")
 
     for file_path in files:
         filename = os.path.basename(file_path)

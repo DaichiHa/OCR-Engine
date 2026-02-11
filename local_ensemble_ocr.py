@@ -44,9 +44,7 @@ def load_dictionary_map(path: Optional[str]) -> Dict[str, str]:
         with open(path, "r", encoding="utf-8") as handle:
             data = json.load(handle)
         if not isinstance(data, dict):
-            raise ValueError(
-                "Dictionary JSON must be an object of {wrong: correct} pairs."
-            )
+            raise ValueError("Dictionary JSON must be an object of {wrong: correct} pairs.")
         mapping = {str(k): str(v) for k, v in data.items()}
         return mapping
 
@@ -75,15 +73,11 @@ def preprocess_variants(cell_img) -> List[OcrVariant]:
 
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
     contrast = clahe.apply(gray)
-    contrast = cv2.threshold(
-        contrast, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
-    )[1]
+    contrast = cv2.threshold(contrast, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
     contrast_img = Image.fromarray(contrast)
 
     edges = cv2.Canny(gray, 50, 150)
-    edges = cv2.dilate(
-        edges, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)), iterations=1
-    )
+    edges = cv2.dilate(edges, cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2)), iterations=1)
     edges = cv2.bitwise_not(edges)
     edge_img = Image.fromarray(edges)
 
@@ -126,9 +120,7 @@ def majority_vote_text(candidates: List[str]) -> str:
     max_len = max(len(c) for c in candidates)
     output_chars = []
     for idx in range(max_len):
-        column_chars = [
-            c[idx] for c in candidates if idx < len(c) and c[idx].strip()
-        ]
+        column_chars = [c[idx] for c in candidates if idx < len(c) and c[idx].strip()]
         if not column_chars:
             continue
         counts = Counter(column_chars)
@@ -166,9 +158,7 @@ def group_rows(cells: List[Tuple[int, int, int, int]], tolerance: int = 20):
     return rows
 
 
-def process_page(
-    image_path: str, output_dir: str, lang: str, mapping: Dict[str, str]
-) -> str:
+def process_page(image_path: str, output_dir: str, lang: str, mapping: Dict[str, str]) -> str:
     print(f"Processing {os.path.basename(image_path)}...")
     cells, debug_path = extract_table_structure_v4(image_path, output_dir)
     print(f"  Found {len(cells)} cells. Debug: {debug_path}")
@@ -231,28 +221,14 @@ def parse_page_limit(limit: Optional[str], paths: List[str]) -> List[str]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Local Multi-process Ensemble OCR"
-    )
-    parser.add_argument(
-        "--input-dir", required=True, help="Directory with page images"
-    )
-    parser.add_argument(
-        "--output-dir", required=True, help="Directory for output markdown"
-    )
-    parser.add_argument(
-        "--pattern", default="page_*.png", help="Glob pattern for page images"
-    )
-    parser.add_argument(
-        "--lang", default="jpn", help="Tesseract language code"
-    )
-    parser.add_argument(
-        "--dictionary", help="Path to dictionary CSV/TSV/JSON for corrections"
-    )
+    parser = argparse.ArgumentParser(description="Local Multi-process Ensemble OCR")
+    parser.add_argument("--input-dir", required=True, help="Directory with page images")
+    parser.add_argument("--output-dir", required=True, help="Directory for output markdown")
+    parser.add_argument("--pattern", default="page_*.png", help="Glob pattern for page images")
+    parser.add_argument("--lang", default="jpn", help="Tesseract language code")
+    parser.add_argument("--dictionary", help="Path to dictionary CSV/TSV/JSON for corrections")
     parser.add_argument("--max-pages", help="Process only the first N pages")
-    parser.add_argument(
-        "--processes", type=int, default=2, help="Number of parallel processes"
-    )
+    parser.add_argument("--processes", type=int, default=2, help="Number of parallel processes")
 
     args = parser.parse_args()
 
@@ -267,12 +243,7 @@ def main() -> None:
 
     results = []
     with ProcessPoolExecutor(max_workers=args.processes) as executor:
-        futures = {
-            executor.submit(
-                process_page, page, args.output_dir, args.lang, mapping
-            ): page
-            for page in pages
-        }
+        futures = {executor.submit(process_page, page, args.output_dir, args.lang, mapping): page for page in pages}
         for future in as_completed(futures):
             page = futures[future]
             try:

@@ -29,9 +29,7 @@ def extract_table_structure_v3(image_path, debug_dir):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Adaptive threshold for clean binary
-    binary = cv2.adaptiveThreshold(
-        gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 15, 5
-    )
+    binary = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 15, 5)
 
     height, width = binary.shape
 
@@ -51,9 +49,7 @@ def extract_table_structure_v3(image_path, debug_dir):
     if len(row_candidates) > 0:
         current_group = [row_candidates[0]]
         for i in range(1, len(row_candidates)):
-            if (
-                row_candidates[i] - row_candidates[i - 1] < 10
-            ):  # If lines are within 10px
+            if row_candidates[i] - row_candidates[i - 1] < 10:  # If lines are within 10px
                 current_group.append(row_candidates[i])
             else:
                 rows.append(int(np.mean(current_group)))
@@ -65,26 +61,20 @@ def extract_table_structure_v3(image_path, debug_dir):
     vertical_proj = vertical_proj / 255
 
     # Vertical lines are often thinner/fainter, verify threshold
-    col_candidates = np.where(vertical_proj > (height * 0.1))[
-        0
-    ]  # Lower threshold
+    col_candidates = np.where(vertical_proj > (height * 0.1))[0]  # Lower threshold
 
     cols = []
     if len(col_candidates) > 0:
         current_group = [col_candidates[0]]
         for i in range(1, len(col_candidates)):
-            if (
-                col_candidates[i] - col_candidates[i - 1] < 20
-            ):  # If lines are within 20px
+            if col_candidates[i] - col_candidates[i - 1] < 20:  # If lines are within 20px
                 current_group.append(col_candidates[i])
             else:
                 cols.append(int(np.mean(current_group)))
                 current_group = [col_candidates[i]]
         cols.append(int(np.mean(current_group)))
 
-    print(
-        f"Detected {len(rows)} potential rows and {len(cols)} potential cols"
-    )
+    print(f"Detected {len(rows)} potential rows and {len(cols)} potential cols")
 
     # 3. Form Grid
     debug_img = img.copy()
@@ -128,9 +118,7 @@ def extract_table_structure_v3(image_path, debug_dir):
 
 
 if __name__ == "__main__":
-    test_page = (
-        r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_011.png"
-    )
+    test_page = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_011.png"
     debug_dir = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages"
 
     print(f"Testing V3 extraction on {test_page}...")

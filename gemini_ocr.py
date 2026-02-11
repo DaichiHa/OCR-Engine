@@ -51,9 +51,7 @@ def process_page_ultra(model, image_path, page_num):
         except Exception as e:
             err_str = str(e)
             if "429" in err_str:
-                print(
-                    f"Quota exceeded. Waiting {quota_delay}s... (Attempt {attempt+1}/{max_retries})"
-                )
+                print(f"Quota exceeded. Waiting {quota_delay}s... (Attempt {attempt+1}/{max_retries})")
                 time.sleep(quota_delay)
             elif "500" in err_str or "503" in err_str:
                 print("Server error. Waiting 10s...")

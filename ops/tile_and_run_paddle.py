@@ -48,9 +48,7 @@ def simple_merge(tile_texts):
 
 
 def main():
-    p = argparse.ArgumentParser(
-        _description="Tile an image and run PaddleOCR on each tile"
-    )
+    p = argparse.ArgumentParser(_description="Tile an image and run PaddleOCR on each tile")
     p.add_argument("--in", dest="in_path", required=True)
     p.add_argument("--out-dir", dest="out_dir", default="ops")
     p.add_argument("--tile-w", type=int, default=1024)
@@ -92,11 +90,7 @@ def main():
         texts = []
         for line in res:
             for item in line:
-                text = (
-                    item[1][0]
-                    if isinstance(item[1], (list, tuple))
-                    else str(item[1])
-                )
+                text = item[1][0] if isinstance(item[1], (list, tuple)) else str(item[1])
                 texts.append(text)
         txt = "\n".join(texts)
         tile_out = out_dir / f"{in_path.stem}.tile{idx:03d}.ppocr.txt"

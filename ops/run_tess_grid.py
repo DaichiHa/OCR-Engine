@@ -149,9 +149,7 @@ def main(smoke=False, assist=False):
         if assist:
             assist_in = None
             # prefer ensemble clean if present
-            ensemble_clean = (
-                out_dir / f"{name}.rapid.normalized.ensemble.clean.txt"
-            )
+            ensemble_clean = out_dir / f"{name}.rapid.normalized.ensemble.clean.txt"
             if ensemble_clean.exists():
                 assist_in = ensemble_clean
             elif tess_norm.exists():
@@ -186,9 +184,7 @@ def main(smoke=False, assist=False):
 
         results.append(entry)
 
-    (out_dir / "clahe_grid_tess_results.json").write_text(
-        json.dumps(results, indent=2), encoding="utf-8"
-    )
+    (out_dir / "clahe_grid_tess_results.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
     print("WROTE ops/clahe_grid_tess_results.json")
 
 

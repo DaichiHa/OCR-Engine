@@ -79,16 +79,12 @@ def extract_table_structure_v4(image_path, debug_dir):
             # Horizontal: angle near 0 or 180
             if abs(angle) < 5 or abs(angle) > 175:
                 # Store (y, x1, x2) - use average Y
-                horizontal_lines.append(
-                    ((y1 + y2) / 2, min(x1, x2), max(x1, x2))
-                )
+                horizontal_lines.append(((y1 + y2) / 2, min(x1, x2), max(x1, x2)))
 
             # Vertical: angle near 90 or -90
             elif abs(abs(angle) - 90) < 5:
                 # Store (x, y1, y2)
-                vertical_lines.append(
-                    ((x1 + x2) / 2, min(y1, y2), max(y1, y2))
-                )
+                vertical_lines.append(((x1 + x2) / 2, min(y1, y2), max(y1, y2)))
 
     # Cluster Lines
     def cluster_lines(lines, tolerance=10):
@@ -176,9 +172,7 @@ def extract_table_structure_v4(image_path, debug_dir):
         # too narrow (e.g., index/sep columns)
         col_medians = []
         for j in range(cols_n):
-            col_ws = [
-                grid[i][j][2] for i in range(rows_n) if grid[i][j][2] > 0
-            ]
+            col_ws = [grid[i][j][2] for i in range(rows_n) if grid[i][j][2] > 0]
             if col_ws:
                 col_medians.append(int(np.median(col_ws)))
             else:
@@ -205,11 +199,7 @@ def extract_table_structure_v4(image_path, debug_dir):
             run_end = j
 
             # choose target: prefer right of run, else left
-            target_j = (
-                run_end + 1
-                if run_end + 1 < cols_n
-                else (run_start - 1 if run_start - 1 >= 0 else None)
-            )
+            target_j = run_end + 1 if run_end + 1 < cols_n else (run_start - 1 if run_start - 1 >= 0 else None)
             if target_j is not None:
                 for i in range(rows_n):
                     # accumulate widths from run into target
@@ -319,9 +309,7 @@ def extract_table_structure_v4(image_path, debug_dir):
                         rgb = cv2.cvtColor(crop, cv2.COLOR_BGR2RGB)
                         pil = Image.fromarray(rgb)
                         # use a compact config for speed
-                        txt = pytesseract.image_to_string(
-                            pil, lang=ocr_lang, config="--psm 6"
-                        )
+                        txt = pytesseract.image_to_string(pil, lang=ocr_lang, config="--psm 6")
                         txt = txt.strip()
                     except Exception:
                         txt = ""
@@ -375,9 +363,7 @@ def extract_table_structure_v4(image_path, debug_dir):
         centers = [(c[1] + c[3] / 2.0, idx) for idx, c in enumerate(cells)]
         centers.sort()
         # tolerance based on median_h
-        row_tol = (
-            max(12, int(median_h * row_tol_factor)) if median_h > 0 else 20
-        )
+        row_tol = max(12, int(median_h * row_tol_factor)) if median_h > 0 else 20
         groups = []
         current = [centers[0][1]]
         for k in range(1, len(centers)):
@@ -429,10 +415,7 @@ def extract_table_structure_v4(image_path, debug_dir):
 
 
 if __name__ == "__main__":
-    test_page = (
-        "c:\\Users\\User\\Downloads\\日本帝國港灣統計_0001\\pages\\"
-        + "page_011.png"
-    )
+    test_page = "c:\\Users\\User\\Downloads\\日本帝國港灣統計_0001\\pages\\" + "page_011.png"
     debug_dir = "c:\\Users\\User\\Downloads\\日本帝國港灣統計_0001\\" + "pages"
 
     print(f"Testing V4 (LSD) extraction on {test_page}...")

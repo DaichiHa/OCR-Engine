@@ -66,9 +66,7 @@ def main():
 
         # 未処理または失敗ページを処理
         page_num = filename.replace("page_", "").replace(".png", "")
-        print(
-            f"[{time.strftime('%H:%M:%S')}] Processing Gap: Page {page_num}..."
-        )
+        print(f"[{time.strftime('%H:%M:%S')}] Processing Gap: Page {page_num}...")
 
         success = False
         retry_delay = 120  # 429時は2分休む
@@ -80,9 +78,7 @@ def main():
                 if img.width > 3072 or img.height > 3072:
                     img.thumbnail((3072, 3072))
 
-                response = model.generate_content(
-                    [ULTRA_PRECISION_PROMPT, img]
-                )
+                response = model.generate_content([ULTRA_PRECISION_PROMPT, img])
 
                 if response.text and len(response.text) > 10:
                     with open(out_path, "w", encoding="utf-8") as f:
@@ -93,29 +89,21 @@ def main():
                     print(f"   Waiting {INTERVAL}s for next step...")
                     time.sleep(INTERVAL)
                 else:
-                    print(
-                        f"   -> Error: Response empty for Page {page_num}. Retrying..."
-                    )
+                    print(f"   -> Error: Response empty for Page {page_num}. Retrying...")
                     time.sleep(10)
 
             except Exception as e:
                 err_str = str(e)
                 if "429" in err_str or "402" in err_str:
-                    print(
-                        f"   [Limit] Quota reached. Cooling down {retry_delay}s..."
-                    )
+                    print(f"   [Limit] Quota reached. Cooling down {retry_delay}s...")
                     time.sleep(retry_delay)
                 else:
-                    print(
-                        f"   [Error] Unexpected: {err_str[:100]}. Waiting 30s..."
-                    )
+                    print(f"   [Error] Unexpected: {err_str[:100]}. Waiting 30s...")
                     time.sleep(30)
                     # 重大なエラーでも一応ループ継続（レジューム性確保）
 
     print(f"\n--- [COMPLETED] Final output generated in {OUTPUT_DIR} ---")
-    print(
-        f"Total time elapsed: {(time.time() - overall_start)/60:.1f} minutes."
-    )
+    print(f"Total time elapsed: {(time.time() - overall_start)/60:.1f} minutes.")
 
 
 if __name__ == "__main__":

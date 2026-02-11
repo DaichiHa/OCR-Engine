@@ -27,9 +27,7 @@ def process_file(p: Path):
 
     # Fix comprehension patterns: if line.strip() -> line.strip()
     text2 = "\n".join(lines)
-    text3 = re.sub(
-        r"(for\s+line\s+in[^\n]*if\s*)l\.strip\(\)", r"\1line.strip()", text2
-    )
+    text3 = re.sub(r"(for\s+line\s+in[^\n]*if\s*)l\.strip\(\)", r"\1line.strip()", text2)
     if text3 != text2:
         text2 = text3
         changed = True
@@ -75,10 +73,7 @@ def main():
     modified = []
     for p in py_files:
         # skip venv and hidden folders
-        if any(
-            part.startswith(".") or part in ("venv", "__pycache__")
-            for part in p.parts
-        ):
+        if any(part.startswith(".") or part in ("venv", "__pycache__") for part in p.parts):
             continue
         try:
             if process_file(p):

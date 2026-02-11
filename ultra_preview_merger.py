@@ -7,22 +7,15 @@ FINAL_FILE = "日本帝國港灣統計_ULTRA_PREVIEW.md"
 
 
 def natural_sort_key(s):
-    return [
-        int(text) if text.isdigit() else text.lower()
-        for text in re.split("([0-9]+)", s)
-    ]
+    return [int(text) if text.isdigit() else text.lower() for text in re.split("([0-9]+)", s)]
 
 
 def merge_ultra_preview():
-    files = sorted(
-        glob.glob(os.path.join(OUTPUT_DIR, "page_*.md")), key=natural_sort_key
-    )
+    files = sorted(glob.glob(os.path.join(OUTPUT_DIR, "page_*.md")), key=natural_sort_key)
 
     with open(FINAL_FILE, "w", encoding="utf-8") as outfile:
         outfile.write("# 日本帝國港灣統計 [ULTRA品質 プレビュー]\n\n")
-        outfile.write(
-            "> 現在、最高精度モードで抽出中のデータを統合した暫定版です。\n\n"
-        )
+        outfile.write("> 現在、最高精度モードで抽出中のデータを統合した暫定版です。\n\n")
 
         for fpath in files:
             fname = os.path.basename(fpath)

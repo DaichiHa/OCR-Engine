@@ -41,9 +41,7 @@ def _safe_float(value: str, default: float = 0.0) -> float:
         return default
 
 
-def _bbox_iou(
-    a: Tuple[int, int, int, int], b: Tuple[int, int, int, int]
-) -> float:
+def _bbox_iou(a: Tuple[int, int, int, int], b: Tuple[int, int, int, int]) -> float:
     ax1, ay1, ax2, ay2 = a
     bx1, by1, bx2, by2 = b
     inter_x1 = max(ax1, bx1)
@@ -76,17 +74,11 @@ def _default_y_tolerance(lines: Iterable[OcrLine]) -> int:
     return max(10, int(median(heights) * 0.6))
 
 
-def _order_lines(
-    lines: List[OcrLine], y_tolerance: Optional[int] = None
-) -> List[OcrLine]:
+def _order_lines(lines: List[OcrLine], y_tolerance: Optional[int] = None) -> List[OcrLine]:
     if not lines:
         return []
-    tolerance = (
-        y_tolerance if y_tolerance is not None else _default_y_tolerance(lines)
-    )
-    sorted_lines = sorted(
-        lines, key=lambda line: (_line_center_y(line), line.bbox[0])
-    )
+    tolerance = y_tolerance if y_tolerance is not None else _default_y_tolerance(lines)
+    sorted_lines = sorted(lines, key=lambda line: (_line_center_y(line), line.bbox[0]))
 
     rows: List[dict] = []
     for line in sorted_lines:
@@ -100,9 +92,7 @@ def _order_lines(
                 placed = True
                 break
         if not placed:
-            rows.append(
-                {"center": center, "centers": [center], "lines": [line]}
-            )
+            rows.append({"center": center, "centers": [center], "lines": [line]})
 
     ordered: List[OcrLine] = []
     for row in rows:
@@ -147,9 +137,7 @@ def run_tesseract_lines(image_path: str, lang: str = "jpn") -> List[OcrLine]:
         height = int(data["height"][idx])
         bbox = _normalize_bbox((left, top, left + width, top + height))
         conf = _safe_float(data["conf"][idx], default=0.0) / 100.0
-        lines.append(
-            OcrLine(text=text, bbox=bbox, conf=conf, engine="tesseract")
-        )
+        lines.append(OcrLine(text=text, bbox=bbox, conf=conf, engine="tesseract"))
     return _order_lines(lines)
 
 
@@ -158,9 +146,7 @@ def _get_paddle_ocr(lang: str = "japan"):
     try:
         from paddleocr import PaddleOCR  # type: ignore
     except ImportError as exc:
-        raise ImportError(
-            "PaddleOCR is not installed. Install paddleocr to enable ensemble OCR."
-        ) from exc
+        raise ImportError("PaddleOCR is not installed. Install paddleocr to enable ensemble OCR.") from exc
     return PaddleOCR(lang=lang, use_angle_cls=True)
 
 
@@ -176,9 +162,7 @@ def run_paddle_lines(image_path: str, lang: str = "japan") -> List[OcrLine]:
                 continue
             xs = [pt[0] for pt in points]
             ys = [pt[1] for pt in points]
-            bbox = _normalize_bbox(
-                (int(min(xs)), int(min(ys)), int(max(xs)), int(max(ys)))
-            )
+            bbox = _normalize_bbox((int(min(xs)), int(min(ys)), int(max(xs)), int(max(ys))))
             lines.append(
                 OcrLine(
                     text=clean_text,
@@ -195,11 +179,7 @@ def _match_lines(
     p_lines: List[OcrLine],
     y_tolerance: Optional[int] = None,
 ) -> Tuple[List[Tuple[Optional[OcrLine], Optional[OcrLine]]], List[OcrLine]]:
-    tolerance = (
-        y_tolerance
-        if y_tolerance is not None
-        else _default_y_tolerance(t_lines + p_lines)
-    )
+    tolerance = y_tolerance if y_tolerance is not None else _default_y_tolerance(t_lines + p_lines)
     matches: List[Tuple[Optional[OcrLine], Optional[OcrLine]]] = []
     used_paddle: set[int] = set()
 
@@ -211,9 +191,7 @@ def _match_lines(
             if idx in used_paddle:
                 continue
             delta = abs(_line_center_y(p_line) - t_center)
-            if delta <= tolerance and (
-                best_delta is None or delta < best_delta
-            ):
+            if delta <= tolerance and (best_delta is None or delta < best_delta):
                 best_delta = delta
                 best_idx = idx
         if best_idx is not None:

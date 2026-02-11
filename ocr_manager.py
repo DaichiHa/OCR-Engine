@@ -47,9 +47,7 @@ def ocr_cell(img_path, cell_box, margin=2):
             cell_bgr = cell_img
         gray = cv2.cvtColor(cell_bgr, cv2.COLOR_BGR2GRAY)
     # Simple Otsu is usually best for high-contrast text in cells
-    thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[
-        1
-    ]
+    thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
     pil_img = Image.fromarray(thresh)
 
@@ -58,9 +56,7 @@ def ocr_cell(img_path, cell_box, margin=2):
     config = r"--oem 3 --psm 7"
     text = pytesseract.image_to_string(pil_img, lang="jpn", config=config)
 
-    return (
-        text.strip().replace("\n", " ").replace("|", "")
-    )  # Remove pipe to avoid markdown break
+    return text.strip().replace("\n", " ").replace("|", "")  # Remove pipe to avoid markdown break
 
 
 def process_page(image_path, output_dir):
@@ -115,9 +111,7 @@ def process_page(image_path, output_dir):
 
 
 if __name__ == "__main__":
-    test_page = (
-        r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_011.png"
-    )
+    test_page = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_011.png"
     output_dir = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages"
 
     print("Starting OCR Manager Test...")

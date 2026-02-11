@@ -34,14 +34,10 @@ def preprocess_image_advanced(image_path, debug_save_path=None):
 
     # Adaptive Thresholding (Gaussian C) - Handles uneven lighting/aging
     # Block size 11, C=2 (standard starting points)
-    thresh = cv2.adaptiveThreshold(
-        denoised, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
-    )
+    thresh = cv2.adaptiveThreshold(denoised, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
 
     # Morphological operations to clean up dots/noise
-    kernel = np.ones(
-        (1, 1), np.uint8
-    )  # Very small kernel to avoid damaging thin strokes
+    # small kernel removed (unused) to satisfy lint
 
     # Slight dilation to connect broken characters (common in old print)
     # dilate = cv2.dilate(thresh, kernel, iterations=1)
@@ -78,9 +74,7 @@ def ocr_page_advanced(image_path, lang="jpn_vert", psm=5):
         # -c preserve_interword_spaces=1: Keep spacing
         custom_config = f"--oem 3 --psm {psm} -c preserve_interword_spaces=1"
 
-        text = pytesseract.image_to_string(
-            pil_img, lang=lang, config=custom_config
-        )
+        text = pytesseract.image_to_string(pil_img, lang=lang, config=custom_config)
 
         # Get confidence data
         data = pytesseract.image_to_data(
@@ -112,7 +106,9 @@ if __name__ == "__main__":
             os.path.join(base_dir, "page_011.png"),
             "jpn",
             6,
-        ),  # Tables usually better with psm 6 or 4 in horizontal mode if they are standard tables, but vertical PDF tables are tricky.
+        )
+        # Tables usually better with psm 6 or 4 in horizontal mode if they are
+        # standard tables. Vertical PDF tables are trickier.
     ]
 
     output_lines = []
@@ -121,11 +117,16 @@ if __name__ == "__main__":
         print(f"Processing {label} with lang={lang}, psm={psm}...")
 
         try:
-            text, conf, debug_process_path = ocr_page_advanced(
-                path, lang=lang, psm=psm
-            )
+            text, conf, debug_process_path = ocr_page_advanced(path, lang=lang, psm=psm)
 
-            header = f"\n{'='*70}\n{label}\nLang: {lang}, PSM: {psm}\nConfidence: {conf:.2f}%\nProcessed Image: {debug_process_path}\n{'='*70}\n"
+            header = (
+                "\n" + "=" * 70 + "\n"
+                + label + "\n"
+                + f"Lang: {lang}, PSM: {psm}\n"
+                + f"Confidence: {conf:.2f}%\n"
+                + f"Processed Image: {debug_process_path}\n"
+                + "=" * 70 + "\n"
+            )
             print(header)
             print(text[:500])  # Preview
 
@@ -137,9 +138,7 @@ if __name__ == "__main__":
             output_lines.append(err_msg)
 
     # Save results
-    output_file = (
-        r"c:\Users\User\Downloads\日本帝國港灣統計_0001\ocr_advanced_test.txt"
-    )
+    output_file = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\ocr_advanced_test.txt"
     with open(output_file, "w", encoding="utf-8") as f:
         f.write("\n".join(output_lines))
 

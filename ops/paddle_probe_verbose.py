@@ -10,7 +10,7 @@ os.environ.setdefault("PADDLE_WITH_ONEDNN", "0")
 os.environ.setdefault("PADDLE_DISABLE_ONEDNN", "1")
 os.environ.setdefault("PADDLE_WITH_MKL", "0")
 
-from paddleocr import PaddleOCR
+from paddleocr import PaddleOCR  # noqa: E402
 
 # per-image timeout (seconds)
 TIMEOUT_SECONDS = 30
@@ -25,15 +25,7 @@ _pocr = PaddleOCR(use_textline_orientation=False, lang="japan")
 # search the ops tree for any image files referencing 'page_010' (archive or consolidated locations)
 base = Path(__file__).parent
 exts = (".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp")
-imgs = sorted(
-    [
-        p
-        for p in base.rglob("*")
-        if p.is_file()
-        and "page_010" in p.name.lower()
-        and p.suffix.lower() in exts
-    ]
-)
+imgs = sorted([p for p in base.rglob("*") if p.is_file() and "page_010" in p.name.lower() and p.suffix.lower() in exts])
 if not imgs:
     print("No page_010 images found under", base)
 
@@ -47,11 +39,7 @@ for img in imgs:
         # directly run tesseract for this image
         cfgp = Path(__file__).parent / "paths_config.json"
         try:
-            cfg = (
-                json.loads(cfgp.read_text(encoding="utf-8"))
-                if cfgp.exists()
-                else {}
-            )
+            cfg = json.loads(cfgp.read_text(encoding="utf-8")) if cfgp.exists() else {}
         except Exception:
             cfg = {}
         tesseract = cfg.get("tesseract")
@@ -113,11 +101,7 @@ for img in imgs:
         # try fallback to tesseract if configured, with same timeout
         cfgp = Path(__file__).parent / "paths_config.json"
         try:
-            cfg = (
-                json.loads(cfgp.read_text(encoding="utf-8"))
-                if cfgp.exists()
-                else {}
-            )
+            cfg = json.loads(cfgp.read_text(encoding="utf-8")) if cfgp.exists() else {}
         except Exception:
             cfg = {}
         tesseract = cfg.get("tesseract")
@@ -164,11 +148,7 @@ for img in imgs:
         # attempt tesseract fallback without waiting longer than TIMEOUT_SECONDS
         cfgp = Path(__file__).parent / "paths_config.json"
         try:
-            cfg = (
-                json.loads(cfgp.read_text(encoding="utf-8"))
-                if cfgp.exists()
-                else {}
-            )
+            cfg = json.loads(cfgp.read_text(encoding="utf-8")) if cfgp.exists() else {}
         except Exception:
             cfg = {}
         tesseract = cfg.get("tesseract")

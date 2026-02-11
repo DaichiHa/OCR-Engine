@@ -45,9 +45,7 @@ def normalize_text(s):
 def process_and_score(in_path):
     in_path = Path(in_path)
     text = in_path.read_text(encoding="utf-8")
-    norm = "\n".join(
-        normalize_text(line) for line in text.splitlines() if line.strip()
-    )
+    norm = "\n".join(normalize_text(line) for line in text.splitlines() if line.strip())
     out_path = in_path.with_name(in_path.stem + ".normalized.txt")
     out_path.write_text(norm, encoding="utf-8")
     clean_out = in_path.with_suffix(".clean.txt")

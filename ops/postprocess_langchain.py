@@ -94,32 +94,28 @@ def main():
     args = ap.parse_args()
 
     # If LLM requested and env var present, attempt to call LangChain/OpenAI
-    if (
-        args.use_llm
-        and os.getenv("OPENAI_API_KEY")
-        and os.getenv("USE_LANGCHAIN", "1") != "0"
-    ):
+    if args.use_llm and os.getenv("OPENAI_API_KEY") and os.getenv("USE_LANGCHAIN", "1") != "0":
         try:
             from langchain import LLMChain, PromptTemplate
             from langchain.llms import OpenAI
 
             with open(args.in_path, "r", encoding="utf-8") as f:
                 src = f.read()
+            prompt_text = (
+                "You are a specialist in correcting OCR output from Showa-era Japanese statistical tables.\n"
+                "Correct OCR errors, normalize old kanji to modern equivalents, fix numbers and punctuation, "
+                "and preserve layout.\n"
+                "Return only the corrected text.\n\nInput:\n{text}\n\nCorrected:"
+            )
             prompt = PromptTemplate(
                 _input_variables=["text"],
-                _template=(
-                    "You are a specialist in correcting OCR output from Showa-era Japanese statistical tables. "
-                    "Correct OCR errors, normalize old kanji to modern equivalents, fix numbers and punctuation, and preserve layout. "
-                    "Return only the corrected text.\n\nInput:\n{text}\n\nCorrected:"
-                ),
+                _template=prompt_text,
             )
             llm = OpenAI(temperature=0)
             chain = LLMChain(llm=llm, prompt=prompt)
             # chunk large text
             chunk_size = 4000
-            parts = [
-                src[i : i + chunk_size] for i in range(0, len(src), chunk_size)
-            ]
+            parts = [src[i : i + chunk_size] for i in range(0, len(src), chunk_size)]
             out_parts = []
             for p in parts:
                 res = chain.run(text=p)

@@ -89,9 +89,7 @@ def main():
     print(f"Starting parallel small test ({MAX_WORKERS} workers)...")
     start_time = time.time()
 
-    with concurrent.futures.ThreadPoolExecutor(
-        max_workers=MAX_WORKERS
-    ) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         executor.map(process_page_parallel, tasks)
 
     end_time = time.time()
