@@ -1,0 +1,7 @@
+{
+  "host": null,
+  "model": "llama2:latest",
+  "timeout": 10,
+  "use_cli": false,
+  "cli_path": "C:\\Users\\User\\AppData\\Local\\Programs\\Ollama\\ollama.exe"
+}

@@ -1,0 +1,45 @@
+name: CLAHE Sweep
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  clahe-sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install requirements (if present)
+        run: |
+          if [ -f requirements.txt ]; then
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+          else
+            python -m pip install --upgrade pip
+            pip install --no-cache-dir pillow numpy opencv-python-headless
+          fi
+
+      - name: Run CLAHE sweep
+        shell: bash
+        run: |
+          if [ -f ops/clahe_sweep_page010.py ]; then
+            python ops/clahe_sweep_page010.py
+          else
+            echo 'CLAHE sweep script not found; skipping'
+            exit 0
+          fi
+
+      - name: Upload inputs and results
+        uses: actions/upload-artifact@v4
+        with:
+          name: clahe-sweep-results
+          path: |
+            ops/page_010_clahe_*.png
+            ops/clahe_sweep_page010_results.json
+            ops/clahe_sweep_*.rapid.txt

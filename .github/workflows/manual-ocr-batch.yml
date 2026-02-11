@@ -1,0 +1,42 @@
+name: Manual OCR Batch
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  run-ocr-batch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install requirements (if present)
+        run: |
+          if [ -f requirements.txt ]; then
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+          else
+            echo 'No requirements.txt found; attempting to install light deps'
+            python -m pip install --upgrade pip
+            pip install --no-cache-dir pillow numpy
+          fi
+
+      - name: Run OCR batch (if runtime available)
+        shell: bash
+        run: |
+          python ops/run_rapidocr_action.py
+
+      - name: Collect OCR artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ocr-results
+          path: |
+            ops/rapid_page_*.json
+            ops/rapid_page_*.txt
+            ops/*rapid_page_*.json
+            ops/*rapid_page_*.txt

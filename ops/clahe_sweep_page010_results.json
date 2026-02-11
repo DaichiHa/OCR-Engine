@@ -1,0 +1,50 @@
+[
+  {
+    "combo": [
+      2,
+      1.5,
+      4,
+      0
+    ],
+    "rapid": {
+      "in": "ops\\page_010_clahe_1.rapid.normalized.txt",
+      "out": "ops\\page_010_clahe_1.rapid.clean.txt",
+      "before_jp_rate2_fix": 0.18854415274463007,
+      "before_noise_rate2_fix": 0.04608294930875576,
+      "after_jp_rate2_fix": 0.18944844124700239,
+      "after_noise_rate2_fix": 0.046296296296296294
+    },
+    "tesseract_psm11": {
+      "in": "ops\\page_010_clahe_1.tess.psm11.normalized.txt",
+      "out": "ops\\page_010_clahe_1.tess.psm11.clean.txt",
+      "before_jp_rate2_fix": 0.330173775671406,
+      "before_noise_rate2_fix": 0.15821812596006143,
+      "after_jp_rate2_fix": 0.3281004709576138,
+      "after_noise_rate2_fix": 0.0893939393939394
+    }
+  },
+  {
+    "combo": [
+      2,
+      1.5,
+      4,
+      8
+    ],
+    "rapid": {
+      "in": "ops\\page_010_clahe_2.rapid.normalized.txt",
+      "out": "ops\\page_010_clahe_2.rapid.clean.txt",
+      "before_jp_rate2_fix": 0.19856459330143542,
+      "before_noise_rate2_fix": 0.05057471264367816,
+      "after_jp_rate2_fix": 0.2,
+      "after_noise_rate2_fix": 0.04861111111111111
+    },
+    "tesseract_psm11": {
+      "in": "ops\\page_010_clahe_2.tess.psm11.normalized.txt",
+      "out": "ops\\page_010_clahe_2.tess.psm11.clean.txt",
+      "before_jp_rate2_fix": 0.3404605263157895,
+      "before_noise_rate2_fix": 0.1282051282051282,
+      "after_jp_rate2_fix": 0.33713355048859933,
+      "after_noise_rate2_fix": 0.05246422893481717
+    }
+  }
+]

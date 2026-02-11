@@ -1,0 +1,80 @@
+[
+  {
+    "idx": 1,
+    "name": "page_010_clahe_1",
+    "params": {
+      "scale": 2,
+      "clahe_clip": 1.5,
+      "clahe_tile": 4,
+      "denoise_h": 0,
+      "deskew": false,
+      "binarize": false
+    },
+    "tesseract": null
+  },
+  {
+    "idx": 2,
+    "name": "page_010_clahe_2",
+    "params": {
+      "scale": 2,
+      "clahe_clip": 1.5,
+      "clahe_tile": 4,
+      "denoise_h": 0,
+      "deskew": false,
+      "binarize": true
+    },
+    "tesseract": null
+  },
+  {
+    "idx": 3,
+    "name": "page_010_clahe_3",
+    "params": {
+      "scale": 2,
+      "clahe_clip": 1.5,
+      "clahe_tile": 4,
+      "denoise_h": 0,
+      "deskew": true,
+      "binarize": false
+    },
+    "tesseract": null
+  },
+  {
+    "idx": 4,
+    "name": "page_010_clahe_4",
+    "params": {
+      "scale": 2,
+      "clahe_clip": 1.5,
+      "clahe_tile": 4,
+      "denoise_h": 0,
+      "deskew": true,
+      "binarize": true
+    },
+    "tesseract": null
+  },
+  {
+    "idx": 5,
+    "name": "page_010_clahe_5",
+    "params": {
+      "scale": 2,
+      "clahe_clip": 1.5,
+      "clahe_tile": 4,
+      "denoise_h": 8,
+      "deskew": false,
+      "binarize": false
+    },
+    "tesseract": null
+  },
+  {
+    "idx": 6,
+    "name": "page_010_clahe_6",
+    "params": {
+      "scale": 2,
+      "clahe_clip": 1.5,
+      "clahe_tile": 4,
+      "denoise_h": 8,
+      "deskew": false,
+      "binarize": true
+    },
+    "tesseract": null
+  }
+]
