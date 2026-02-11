@@ -10,8 +10,8 @@ try:
 except Exception:
     RapidOCR = None
 
-from itertools import product
 import json
+from itertools import product
 
 try:
     import pytesseract
