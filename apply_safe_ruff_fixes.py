@@ -55,7 +55,7 @@ def main():
     )
     parser.add_argument(
         "--message",
-        default="chore(lint): convert bare except to except Exception",
+        _default="chore(lint): convert bare except to except Exception",
         help="commit message when using --commit",
     )
     args = parser.parse_args()
