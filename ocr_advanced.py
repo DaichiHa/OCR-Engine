@@ -39,9 +39,7 @@ def preprocess_image_advanced(image_path, debug_save_path=None):
     )
 
     # Morphological operations to clean up dots/noise
-    _kernel = np.ones(
-        (1, 1), np.uint8
-    )  # Very small kernel to avoid damaging thin strokes
+    # small kernel removed (unused) to satisfy lint
 
     # Slight dilation to connect broken characters (common in old print)
     # dilate = cv2.dilate(thresh, kernel, iterations=1)
