@@ -32,16 +32,16 @@ def fix_file_for_name(p: Path, name: str, code: str):
 
     if code == "F821":
         if name == "l":
-            # if file contains lambda line or for line in, replace lone 'line' with 'line'
+            # if file contains lambda line or for line in, replace lone 'l' with 'line'
             if re.search(r"lambda\s+line\b|for\s+line\s+in\b", src):
-                new = replace_word(src, "line", "line")
+                new = replace_word(src, "l", "line")
                 if new != src:
                     src = new
                     modified = True
         elif name == "line":
-            # if file contains numeric assignment to line, prefer keeping line for coords
+            # if file contains numeric assignment to l, prefer keeping l for coords
             if re.search(r"\bl\s*=\s*int\(|\bl\s*=\s*", src):
-                new = replace_word(src, "line", "line")
+                new = replace_word(src, "line", "l")
                 if new != src:
                     src = new
                     modified = True

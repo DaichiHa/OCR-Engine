@@ -73,7 +73,7 @@ def numeric_corrections_linewise(s: str) -> str:
             continue
         # If the line looks like a numeric table or pure number, apply fixes
         if re.fullmatch(r"[\dOIl\s,\.\%\-\+()]+", stripped):
-            # common OCR confusions: O->0, I or line -> 1 when adjacent to digits
+            # common OCR confusions: O->0, I or l -> 1 when adjacent to digits
             t = re.sub(r"O", "0", stripped)
             t = re.sub(r"(?<=\d)[Il](?=\d)", "1", t)
             # normalize multiple spaces and fix comma placements (simple)

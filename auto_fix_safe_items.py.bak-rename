@@ -27,19 +27,19 @@ def transform_text(text: str) -> (str, bool):
     changed = False
 
     # 1) Rename lambda parameter `l` -> `line` (simple pattern)
-    new = re.sub(r"\blambda\s+line\s*:", "lambda line:", text)
+    new = re.sub(r"\blambda\s+l\s*:", "lambda line:", text)
     if new != text:
         text = new
         changed = True
 
     # 2) Rename comprehension/for variable `for line in` -> `for line in`
-    new = re.sub(r"\bfor\s+line\s+in\b", "for line in", text)
+    new = re.sub(r"\bfor\s+l\s+in\b", "for line in", text)
     if new != text:
         text = new
         changed = True
 
     # 3) Replace common comprehension targets like `[line.strip() for line in ...]` occurrences
-    new = re.sub(r"\[\s*line\b", "[line", text)
+    new = re.sub(r"\[\s*l\b", "[line", text)
     if new != text:
         text = new
         changed = True
