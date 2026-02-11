@@ -70,10 +70,14 @@ def main():
         model_name = MODELS[i % len(MODELS)]
         tasks.append((img_path, out_path, model_name, p_num))
 
-    print(f"--- Launching Parallel Efficiency Test ({len(tasks)} parallel nodes) ---")
+    print(
+        f"--- Launching Parallel Efficiency Test ({len(tasks)} parallel nodes) ---"
+    )
     start = time.time()
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=len(tasks)) as executor:
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=len(tasks)
+    ) as executor:
         executor.map(process_node, tasks)
 
     print(f"--- Finished in {time.time() - start:.2f}s ---")

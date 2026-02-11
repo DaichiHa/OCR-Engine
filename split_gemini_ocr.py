@@ -75,7 +75,9 @@ def split_and_process():
 
     # 統合
     with open(
-        os.path.join(OUTPUT_DIR, "integrated_page_010.md"), "w", encoding="utf-8"
+        os.path.join(OUTPUT_DIR, "integrated_page_010.md"),
+        "w",
+        encoding="utf-8",
     ) as f:
         f.write("# Page 10 Integrated Result\n\n")
         for res in results:

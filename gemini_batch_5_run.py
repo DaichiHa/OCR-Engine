@@ -32,7 +32,9 @@ def load_key():
 
 
 def process_page(file_path, out_path, model):
-    page_num = os.path.basename(file_path).replace("page_", "").replace(".png", "")
+    page_num = (
+        os.path.basename(file_path).replace("page_", "").replace(".png", "")
+    )
     print(f"[{time.strftime('%H:%M:%S')}] Processing Page {page_num}...")
 
     try:

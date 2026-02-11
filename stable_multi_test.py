@@ -81,14 +81,20 @@ def main():
 
         print(f"\n[Batch] Starting Batch {i//BATCH_SIZE + 1}...")
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=BATCH_SIZE) as executor:
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=BATCH_SIZE
+        ) as executor:
             executor.map(process_page_stable, tasks)
 
         if i + BATCH_SIZE < len(test_pages):
-            print(f"[Wait] Cooling down for {COOLDOWN}s to reset ALL models' quotas...")
+            print(
+                f"[Wait] Cooling down for {COOLDOWN}s to reset ALL models' quotas..."
+            )
             time.sleep(COOLDOWN)
 
-    print(f"\n--- Multi-Model Test Complete in {time.time() - start_time:.2f}s ---")
+    print(
+        f"\n--- Multi-Model Test Complete in {time.time() - start_time:.2f}s ---"
+    )
 
 
 if __name__ == "__main__":

@@ -7,7 +7,10 @@ def parse_ruff_report(report_path: Path):
     entries = []
     text = report_path.read_text(encoding="utf-8", errors="ignore")
     # Pattern: F821 ... Undefined name `l`\n  --> path:line:col
-    for m in re.finditer(r"(F821|E722) .*?`?(\w+)`?.*?\n\s*-->\s*([^:\n]+):([0-9]+):([0-9]+)", text):
+    for m in re.finditer(
+        r"(F821|E722) .*?`?(\w+)`?.*?\n\s*-->\s*([^:\n]+):([0-9]+):([0-9]+)",
+        text,
+    ):
         code = m.group(1)
         name = m.group(2)
         path = m.group(3).strip()
@@ -48,7 +51,12 @@ def fix_file_for_name(p: Path, name: str, code: str):
 
     if code == "E722":
         # convert bare except: -> except Exception:
-        new = re.sub(r"(^\s*)except:\s*$", r"\1except Exception:", src, flags=re.MULTILINE)
+        new = re.sub(
+            r"(^\s*)except:\s*$",
+            r"\1except Exception:",
+            src,
+            flags=re.MULTILINE,
+        )
         if new != src:
             src = new
             modified = True

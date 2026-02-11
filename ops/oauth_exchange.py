@@ -18,7 +18,9 @@ for line in env_path.read_text(encoding="utf-8").splitlines():
 
 CLIENT_ID = env.get("GITHUB_CLIENT_ID")
 CLIENT_SECRET = env.get("GITHUB_CLIENT_SECRET")
-REDIRECT_URI = env.get("OAUTH_CALLBACK_URL", "http://localhost:8000/auth/callback")
+REDIRECT_URI = env.get(
+    "OAUTH_CALLBACK_URL", "http://localhost:8000/auth/callback"
+)
 
 CB = Path(__file__).resolve().parent / "oauth_callback_last.json"
 if not CB.exists():
@@ -45,7 +47,9 @@ data = {
 }
 headers = {"Accept": "application/json"}
 req = urllib.request.Request(
-    post_url, data=urllib.parse.urlencode(data).encode("utf-8"), headers=headers
+    post_url,
+    data=urllib.parse.urlencode(data).encode("utf-8"),
+    headers=headers,
 )
 with urllib.request.urlopen(req) as resp:
     body = resp.read()
@@ -55,7 +59,9 @@ with urllib.request.urlopen(req) as resp:
         out = {"raw": body.decode("utf-8")}
 
 Path("oauth_token.json").write_text(
-    json.dumps({"request": data, "response": out}, ensure_ascii=False, indent=2),
+    json.dumps(
+        {"request": data, "response": out}, ensure_ascii=False, indent=2
+    ),
     encoding="utf-8",
 )
 print("wrote ops/oauth_token.json")

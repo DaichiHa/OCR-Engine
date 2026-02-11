@@ -37,8 +37,12 @@ def analyze_hybrid_structure(image_path, debug_dir):
     if lines is not None:
         for line in lines:
             x1, y1, x2, y2 = line[0]
-            if abs(x1 - x2) < 5 and abs(y1 - y2) > 50:  # Verticalish and long enough
-                vertical_lines.append(((x1 + x2) / 2, min(y1, y2), max(y1, y2)))
+            if (
+                abs(x1 - x2) < 5 and abs(y1 - y2) > 50
+            ):  # Verticalish and long enough
+                vertical_lines.append(
+                    ((x1 + x2) / 2, min(y1, y2), max(y1, y2))
+                )
 
     # Cluster Vertical Lines (Columns)
     vertical_lines.sort(key=lambda x: x[0])
@@ -62,7 +66,10 @@ def analyze_hybrid_structure(image_path, debug_dir):
     custom_config = r"--oem 3 --psm 6"
     pil_img = Image.fromarray(gray)
     data = pytesseract.image_to_data(
-        pil_img, lang="jpn", config=custom_config, output_type=pytesseract.Output.DICT
+        pil_img,
+        lang="jpn",
+        config=custom_config,
+        output_type=pytesseract.Output.DICT,
     )
 
     # Filter valid text blocks
@@ -158,8 +165,12 @@ def analyze_hybrid_structure(image_path, debug_dir):
 
 
 if __name__ == "__main__":
-    test_page = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_011.png"
-    debug_dir = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages"
+    from pathlib import Path
+
+    home = Path.home()
+    sample_root = home / "Downloads" / "日本帝國港灣統計_0001"
+    test_page = str(sample_root / "pages" / "page_011.png")
+    debug_dir = str(sample_root / "pages")
 
     print(f"Testing Hybrid Extraction on {test_page}...")
     rows, path = analyze_hybrid_structure(test_page, debug_dir)
@@ -170,10 +181,7 @@ if __name__ == "__main__":
         print("| " + " | ".join(row) + " |")
 
     # Save md
-    with open(
-        r"c:\Users\User\Downloads\日本帝國港灣統計_0001\page_011_hybrid.md",
-        "w",
-        _encoding="utf-8",
-    ) as f:
+    out_md = sample_root / "page_011_hybrid.md"
+    with out_md.open("w", encoding="utf-8") as f:
         for row in rows:
             f.write("| " + " | ".join(row) + " |\n")

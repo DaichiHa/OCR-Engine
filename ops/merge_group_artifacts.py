@@ -66,7 +66,7 @@ for group in sorted([d for d in la.iterdir() if d.is_dir()]):
             if s in seen:
                 continue
             seen.add(s)
-            lines.append(line)
+            lines.append(s)
 
     # start with canonical
     add_lines(canonical)

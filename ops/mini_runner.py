@@ -52,7 +52,9 @@ def preprocess(pil_img):
         gray = cv2.cvtColor(arr, cv2.COLOR_RGB2GRAY)
 
     # revert upscale to 2.0 (keep INK_MIN lowered) to isolate effect
-    gray = cv2.resize(gray, None, fx=2.0, fy=2.0, interpolation=cv2.INTER_CUBIC)
+    gray = cv2.resize(
+        gray, None, fx=2.0, fy=2.0, interpolation=cv2.INTER_CUBIC
+    )
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
     th = cv2.adaptiveThreshold(
         gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 35, 11
@@ -62,8 +64,12 @@ def preprocess(pil_img):
 
     inv = 255 - th
     hh, ww = inv.shape
-    hk = cv2.getStructuringElement(cv2.MORPH_RECT, (max(80, int(ww / HK_DIV)), 1))
-    vk = cv2.getStructuringElement(cv2.MORPH_RECT, (1, max(80, int(hh / VK_DIV))))
+    hk = cv2.getStructuringElement(
+        cv2.MORPH_RECT, (max(80, int(ww / HK_DIV)), 1)
+    )
+    vk = cv2.getStructuringElement(
+        cv2.MORPH_RECT, (1, max(80, int(hh / VK_DIV)))
+    )
     h = cv2.morphologyEx(inv, cv2.MORPH_OPEN, hk, iterations=1)
     v = cv2.morphologyEx(inv, cv2.MORPH_OPEN, vk, iterations=1)
     inv2 = cv2.subtract(inv, cv2.bitwise_or(h, v))
@@ -74,7 +80,9 @@ def preprocess(pil_img):
 
     inv2 = cv2.dilate(inv2, np.ones((2, 2), np.uint8), iterations=1)
     out = 255 - inv2
-    out = cv2.copyMakeBorder(out, 10, 10, 10, 10, cv2.BORDER_CONSTANT, value=255)
+    out = cv2.copyMakeBorder(
+        out, 10, 10, 10, 10, cv2.BORDER_CONSTANT, value=255
+    )
     return Image.fromarray(out)
 
 
@@ -97,7 +105,12 @@ def scrub(t):
 def digit_score(s):
     if not s:
         return 0.0
-    s = s.replace("，", ",").replace("．", ".").replace("（", "(").replace("）", ")")
+    s = (
+        s.replace("，", ",")
+        .replace("．", ".")
+        .replace("（", "(")
+        .replace("）", ")")
+    )
     d = sum(c.isdigit() for c in s)
     p = sum(c in ".,-()%" for c in s)
     return d * 2.0 + p * 0.5
@@ -109,7 +122,12 @@ def postprocess_text(s):
     # Unicode normalize to NFKC (convert fullwidth to ascii where appropriate)
     s = unicodedata.normalize("NFKC", s)
     # Replace common punctuation and long dash
-    s = s.replace("　", " ").replace("。", ".").replace("、", ",").replace("ー", "-")
+    s = (
+        s.replace("　", " ")
+        .replace("。", ".")
+        .replace("、", ",")
+        .replace("ー", "-")
+    )
     # Remove control characters
     s = re.sub(r"[\x00-\x1f\x7f]", "", s)
 
@@ -169,7 +187,9 @@ def patch_tesseract(lang_main):
         if os.getenv("TESS_DIGIT_2PASS", "1") == "1":
             kw2 = dict(kw)
             kw2["lang"] = "eng"
-            kw2["config"] = cfg + " -c tessedit_char_whitelist=0123456789.,-()%"
+            kw2["config"] = (
+                cfg + " -c tessedit_char_whitelist=0123456789.,-()%"
+            )
 
             t2 = scrub(orig(img, **kw2))
             t2 = postprocess_text(t2)
@@ -261,7 +281,9 @@ def main():
 
     audit = out / "audit"
     audit.mkdir(exist_ok=True)
-    (audit / f"{out_md.stem}.runlog.txt").write_text(buf.getvalue(), encoding="utf-8")
+    (audit / f"{out_md.stem}.runlog.txt").write_text(
+        buf.getvalue(), encoding="utf-8"
+    )
     (audit / f"{out_md.stem}.sha256.txt").write_text(
         f"page_sha256={sha256_file(args.page)}\nmd_sha256={sha256_file(out_md)}\n",
         encoding="utf-8",

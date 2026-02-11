@@ -42,14 +42,18 @@ def main():
                     if isinstance(page, (list, tuple)):
                         for item in page:
                             try:
-                                if isinstance(item, (list, tuple)) and len(item) >= 2:
+                                if (
+                                    isinstance(item, (list, tuple))
+                                    and len(item) >= 2
+                                ):
                                     txt = None
                                     if isinstance(item[1], (list, tuple)):
                                         txt = item[1][0]
                                     elif isinstance(item[1], str):
                                         txt = item[1]
                                     elif (
-                                        isinstance(item[1], dict) and "text" in item[1]
+                                        isinstance(item[1], dict)
+                                        and "text" in item[1]
                                     ):
                                         txt = item[1]["text"]
                                     if txt:

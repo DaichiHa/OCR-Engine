@@ -37,14 +37,18 @@ def process_and_save_page(page_info):
             # Table Mode
             rows = hybrid_extractor.extract_table_content(image_path)
             if not rows:
-                result = f"\n\n## Page {page_num}\n\n(No table data detected)\n"
+                result = (
+                    f"\n\n## Page {page_num}\n\n(No table data detected)\n"
+                )
             else:
                 lines = []
                 lines.append(f"\n\n## Page {page_num}")
                 # Construct Markdown Table
                 for row_idx, row in enumerate(rows):
                     # Clean up: Replace pipes with generic separator or escape them
-                    clean_row = [str(c).replace("|", "") for c in row if c is not None]
+                    clean_row = [
+                        str(c).replace("|", "") for c in row if c is not None
+                    ]
                     lines.append("| " + " | ".join(clean_row) + " |")
                 result = "\n".join(lines)
 
@@ -101,7 +105,9 @@ if __name__ == "__main__":
         os.makedirs(intermediate_dir)
 
     # Get all page files
-    files = sorted([f for f in os.listdir(pages_dir) if f.lower().endswith(".png")])
+    files = sorted(
+        [f for f in os.listdir(pages_dir) if f.lower().endswith(".png")]
+    )
 
     # Map filenames to page numbers (assuming page_XXX.png)
     page_tasks = []
@@ -114,7 +120,9 @@ if __name__ == "__main__":
         try:
             num_str = f.split("_")[-1].split(".")[0]
             num = int(num_str)
-            page_tasks.append((num, os.path.join(pages_dir, f), intermediate_dir))
+            page_tasks.append(
+                (num, os.path.join(pages_dir, f), intermediate_dir)
+            )
         except Exception:
             continue
 
@@ -128,9 +136,12 @@ if __name__ == "__main__":
     count = 0
     total = len(page_tasks)
 
-    with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
+    with concurrent.futures.ProcessPoolExecutor(
+        max_workers=max_workers
+    ) as executor:
         futures = {
-            executor.submit(process_and_save_page, task): task for task in page_tasks
+            executor.submit(process_and_save_page, task): task
+            for task in page_tasks
         }
 
         for future in concurrent.futures.as_completed(futures):
@@ -142,7 +153,9 @@ if __name__ == "__main__":
                     if count % 10 == 0:
                         print(f"[{count}/{total}] Skipped existing pages...")
                 else:
-                    print(f"[{count}/{total}] Page {p_num} {status} in {dur:.2f}s")
+                    print(
+                        f"[{count}/{total}] Page {p_num} {status} in {dur:.2f}s"
+                    )
             except Exception as e:
                 print(f"Worker failed: {e}")
 

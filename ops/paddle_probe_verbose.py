@@ -29,7 +29,9 @@ imgs = sorted(
     [
         p
         for p in base.rglob("*")
-        if p.is_file() and "page_010" in p.name.lower() and p.suffix.lower() in exts
+        if p.is_file()
+        and "page_010" in p.name.lower()
+        and p.suffix.lower() in exts
     ]
 )
 if not imgs:
@@ -45,16 +47,26 @@ for img in imgs:
         # directly run tesseract for this image
         cfgp = Path(__file__).parent / "paths_config.json"
         try:
-            cfg = json.loads(cfgp.read_text(encoding="utf-8")) if cfgp.exists() else {}
+            cfg = (
+                json.loads(cfgp.read_text(encoding="utf-8"))
+                if cfgp.exists()
+                else {}
+            )
         except Exception:
             cfg = {}
         tesseract = cfg.get("tesseract")
         if tesseract:
             out_base = str(img.with_suffix(""))
             try:
-                print("FORCE_TESSERACT_ONLY: running tesseract:", tesseract, str(img))
+                print(
+                    "FORCE_TESSERACT_ONLY: running tesseract:",
+                    tesseract,
+                    str(img),
+                )
                 subprocess.run(
-                    [tesseract, str(img), out_base], check=True, timeout=TIMEOUT_SECONDS
+                    [tesseract, str(img), out_base],
+                    check=True,
+                    timeout=TIMEOUT_SECONDS,
                 )
                 produced = Path(out_base + ".txt")
                 if produced.exists():
@@ -92,23 +104,35 @@ for img in imgs:
         break
     try:
         subprocess.run(
-            [sys.executable, str(worker), str(img)], check=True, timeout=timeout
+            [sys.executable, str(worker), str(img)],
+            check=True,
+            timeout=timeout,
         )
     except subprocess.TimeoutExpired:
         print("Timeout expired for", img, f"({TIMEOUT_SECONDS}s)")
         # try fallback to tesseract if configured, with same timeout
         cfgp = Path(__file__).parent / "paths_config.json"
         try:
-            cfg = json.loads(cfgp.read_text(encoding="utf-8")) if cfgp.exists() else {}
+            cfg = (
+                json.loads(cfgp.read_text(encoding="utf-8"))
+                if cfgp.exists()
+                else {}
+            )
         except Exception:
             cfg = {}
         tesseract = cfg.get("tesseract")
         if tesseract:
             out_base = str(img.with_suffix(""))
             try:
-                print("Running tesseract fallback (with timeout):", tesseract, str(img))
+                print(
+                    "Running tesseract fallback (with timeout):",
+                    tesseract,
+                    str(img),
+                )
                 subprocess.run(
-                    [tesseract, str(img), out_base], check=True, timeout=TIMEOUT_SECONDS
+                    [tesseract, str(img), out_base],
+                    check=True,
+                    timeout=TIMEOUT_SECONDS,
                 )
                 produced = Path(out_base + ".txt")
                 if produced.exists():
@@ -140,7 +164,11 @@ for img in imgs:
         # attempt tesseract fallback without waiting longer than TIMEOUT_SECONDS
         cfgp = Path(__file__).parent / "paths_config.json"
         try:
-            cfg = json.loads(cfgp.read_text(encoding="utf-8")) if cfgp.exists() else {}
+            cfg = (
+                json.loads(cfgp.read_text(encoding="utf-8"))
+                if cfgp.exists()
+                else {}
+            )
         except Exception:
             cfg = {}
         tesseract = cfg.get("tesseract")
@@ -148,7 +176,9 @@ for img in imgs:
             out_base = str(img.with_suffix(""))
             try:
                 subprocess.run(
-                    [tesseract, str(img), out_base], check=True, timeout=TIMEOUT_SECONDS
+                    [tesseract, str(img), out_base],
+                    check=True,
+                    timeout=TIMEOUT_SECONDS,
                 )
                 produced = Path(out_base + ".txt")
                 if produced.exists():

@@ -58,7 +58,10 @@ def run(
         from onnxocr.onnx_paddleocr import ONNXPaddleOcr
 
         ppocr = ONNXPaddleOcr(
-            _use_angle_cls=True, use_gpu=False, use_dml=False, use_openvino=False
+            _use_angle_cls=True,
+            use_gpu=False,
+            use_dml=False,
+            use_openvino=False,
         )
         ppocr_ok = True
     except Exception:
@@ -105,7 +108,9 @@ def run(
                 else:
                     dets = r
                 if isinstance(dets, list) and len(dets) > 0:
-                    best = max(dets, key=lambda z: float(z[2]) if len(z) >= 3 else 0)
+                    best = max(
+                        dets, key=lambda z: float(z[2]) if len(z) >= 3 else 0
+                    )
                     entry["rapid"] = {"text": best[1], "score": float(best[2])}
                 else:
                     entry["rapid"] = {"text": None, "score": None}
@@ -115,12 +120,22 @@ def run(
         if ppocr_ok:
             try:
                 res = ppocr.ocr(up)
-                if res and isinstance(res, list) and len(res) > 0 and len(res[0]) > 0:
+                if (
+                    res
+                    and isinstance(res, list)
+                    and len(res) > 0
+                    and len(res[0]) > 0
+                ):
                     best = res[0][0]
-                    txt = best[1][0] if isinstance(best[1], (list, tuple)) else best[1]
+                    txt = (
+                        best[1][0]
+                        if isinstance(best[1], (list, tuple))
+                        else best[1]
+                    )
                     sc = (
                         float(best[1][1])
-                        if isinstance(best[1], (list, tuple)) and len(best[1]) > 1
+                        if isinstance(best[1], (list, tuple))
+                        and len(best[1]) > 1
                         else None
                     )
                     entry["ppocr"] = {"text": txt, "score": sc}

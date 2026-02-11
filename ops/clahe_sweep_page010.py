@@ -3,11 +3,29 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from typing import Optional
 
 try:
     from rapidocr_onnxruntime import RapidOCR
 except Exception:
     RapidOCR = None
+    
+from itertools import product
+import json
+
+try:
+    import pytesseract
+    from PIL import Image
+except Exception:
+    pytesseract = None
+    Image = None
+
+# lightweight postprocess scoring helper (imported early to avoid E402 later)
+try:
+    from postprocess_and_score import process_and_score
+except Exception:
+    # allow import failure during quick static checks; runtime will fail if used
+    process_and_score = None
 
 
 # Fallback wrapper that mimics RapidOCR minimal output shape
@@ -42,7 +60,9 @@ def _make_fallback_ocr():
             def __call__(self, img_path):
                 img = Image.open(img_path)
                 txt = pytesseract.image_to_string(img, lang="jpn")
-                lines = [line.strip() for line in txt.splitlines() if line.strip()]
+                lines = [
+                    line.strip() for line in txt.splitlines() if line.strip()
+                ]
                 dets = []
                 for t in lines:
                     dets.append((None, t, 1.0))
@@ -69,7 +89,9 @@ def _parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--page", default="010", help="page id (e.g. 000, 010)")
     p.add_argument(
-        "--smoke", action="store_true", help="run a fast smoke test (limit combos)"
+        "--smoke",
+        action="store_true",
+        help="run a fast smoke test (limit combos)",
     )
     p.add_argument(
         "--preprocess-python",
@@ -81,13 +103,35 @@ def _parse_args():
 
 args = _parse_args()
 page = args.page
-miniconda_py = r"C:/Users/User/Miniconda3/envs/ocr311/python.exe"
+
+
+def _find_conda_env_python(preferred_env: str = "ocr311") -> Optional[str]:
+    home = Path.home()
+    conda_envs = home / "Miniconda3" / "envs"
+    try:
+        if conda_envs.exists():
+            pref = conda_envs / preferred_env
+            if pref.exists():
+                py = pref / ("python.exe" if os.name == "nt" else "bin/python")
+                if py.exists():
+                    return str(py)
+            for env in conda_envs.iterdir():
+                py = env / ("python.exe" if os.name == "nt" else "bin/python")
+                if py.exists():
+                    return str(py)
+    except Exception:
+        pass
+    return None
+
+
+miniconda_py = _find_conda_env_python()
 if args.preprocess_python:
     preprocess_python = args.preprocess_python
 else:
-    preprocess_python = miniconda_py if Path(miniconda_py).exists() else sys.executable
+    preprocess_python = miniconda_py if miniconda_py else sys.executable
 
-user_src = Path(f"C:/Users/User/Downloads/PDF/_img/page_{page}.png")
+# Prefer user Downloads/PDF/_img if present; otherwise look in repo ops/
+user_src = Path.home() / "Downloads" / "PDF" / "_img" / f"page_{page}.png"
 repo_src = Path(f"ops/page_{page}.png")
 if user_src.exists():
     src = user_src
@@ -121,11 +165,11 @@ if os.environ.get("GITHUB_ACTIONS", "").lower() == "true":
     os.environ.setdefault("PADDLE_DISABLE_ONEDNN", "1")
     os.environ.setdefault("PADDLE_WITH_MKL", "0")
     print("Detected CI environment: set Paddle/OneDNN disable env vars")
-from itertools import product  # noqa: E402
 
-import pytesseract  # noqa: E402
-from PIL import Image  # noqa: E402
-from postprocess_and_score import process_and_score  # noqa: E402
+
+def _normalize_text(text: str) -> str:
+    return " ".join(str(text).strip().split())
+
 
 # broader grid of SR scales + CLAHE combos: (scale, clip, tile, denoise_h)
 scales = [2, 3]
@@ -197,14 +241,17 @@ for i, combo in enumerate(combos, start=1):
     txt_path = out.with_suffix(".rapid.txt")
     with open(txt_path, "w", encoding="utf-8") as f:
         for item in dets:
+            if item is None:
+                continue
             try:
-                _, text, _ = item
+                box, text, score = item
             except Exception:
-                if len(item) >= 3:
-                    _, text, _ = item[0], item[1], item[2]
+                # only attempt index-based unpacking for sequences
+                if isinstance(item, (list, tuple)) and len(item) >= 3:
+                    box, text, score = item[0], item[1], item[2]
                 else:
                     continue
-            f.write(str(text) + "\n")
+            f.write(_normalize_text(text) + "\n")
     print("Wrote rapid txt:", txt_path)
     # Postprocess KPI for rapid output
     _, summary_rapid = process_and_score(str(txt_path))
@@ -217,7 +264,7 @@ for i, combo in enumerate(combos, start=1):
     except Exception:
         tess_txt = ""
     with open(tess_path, "w", encoding="utf-8") as f:
-        f.write(tess_txt)
+        f.write(_normalize_text(tess_txt))
     _, summary_tess = process_and_score(str(tess_path))
     results.append(
         {
@@ -227,9 +274,7 @@ for i, combo in enumerate(combos, start=1):
         }
     )
 
-# write results
-import json  # noqa: E402
-
-with open("ops/clahe_sweep_page010_results.json", "w", encoding="utf-8") as f:
-    json.dump(results, f, ensure_ascii=False, indent=2)
-print("WROTE ops/clahe_sweep_page010_results.json")
+    # write results
+    with open("ops/clahe_sweep_page010_results.json", "w", encoding="utf-8") as f:
+        json.dump(results, f, ensure_ascii=False, indent=2)
+    print("WROTE ops/clahe_sweep_page010_results.json")

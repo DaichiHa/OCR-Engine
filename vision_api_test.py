@@ -45,7 +45,11 @@ def test_vision_api():
             print(f"API Error: {data['error']['message']}")
             print(f"Status: {data['error']['code']}")
         elif "responses" in data:
-            text = data["responses"][0].get("fullTextAnnotation", {}).get("text", "")
+            text = (
+                data["responses"][0]
+                .get("fullTextAnnotation", {})
+                .get("text", "")
+            )
             if text:
                 print("Success! Vision API returned text.")
                 print(f"Preview: {text[:50]}...")

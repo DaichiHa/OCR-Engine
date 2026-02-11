@@ -46,7 +46,9 @@ def transform_text(text: str) -> (str, bool):
 
     # 4) Prefix obviously-unused assignment targets with _ if name not used elsewhere
     # Find simple assignments at line start: name = ...
-    assigns = re.findall(r"^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=", text, flags=re.MULTILINE)
+    assigns = re.findall(
+        r"^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=", text, flags=re.MULTILINE
+    )
     for name in set(assigns):
         # ignore common magic or single-underscore names
         if name.startswith("_") or name in ("__all__",):
@@ -58,7 +60,11 @@ def transform_text(text: str) -> (str, bool):
             # replace the first assignment occurrence
             pattern = r"(^\s*)\b" + re.escape(name) + r"\b(\s*=)"
             new_text, nsub = re.subn(
-                pattern, r"\1_" + name + r"\2", text, count=1, flags=re.MULTILINE
+                pattern,
+                r"\1_" + name + r"\2",
+                text,
+                count=1,
+                flags=re.MULTILINE,
             )
             if nsub:
                 text = new_text

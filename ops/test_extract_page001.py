@@ -1,10 +1,15 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+)
+from pathlib import Path
+
 from table_extractor_v4 import extract_table_structure_v4
 
-img = r"C:\Users\User\Downloads\PDF\_img\page_001.png"
+home = Path.home()
+img = str(home / "Downloads" / "PDF" / "_img" / "page_001.png")
 out_debug_dir = os.path.abspath(".")
 
 if not os.path.exists(img):

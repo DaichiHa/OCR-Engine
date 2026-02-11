@@ -7,7 +7,15 @@ from pathlib import Path
 root = Path(__file__).parent
 out = root / "tools_paths.json"
 
-executables = ["tesseract", "ollama", "conda", "python", "pip", "git", "docker"]
+executables = [
+    "tesseract",
+    "ollama",
+    "conda",
+    "python",
+    "pip",
+    "git",
+    "docker",
+]
 packages = [
     "paddleocr",
     "paddle",

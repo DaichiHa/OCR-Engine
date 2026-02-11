@@ -36,8 +36,12 @@ def load_key():
 
 
 def process_single_page(file_path, out_path, model):
-    page_num = os.path.basename(file_path).replace("page_", "").replace(".png", "")
-    print(f"[{time.strftime('%H:%M:%S')}] Processing Missing Page {page_num}...")
+    page_num = (
+        os.path.basename(file_path).replace("page_", "").replace(".png", "")
+    )
+    print(
+        f"[{time.strftime('%H:%M:%S')}] Processing Missing Page {page_num}..."
+    )
 
     max_retries = 3
     for attempt in range(max_retries):
@@ -98,7 +102,9 @@ def main():
             print(f"Waiting {INTERVAL}s for next token bucket reset...")
             time.sleep(INTERVAL)
         else:
-            print(f"Failed to process Page {filename} after retries. Moving to next.")
+            print(
+                f"Failed to process Page {filename} after retries. Moving to next."
+            )
 
     print("--- ALL PAGES COMPLETED OR SKIPPED ---")
 
