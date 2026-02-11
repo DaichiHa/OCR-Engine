@@ -1,6 +1,5 @@
 
 import os
-import glob
 import time
 import concurrent.futures
 import google.generativeai as genai

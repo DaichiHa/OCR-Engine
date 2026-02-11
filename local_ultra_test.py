@@ -1,10 +1,7 @@
 
 import os
-import glob
 import subprocess
 import time
-import cv2
-import numpy as np
 
 # --- 設定 (LOCAL-ULTRA 追及テスト) ---
 INPUT_DIR = "pages_ultra_preprocessed" # 今回作成した軽量・高精細画像を使用

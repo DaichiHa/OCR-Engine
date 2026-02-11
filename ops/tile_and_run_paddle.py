@@ -2,7 +2,6 @@ import os
 import argparse
 from pathlib import Path
 from PIL import Image
-import numpy as np
 
 
 def set_onednn_env(disable: bool):

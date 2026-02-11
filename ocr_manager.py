@@ -8,7 +8,6 @@ import cv2
 import pytesseract
 from PIL import Image
 import os
-import concurrent.futures
 from table_extractor_v4 import extract_table_structure_v4, read_image_robust
 
 def ocr_cell(img_path, cell_box, margin=2):

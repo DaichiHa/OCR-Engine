@@ -4,8 +4,7 @@ Uses Tesseract OCR with image preprocessing for better accuracy
 """
 
 import pytesseract
-from PIL import Image, ImageEnhance, ImageFilter, ImageOps
-import os
+from PIL import Image, ImageEnhance, ImageFilter
 
 def preprocess_image(img):
     """

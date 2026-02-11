@@ -1,5 +1,4 @@
 import os
-import re
 import csv
 
 def extract_tables_to_csv(md_file, output_dir):

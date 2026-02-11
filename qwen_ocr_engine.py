@@ -4,7 +4,7 @@ Based on OCR-Engine project structure, adapted for matatabi-engine
 """
 
 import torch
-from transformers import Qwen2VLForConditionalGeneration, AutoTokenizer, AutoProcessor
+from transformers import Qwen2VLForConditionalGeneration, AutoProcessor
 from PIL import Image
 import json
 import os

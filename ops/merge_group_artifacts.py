@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-import re
 
 root = Path(__file__).parent
 la = root / 'local_artifacts'

@@ -1,6 +1,5 @@
 
 import google.generativeai as genai
-import os
 
 api_key = open('gemini_api_key.txt').read().strip()
 genai.configure(api_key=api_key)

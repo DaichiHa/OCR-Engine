@@ -15,7 +15,7 @@ from typing import List, Dict, Optional
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from qwen_ocr_engine import QwenOCREngine, process_page_qwen
+from qwen_ocr_engine import QwenOCREngine
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

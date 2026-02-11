@@ -1,7 +1,6 @@
 
 import os
 import glob
-import time
 from openai import OpenAI
 
 # Configuration

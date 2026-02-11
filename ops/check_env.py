@@ -8,7 +8,6 @@ except Exception as e:
     print('cv2: missing', type(e).__name__, str(e))
 # check PIL
 try:
-    from PIL import Image
     import PIL
     print('PIL: found', PIL.__version__, PIL.__file__)
 except Exception as e:

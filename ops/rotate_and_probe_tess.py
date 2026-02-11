@@ -9,7 +9,6 @@ Produces: INPUT.best_rotation.txt and prints a brief JSON summary to stdout.
 """
 import argparse
 import json
-import os
 import re
 import shutil
 import subprocess

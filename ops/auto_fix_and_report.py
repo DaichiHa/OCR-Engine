@@ -10,7 +10,6 @@ Usage: python ops/auto_fix_and_report.py --pages page_001 page_010 page_100
 """
 import argparse
 import json
-import os
 import re
 import unicodedata
 from pathlib import Path

@@ -3,7 +3,6 @@ import os
 import time
 import glob
 import subprocess
-import concurrent.futures
 import google.generativeai as genai
 from PIL import Image
 

@@ -1,6 +1,5 @@
 
 import google.generativeai as genai
-import os
 
 def load_key():
     with open("gemini_api_key.txt", "r") as f:

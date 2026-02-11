@@ -28,7 +28,7 @@ def process(img_path: Path):
     print('Wrote', js, txt)
 
 if __name__ == '__main__':
-    import sys, os, numpy as np
+    import numpy as np
     imgs = [Path('ops/page_000_pre3x.png'), Path('ops/page_010_pre3x.png')]
     for p in imgs:
         if p.exists():

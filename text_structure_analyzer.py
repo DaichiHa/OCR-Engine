@@ -7,7 +7,6 @@ Robust against missing horizontal lines.
 import cv2
 import numpy as np
 import os
-import math
 import pytesseract
 from PIL import Image
 

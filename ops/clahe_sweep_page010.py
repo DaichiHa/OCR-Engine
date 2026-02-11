@@ -7,7 +7,6 @@ try:
     from rapidocr_onnxruntime import RapidOCR
 except Exception:
     RapidOCR = None
-from postprocess_langchain import run_rule_pipeline
 # Fallback wrapper that mimics RapidOCR minimal output shape
 def _make_fallback_ocr():
     try:

@@ -1,6 +1,5 @@
 
 import os
-import glob
 import time
 import google.generativeai as genai
 from PIL import Image

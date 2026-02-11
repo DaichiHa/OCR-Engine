@@ -1,7 +1,6 @@
 import os
 import requests
 import base64
-import json
 
 def test_vision_api():
     # Load Key

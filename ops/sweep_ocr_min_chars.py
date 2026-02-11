@@ -1,5 +1,4 @@
 import os, subprocess
-from itertools import product
 
 py = os.path.join('.', '.venv', 'Scripts', 'python.exe')
 if not os.path.exists(py):

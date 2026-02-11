@@ -5,7 +5,6 @@ Reusable function for table page processing.
 
 import cv2
 import numpy as np
-import os
 import pytesseract
 import logging
 from PIL import Image
