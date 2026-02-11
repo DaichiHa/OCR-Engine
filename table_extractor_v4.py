@@ -35,7 +35,8 @@ def extract_table_structure_v4(image_path, debug_dir):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Handle various image channel layouts robustly
-    # keep a BGR copy for drawing/debugging and obtain a gray image for processing
+    # keep a BGR copy for drawing/debugging
+    # and obtain a gray image for processing
     if img.ndim == 2:
         gray = img
         bgr = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
@@ -78,12 +79,16 @@ def extract_table_structure_v4(image_path, debug_dir):
             # Horizontal: angle near 0 or 180
             if abs(angle) < 5 or abs(angle) > 175:
                 # Store (y, x1, x2) - use average Y
-                horizontal_lines.append(((y1 + y2) / 2, min(x1, x2), max(x1, x2)))
+                horizontal_lines.append(
+                    ((y1 + y2) / 2, min(x1, x2), max(x1, x2))
+                )
 
             # Vertical: angle near 90 or -90
             elif abs(abs(angle) - 90) < 5:
                 # Store (x, y1, y2)
-                vertical_lines.append(((x1 + x2) / 2, min(y1, y2), max(y1, y2)))
+                vertical_lines.append(
+                    ((x1 + x2) / 2, min(y1, y2), max(y1, y2))
+                )
 
     # Cluster Lines
     def cluster_lines(lines, tolerance=10):
@@ -105,8 +110,10 @@ def extract_table_structure_v4(image_path, debug_dir):
     rows = cluster_lines(horizontal_lines, tolerance=10)  # Tuned down from 20
     cols = cluster_lines(vertical_lines, tolerance=10)  # Tuned down from 20
 
-    print(f"Detected {len(horizontal_lines)} raw H-lines -> {len(rows)} Row Clusters")
-    print(f"Detected {len(vertical_lines)} raw V-lines -> {len(cols)} Col Clusters")
+    print(f"Detected {len(horizontal_lines)} raw H-lines")
+    print(f"Row clusters: {len(rows)}")
+    print(f"Detected {len(vertical_lines)} raw V-lines")
+    print(f"Col clusters: {len(cols)}")
 
     # Filter Grid - Remove edges if necessary or just keep all
     # Usually the first/last detected line is the border.
@@ -120,8 +127,13 @@ def extract_table_structure_v4(image_path, debug_dir):
 
     # Calculate Cells (Intersections)
     cells = []
+    # initialize grid and median defaults to avoid undefined-name F821
+    grid = []
+    median_w = 0
+    median_h = 0
     if len(rows) > 1 and len(cols) > 1:
         for i in range(len(rows) - 1):
+            row_cells = []
             for j in range(len(cols) - 1):
                 y1 = rows[i]
                 y2 = rows[i + 1]
@@ -135,7 +147,8 @@ def extract_table_structure_v4(image_path, debug_dir):
             grid.append(row_cells)
 
     # If grid is empty, skip merging
-    # Allow adjusting merge aggressiveness via env var `TBL_MERGE_FACTOR` (float, default 0.6)
+    # Allow adjusting merge aggressiveness via env var
+    # `TBL_MERGE_FACTOR` (float, default 0.6)
     try:
         merge_factor = float(os.environ.get("TBL_MERGE_FACTOR", "0.8"))
     except Exception:
@@ -143,24 +156,41 @@ def extract_table_structure_v4(image_path, debug_dir):
 
     if grid:
         # Compute typical cell size (median) to detect 'small' cells
-        widths = [c[2] for r in grid for c in r if c[2] > 0]
-        heights = [c[3] for r in grid for c in r if c[3] > 0]
+        widths = [
+            c[2]
+            for r in grid
+            for c in r
+            if c[2] > 0
+        ]
+        heights = [
+            c[3]
+            for r in grid
+            for c in r
+            if c[3] > 0
+        ]
         if widths and heights:
             median_w = int(np.median(widths))
             median_h = int(np.median(heights))
         else:
             median_w = median_h = 0
 
-        # Merge small cells: prefer merging to the right, fallback to merging downward
+        # Merge small cells: prefer merging to the right.
+        # Fallback to merging downward when necessary.
         rows_n = len(grid)
         cols_n = len(grid[0])
         merged = [[False] * cols_n for _ in range(rows_n)]
 
-        # First: merge entire narrow column spans into their right neighbor (or left for last col)
-        # This helps when an entire column is consistently too narrow (e.g., index/sep columns)
+        # First: merge entire narrow column spans into
+        # their right neighbor (or left for last col)
+        # This helps when an entire column is consistently
+        # too narrow (e.g., index/sep columns)
         col_medians = []
         for j in range(cols_n):
-            col_ws = [grid[i][j][2] for i in range(rows_n) if grid[i][j][2] > 0]
+            col_ws = [
+                grid[i][j][2]
+                for i in range(rows_n)
+                if grid[i][j][2] > 0
+            ]
             if col_ws:
                 col_medians.append(int(np.median(col_ws)))
             else:
@@ -173,7 +203,8 @@ def extract_table_structure_v4(image_path, debug_dir):
             if cm > 0 and median_w > 0 and cm < median_w * merge_factor:
                 narrow_flags[j] = True
 
-        # Find runs of adjacent narrow columns and merge each run into an outer neighbor
+        # Find runs of adjacent narrow columns and
+        # merge each run into an outer neighbor
         j = 0
         while j < cols_n:
             if not narrow_flags[j]:
@@ -220,7 +251,8 @@ def extract_table_structure_v4(image_path, debug_dir):
                             merged[i][k] = True
             j += 1
 
-        # Then perform local merging for residual small cells (rightward preferred, then downward)
+        # Then perform local merging for residual small cells.
+        # Rightward preference, then downward.
         for i in range(rows_n):
             for j in range(cols_n):
                 if merged[i][j]:
@@ -255,9 +287,11 @@ def extract_table_structure_v4(image_path, debug_dir):
                     merged[i + 1][j] = True
                     merged[i][j] = False
 
-        # Optional: merge small cells by content density using a lightweight OCR pass
-        # Controlled by env var `TBL_OCR_MERGE` (1 to enable), `TBL_OCR_MIN_CHARS` (int threshold),
-        # and `TBL_OCR_LANG` (lang for tesseract, default 'jpn').
+        # Optional: merge small cells by content density
+        # using a lightweight OCR pass.
+        # Controlled by env var `TBL_OCR_MERGE` (1 to enable),
+        # `TBL_OCR_MIN_CHARS` (int threshold), and
+        # `TBL_OCR_LANG` (lang for tesseract, default 'jpn').
         try:
             ocr_merge_enabled = int(os.environ.get("TBL_OCR_MERGE", "1")) == 1
         except Exception:
@@ -331,12 +365,14 @@ def extract_table_structure_v4(image_path, debug_dir):
                 x, y, w, h = grid[i][j]
                 # Filter logical cell sizes post-merge
                 if h > 15 and w > 15:
-                    cells.append((x1, y1, w, h))
+                    cells.append((x, y, w, h))
 
         # Re-cluster cells after merging to coalesce fragmented row spans
-    # We group by vertical center and then merge horizontally-close cells within each row cluster
+    # We group by vertical center and then merge
+    # horizontally-close cells within each row cluster.
     # Allow tuning of row tolerance and horizontal gap via env vars:
-    # `TBL_ROW_TOL_FACTOR` (multiplier of median_h, default 0.5) and `TBL_H_GAP` (pixels, default 15)
+    # `TBL_ROW_TOL_FACTOR` (multiplier of median_h, default 0.5)
+    # and `TBL_H_GAP` (pixels, default 15)
     try:
         row_tol_factor = float(os.environ.get("TBL_ROW_TOL_FACTOR", "0.5"))
     except Exception:
@@ -351,7 +387,9 @@ def extract_table_structure_v4(image_path, debug_dir):
         centers = [(c[1] + c[3] / 2.0, idx) for idx, c in enumerate(cells)]
         centers.sort()
         # tolerance based on median_h
-        row_tol = max(12, int(median_h * row_tol_factor)) if median_h > 0 else 20
+        row_tol = (
+            max(12, int(median_h * row_tol_factor)) if median_h > 0 else 20
+        )
         groups = []
         current = [centers[0][1]]
         for k in range(1, len(centers)):
@@ -403,8 +441,14 @@ def extract_table_structure_v4(image_path, debug_dir):
 
 
 if __name__ == "__main__":
-    test_page = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_011.png"
-    debug_dir = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages"
+    test_page = (
+        "c:\\Users\\User\\Downloads\\日本帝國港灣統計_0001\\pages\\"
+        + "page_011.png"
+    )
+    debug_dir = (
+        "c:\\Users\\User\\Downloads\\日本帝國港灣統計_0001\\"
+        + "pages"
+    )
 
     print(f"Testing V4 (LSD) extraction on {test_page}...")
     try:

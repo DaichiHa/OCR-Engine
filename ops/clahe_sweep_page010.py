@@ -3,6 +3,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from typing import Optional
 
 try:
     from rapidocr_onnxruntime import RapidOCR
@@ -42,7 +43,7 @@ def _make_fallback_ocr():
             def __call__(self, img_path):
                 img = Image.open(img_path)
                 txt = pytesseract.image_to_string(img, lang="jpn")
-                lines = [l.strip() for l in txt.splitlines() if l.strip()]
+                lines = [line.strip() for line in txt.splitlines() if line.strip()]
                 dets = []
                 for t in lines:
                     dets.append((None, t, 1.0))
@@ -69,7 +70,9 @@ def _parse_args():
     p = argparse.ArgumentParser()
     p.add_argument("--page", default="010", help="page id (e.g. 000, 010)")
     p.add_argument(
-        "--smoke", action="store_true", help="run a fast smoke test (limit combos)"
+        "--smoke",
+        action="store_true",
+        help="run a fast smoke test (limit combos)",
     )
     p.add_argument(
         "--preprocess-python",
@@ -153,6 +156,7 @@ from postprocess_and_score import process_and_score
 def _normalize_text(text: str) -> str:
     return " ".join(str(text).strip().split())
 
+
 # broader grid of SR scales + CLAHE combos: (scale, clip, tile, denoise_h)
 scales = [2, 3]
 clip_vals = [1.5, 2.5, 4.0]
@@ -223,10 +227,13 @@ for i, combo in enumerate(combos, start=1):
     txt_path = out.with_suffix(".rapid.txt")
     with open(txt_path, "w", encoding="utf-8") as f:
         for item in dets:
+            if item is None:
+                continue
             try:
                 box, text, score = item
             except Exception:
-                if len(item) >= 3:
+                # only attempt index-based unpacking for sequences
+                if isinstance(item, (list, tuple)) and len(item) >= 3:
                     box, text, score = item[0], item[1], item[2]
                 else:
                     continue
