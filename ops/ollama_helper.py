@@ -72,9 +72,7 @@ def call_ollama_cli(
 
         tmp = None
         try:
-            tmpf = tempfile.NamedTemporaryFile(
-                delete=False, mode="w", encoding="utf-8"
-            )
+            tmpf = tempfile.NamedTemporaryFile(delete=False, mode="w", encoding="utf-8")
             tmpf.write(prompt)
             tmpf.close()
             tmp = tmpf.name
@@ -166,9 +164,7 @@ def call_ollama_http(
 
 def generate(prompt: str, cfg: dict) -> Optional[str]:
     cli_path = (
-        cfg.get("cli_path") or get_path("ollama")
-        if isinstance(cfg, dict)
-        else None
+        cfg.get("cli_path") or get_path("ollama") if isinstance(cfg, dict) else None
     )
     if cfg.get("use_cli", True) and has_ollama_cli(cli_path):
         # Try CLI invocations (prefer stdin first)

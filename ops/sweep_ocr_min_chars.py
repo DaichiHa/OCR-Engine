@@ -49,12 +49,8 @@ for minc in min_chars_list:
             _proc = subprocess.run(
                 cmd,
                 env=env,
-                _stdout=open(
-                    os.path.join(outdir, "out.txt"), "w", encoding="utf-8"
-                ),
-                _stderr=open(
-                    os.path.join(outdir, "err.txt"), "w", encoding="utf-8"
-                ),
+                _stdout=open(os.path.join(outdir, "out.txt"), "w", encoding="utf-8"),
+                _stderr=open(os.path.join(outdir, "err.txt"), "w", encoding="utf-8"),
                 _timeout=240,
             )
         except subprocess.TimeoutExpired:

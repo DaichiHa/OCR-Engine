@@ -9,7 +9,7 @@ try:
     from rapidocr_onnxruntime import RapidOCR
 except Exception:
     RapidOCR = None
-    
+
 from itertools import product
 import json
 
@@ -60,9 +60,7 @@ def _make_fallback_ocr():
             def __call__(self, img_path):
                 img = Image.open(img_path)
                 txt = pytesseract.image_to_string(img, lang="jpn")
-                lines = [
-                    line.strip() for line in txt.splitlines() if line.strip()
-                ]
+                lines = [line.strip() for line in txt.splitlines() if line.strip()]
                 dets = []
                 for t in lines:
                     dets.append((None, t, 1.0))

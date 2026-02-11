@@ -75,9 +75,7 @@ def preprocess_variants(cell_img) -> List[OcrVariant]:
 
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
     contrast = clahe.apply(gray)
-    contrast = cv2.threshold(
-        contrast, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
-    )[1]
+    contrast = cv2.threshold(contrast, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
     contrast_img = Image.fromarray(contrast)
 
     edges = cv2.Canny(gray, 50, 150)
@@ -126,9 +124,7 @@ def majority_vote_text(candidates: List[str]) -> str:
     max_len = max(len(c) for c in candidates)
     output_chars = []
     for idx in range(max_len):
-        column_chars = [
-            c[idx] for c in candidates if idx < len(c) and c[idx].strip()
-        ]
+        column_chars = [c[idx] for c in candidates if idx < len(c) and c[idx].strip()]
         if not column_chars:
             continue
         counts = Counter(column_chars)
@@ -231,21 +227,15 @@ def parse_page_limit(limit: Optional[str], paths: List[str]) -> List[str]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Local Multi-process Ensemble OCR"
-    )
-    parser.add_argument(
-        "--input-dir", required=True, help="Directory with page images"
-    )
+    parser = argparse.ArgumentParser(description="Local Multi-process Ensemble OCR")
+    parser.add_argument("--input-dir", required=True, help="Directory with page images")
     parser.add_argument(
         "--output-dir", required=True, help="Directory for output markdown"
     )
     parser.add_argument(
         "--pattern", default="page_*.png", help="Glob pattern for page images"
     )
-    parser.add_argument(
-        "--lang", default="jpn", help="Tesseract language code"
-    )
+    parser.add_argument("--lang", default="jpn", help="Tesseract language code")
     parser.add_argument(
         "--dictionary", help="Path to dictionary CSV/TSV/JSON for corrections"
     )

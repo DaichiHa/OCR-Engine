@@ -1,10 +1,10 @@
 import glob
 import os
 
-manual_path = (
-    r"c:\Users\User\Downloads\日本帝國港灣統計_0001\日本帝國港灣統計_OCR.md"
+manual_path = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\日本帝國港灣統計_OCR.md"
+output_path = (
+    r"c:\Users\User\Downloads\日本帝國港灣統計_0001\日本帝國港灣統計_Ultra_Gemini.md"
 )
-output_path = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\日本帝國港灣統計_Ultra_Gemini.md"
 
 dirs = [
     r"c:\Users\User\Downloads\日本帝國港灣統計_0001\intermediate_md_gemini",

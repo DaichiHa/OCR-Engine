@@ -6,9 +6,7 @@ ROOT = Path(__file__).resolve().parent / "local_artifacts"
 
 
 def usage():
-    print(
-        "Usage: python ops/revert_move.py <group_subpath> <target_restore_dir>"
-    )
+    print("Usage: python ops/revert_move.py <group_subpath> <target_restore_dir>")
     print(
         "Example: python ops/revert_move.py page010/page_010 C:\\Users\\User\\Downloads\\restore"
     )

@@ -117,9 +117,7 @@ def main():
             chain = LLMChain(llm=llm, prompt=prompt)
             # chunk large text
             chunk_size = 4000
-            parts = [
-                src[i : i + chunk_size] for i in range(0, len(src), chunk_size)
-            ]
+            parts = [src[i : i + chunk_size] for i in range(0, len(src), chunk_size)]
             out_parts = []
             for p in parts:
                 res = chain.run(text=p)

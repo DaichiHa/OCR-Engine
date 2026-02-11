@@ -93,9 +93,7 @@ def main():
         for line in res:
             for item in line:
                 text = (
-                    item[1][0]
-                    if isinstance(item[1], (list, tuple))
-                    else str(item[1])
+                    item[1][0] if isinstance(item[1], (list, tuple)) else str(item[1])
                 )
                 texts.append(text)
         txt = "\n".join(texts)

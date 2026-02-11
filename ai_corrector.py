@@ -63,9 +63,7 @@ def main():
 
     files = sorted(glob.glob(os.path.join(INPUT_DIR, "page_*.md")))
 
-    print(
-        f"Starting AI correction for {len(files)} pages using GPT-4o-mini..."
-    )
+    print(f"Starting AI correction for {len(files)} pages using GPT-4o-mini...")
 
     for file_path in files:
         filename = os.path.basename(file_path)

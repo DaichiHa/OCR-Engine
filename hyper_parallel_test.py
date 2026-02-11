@@ -102,9 +102,7 @@ def main():
     overall_start = time.time()
 
     # 並列実行
-    with concurrent.futures.ThreadPoolExecutor(
-        max_workers=MAX_WORKERS
-    ) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         executor.map(process_page_hyper, tasks)
 
     overall_dur = time.time() - overall_start

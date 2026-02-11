@@ -11,9 +11,7 @@ ocr = ONNXPaddleOcr(
 
 def process(img_path: Path):
     img = (
-        cv2.imdecode(
-            np.fromfile(str(img_path), dtype=np.uint8), cv2.IMREAD_COLOR
-        )
+        cv2.imdecode(np.fromfile(str(img_path), dtype=np.uint8), cv2.IMREAD_COLOR)
         if False
         else cv2.imread(str(img_path))
     )
@@ -28,14 +26,10 @@ def process(img_path: Path):
             text = item[1][0]
             score = float(item[1][1])
             out.append({"box": box, "text": text, "score": score})
-    js = img_path.parent / (
-        img_path.stem.replace("page_", "ppocr_page_") + ".json"
-    )
+    js = img_path.parent / (img_path.stem.replace("page_", "ppocr_page_") + ".json")
     with open(js, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
-    txt = img_path.parent / (
-        img_path.stem.replace("page_", "ppocr_page_") + ".txt"
-    )
+    txt = img_path.parent / (img_path.stem.replace("page_", "ppocr_page_") + ".txt")
     with open(txt, "w", encoding="utf-8") as f:
         for o in out:
             f.write(o["text"] + "\n")

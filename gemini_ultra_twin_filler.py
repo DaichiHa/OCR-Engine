@@ -11,7 +11,9 @@ KEY_FILE = "gemini_api_key.txt"
 INPUT_DIR = "pages"
 OUTPUT_DIR = "intermediate_md_ultra_final"
 MAX_WORKERS = 2  # 2本並列
-INTERVAL = 90  # 各スレッドが処理後に置くインターバル（並列時は長めに設定して干渉を防ぐ）
+INTERVAL = (
+    90  # 各スレッドが処理後に置くインターバル（並列時は長めに設定して干渉を防ぐ）
+)
 
 # 利用可能なモデル（系統を分けてクォータ分散を狙う）
 MODELS = ["gemini-2.0-flash", "gemini-3-flash-preview"]
@@ -46,9 +48,7 @@ def process_page_twin(task):
     if os.path.exists(out_path) and os.path.getsize(out_path) > 100:
         return True
 
-    print(
-        f"[{time.strftime('%H:%M:%S')}] Starting Page {page_num} on {model_name}"
-    )
+    print(f"[{time.strftime('%H:%M:%S')}] Starting Page {page_num} on {model_name}")
 
     api_key = load_key()
     genai.configure(api_key=api_key)
@@ -74,9 +74,7 @@ def process_page_twin(task):
             err_msg = str(e)
             if "429" in err_msg or "402" in err_msg:
                 wait = 120 + (attempt * 60)
-                print(
-                    f"[Limit] Page {page_num} ({model_name}). Cooling {wait}s..."
-                )
+                print(f"[Limit] Page {page_num} ({model_name}). Cooling {wait}s...")
                 time.sleep(wait)
             else:
                 print(f"[Error] Page {page_num}: {err_msg}")
@@ -100,9 +98,7 @@ def main():
 
     print(f"--- TWIN-ENGINE ULTRA FILLER START (Workers: {MAX_WORKERS}) ---")
 
-    with concurrent.futures.ThreadPoolExecutor(
-        max_workers=MAX_WORKERS
-    ) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         executor.map(process_page_twin, tasks)
 
     print("--- PROCESS FINISHED ---")

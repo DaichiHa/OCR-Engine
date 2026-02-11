@@ -7,11 +7,7 @@ from pathlib import Path
 def main():
     p = str(Path.home())
     try:
-        dirs = [
-            name
-            for name in os.listdir(p)
-            if os.path.isdir(os.path.join(p, name))
-        ]
+        dirs = [name for name in os.listdir(p) if os.path.isdir(os.path.join(p, name))]
     except Exception as e:
         print("ERROR", e)
         return 2

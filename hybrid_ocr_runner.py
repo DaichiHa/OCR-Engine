@@ -86,9 +86,7 @@ class HybridOCRRunner:
                         f"Gemini OCR Engine ready (NANO mode: max {self.max_gemini_requests} requests)"
                     )
                 else:
-                    logger.warning(
-                        "Gemini API key not provided, disabling Gemini"
-                    )
+                    logger.warning("Gemini API key not provided, disabling Gemini")
                     self.use_gemini = False
             except Exception as e:
                 logger.error(f"Failed to initialize Gemini: {e}")
@@ -139,14 +137,10 @@ class HybridOCRRunner:
                 qwen_structured_path = os.path.join(
                     output_dir, f"{page_name}_qwen_structured.json"
                 )
-                qwen_table_path = os.path.join(
-                    output_dir, f"{page_name}_qwen_table.md"
-                )
+                qwen_table_path = os.path.join(output_dir, f"{page_name}_qwen_table.md")
 
                 with open(qwen_structured_path, "w", encoding="utf-8") as f:
-                    json.dump(
-                        structured_result, f, ensure_ascii=False, indent=2
-                    )
+                    json.dump(structured_result, f, ensure_ascii=False, indent=2)
 
                 with open(qwen_table_path, "w", encoding="utf-8") as f:
                     if "content" in table_result:
@@ -196,22 +190,16 @@ class HybridOCRRunner:
                         text = self.tesseract.image_to_string(
                             img, lang=lang, config=config
                         )
-                        tesseract_results[
-                            f"{lang}_{config.replace(' ', '_')}"
-                        ] = text.strip()
-                    except Exception as e:
-                        logger.warning(
-                            f"Tesseract config {lang} {config} failed: {e}"
+                        tesseract_results[f"{lang}_{config.replace(' ', '_')}"] = (
+                            text.strip()
                         )
+                    except Exception as e:
+                        logger.warning(f"Tesseract config {lang} {config} failed: {e}")
 
                 # Save Tesseract results
-                tesseract_path = os.path.join(
-                    output_dir, f"{page_name}_tesseract.json"
-                )
+                tesseract_path = os.path.join(output_dir, f"{page_name}_tesseract.json")
                 with open(tesseract_path, "w", encoding="utf-8") as f:
-                    json.dump(
-                        tesseract_results, f, ensure_ascii=False, indent=2
-                    )
+                    json.dump(tesseract_results, f, ensure_ascii=False, indent=2)
 
                 tesseract_time = time.time() - tesseract_start
 
@@ -223,24 +211,17 @@ class HybridOCRRunner:
                     "configs_tried": len(configs),
                 }
 
-                logger.info(
-                    f"Tesseract processing completed in {tesseract_time:.2f}s"
-                )
+                logger.info(f"Tesseract processing completed in {tesseract_time:.2f}s")
 
             except Exception as e:
-                logger.error(
-                    f"Tesseract processing failed for {page_name}: {e}"
-                )
+                logger.error(f"Tesseract processing failed for {page_name}: {e}")
                 results["outputs"]["tesseract"] = {
                     "success": False,
                     "error": str(e),
                 }
 
         # Process with Gemini if available (NANO USE - very limited)
-        if (
-            self.use_gemini
-            and self.gemini_requests_count < self.max_gemini_requests
-        ):
+        if self.use_gemini and self.gemini_requests_count < self.max_gemini_requests:
             try:
                 logger.info(
                     f"Processing {page_name} with Gemini (request {self.gemini_requests_count + 1}/{self.max_gemini_requests})..."
@@ -264,9 +245,7 @@ class HybridOCRRunner:
                 self.gemini_requests_count += 1
 
                 # Save Gemini result
-                gemini_path = os.path.join(
-                    output_dir, f"{page_name}_gemini_nano.md"
-                )
+                gemini_path = os.path.join(output_dir, f"{page_name}_gemini_nano.md")
                 with open(gemini_path, "w", encoding="utf-8") as f:
                     f.write(response.text)
 
@@ -287,9 +266,7 @@ class HybridOCRRunner:
                 )
 
             except Exception as e:
-                logger.error(
-                    f"Gemini nano processing failed for {page_name}: {e}"
-                )
+                logger.error(f"Gemini nano processing failed for {page_name}: {e}")
                 results["outputs"]["gemini_nano"] = {
                     "success": False,
                     "error": str(e),
@@ -365,16 +342,10 @@ class HybridOCRRunner:
             json.dump(
                 {
                     "total_images": len(image_files),
-                    "successful": len(
-                        [r for r in results if r.get("engines_used")]
-                    ),
-                    "failed": len(
-                        [r for r in results if not r.get("engines_used")]
-                    ),
+                    "successful": len([r for r in results if r.get("engines_used")]),
+                    "failed": len([r for r in results if not r.get("engines_used")]),
                     "engines_used": list(
-                        set().union(
-                            *[r.get("engines_used", []) for r in results]
-                        )
+                        set().union(*[r.get("engines_used", []) for r in results])
                     ),
                     "results": results,
                 },
@@ -383,9 +354,7 @@ class HybridOCRRunner:
                 indent=2,
             )
 
-        logger.info(
-            f"Batch processing complete. Summary saved to {summary_path}"
-        )
+        logger.info(f"Batch processing complete. Summary saved to {summary_path}")
 
         return results
 
@@ -429,9 +398,7 @@ def main():
     parser.add_argument(
         "--max-workers", type=int, default=2, help="Maximum parallel workers"
     )
-    parser.add_argument(
-        "--single", action="store_true", help="Process single image"
-    )
+    parser.add_argument("--single", action="store_true", help="Process single image")
 
     args = parser.parse_args()
 
@@ -461,9 +428,7 @@ def main():
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:
         # Batch processing
-        logger.info(
-            f"Starting batch processing: {args.input} -> {args.output}"
-        )
+        logger.info(f"Starting batch processing: {args.input} -> {args.output}")
         results = runner.batch_process(
             args.input,
             args.output,

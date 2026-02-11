@@ -76,8 +76,7 @@ def main():
     for p in py_files:
         # skip venv and hidden folders
         if any(
-            part.startswith(".") or part in ("venv", "__pycache__")
-            for part in p.parts
+            part.startswith(".") or part in ("venv", "__pycache__") for part in p.parts
         ):
             continue
         try:

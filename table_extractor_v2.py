@@ -49,9 +49,7 @@ def extract_table_structure_v2(image_path, debug_dir):
     horizontal = cv2.dilate(horizontal, horizontal_structure)
 
     # Detection of vertical lines
-    vertical_structure = cv2.getStructuringElement(
-        cv2.MORPH_RECT, (1, vertical_size)
-    )
+    vertical_structure = cv2.getStructuringElement(cv2.MORPH_RECT, (1, vertical_size))
     vertical = cv2.erode(thresh, vertical_structure)
     vertical = cv2.dilate(vertical, vertical_structure)
 
@@ -60,17 +58,13 @@ def extract_table_structure_v2(image_path, debug_dir):
     horizontal = cv2.dilate(
         horizontal, cv2.getStructuringElement(cv2.MORPH_RECT, (5, 1))
     )
-    vertical = cv2.dilate(
-        vertical, cv2.getStructuringElement(cv2.MORPH_RECT, (1, 5))
-    )
+    vertical = cv2.dilate(vertical, cv2.getStructuringElement(cv2.MORPH_RECT, (1, 5)))
 
     mask = horizontal + vertical
 
     # 4. Find Contours (Cells)
     # Find contours on the mask
-    contours, _ = cv2.findContours(
-        mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
-    )
+    contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     # Sort contours (top-to-bottom, left-to-right logic needs to be applied later)
     # Here we just filter and count
@@ -89,9 +83,7 @@ def extract_table_structure_v2(image_path, debug_dir):
             # Filter distinct cell shapes (not too thin lines)
             if w > 20 and h > 10:
                 bounding_boxes.append((x, y, w, h))
-                cv2.rectangle(
-                    debug_img, (x, y), (x + w, y + h), (0, 0, 255), 2
-                )
+                cv2.rectangle(debug_img, (x, y), (x + w, y + h), (0, 0, 255), 2)
                 cells_found += 1
 
     # Save debug

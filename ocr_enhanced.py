@@ -87,9 +87,7 @@ def ocr_page_enhanced(image_path, preprocess=True):
 
 if __name__ == "__main__":
     # Test with page 3 (緒言 - Introduction)
-    test_page = (
-        r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_003.png"
-    )
+    test_page = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_003.png"
 
     print("=" * 70)
     print("Enhanced OCR Test - Page 003 (緒言)")
@@ -103,14 +101,10 @@ if __name__ == "__main__":
         print(header)
         print(result.get("text", result.get("error", "Unknown error"))[:500])
         output_lines.append(header)
-        output_lines.append(
-            result.get("text", result.get("error", "Unknown error"))
-        )
+        output_lines.append(result.get("text", result.get("error", "Unknown error")))
 
     # Save all results to file
-    output_file = (
-        r"c:\Users\User\Downloads\日本帝國港灣統計_0001\ocr_enhanced_test.txt"
-    )
+    output_file = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\ocr_enhanced_test.txt"
     with open(output_file, "w", encoding="utf-8") as f:
         f.write("\n".join(output_lines))
 

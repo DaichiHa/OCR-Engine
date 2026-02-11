@@ -47,8 +47,7 @@ def gather_candidates(base: Path):
             # consider files with .clean.txt, .normalized.txt, .ppocr.txt, .ollama.suggested.txt
             s = str(p.name)
             if any(
-                k in s
-                for k in (".clean", ".normalized", ".ppocr", ".tess", "ollama")
+                k in s for k in (".clean", ".normalized", ".ppocr", ".tess", "ollama")
             ):
                 candidates.append(p)
     return candidates

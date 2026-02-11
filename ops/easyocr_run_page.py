@@ -16,12 +16,8 @@ def run(page, outdir, langs, gpu):
     serial_full = []
     for bbox, text, prob in full:
         bbox2 = [[int(float(x)), int(float(y))] for x, y in bbox]
-        serial_full.append(
-            {"bbox": bbox2, "text": str(text), "prob": float(prob)}
-        )
-    with open(
-        os.path.join(outdir, "full_easyocr.json"), "w", encoding="utf-8"
-    ) as f:
+        serial_full.append({"bbox": bbox2, "text": str(text), "prob": float(prob)})
+    with open(os.path.join(outdir, "full_easyocr.json"), "w", encoding="utf-8") as f:
         json.dump(serial_full, f, ensure_ascii=False, indent=2)
 
     im = Image.open(page).convert("RGB")
@@ -41,12 +37,8 @@ def run(page, outdir, langs, gpu):
     serial_crop = []
     for bbox, text, prob in crop_res:
         bbox2 = [[int(float(x)), int(float(y))] for x, y in bbox]
-        serial_crop.append(
-            {"bbox": bbox2, "text": str(text), "prob": float(prob)}
-        )
-    with open(
-        os.path.join(outdir, "crop_easyocr.json"), "w", encoding="utf-8"
-    ) as f:
+        serial_crop.append({"bbox": bbox2, "text": str(text), "prob": float(prob)})
+    with open(os.path.join(outdir, "crop_easyocr.json"), "w", encoding="utf-8") as f:
         json.dump(serial_crop, f, ensure_ascii=False, indent=2)
 
     summary_path = os.path.join(outdir, "easyocr_summary.txt")

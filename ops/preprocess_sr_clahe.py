@@ -42,22 +42,16 @@ def preprocess(
         raise SystemExit(f"failed to read input image: {in_path}\n{e}")
 
     if scale != 1:
-        img = cv2.resize(
-            img, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC
-        )
+        img = cv2.resize(img, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
 
     if denoise_h > 0:
-        img = cv2.fastNlMeansDenoisingColored(
-            img, None, denoise_h, denoise_h, 7, 21
-        )
+        img = cv2.fastNlMeansDenoisingColored(img, None, denoise_h, denoise_h, 7, 21)
 
     # deskewing is handled by module-level helper when requested in main
 
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     l_channel, a, b = cv2.split(lab)
-    clahe = cv2.createCLAHE(
-        clipLimit=clahe_clip, tileGridSize=(clahe_tile, clahe_tile)
-    )
+    clahe = cv2.createCLAHE(clipLimit=clahe_clip, tileGridSize=(clahe_tile, clahe_tile))
     cl = clahe.apply(l_channel)
     limg = cv2.merge((cl, a, b))
     final = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
@@ -75,9 +69,7 @@ def main():
     p = argparse.ArgumentParser(description="Simple SR + CLAHE preprocessing")
     p.add_argument("--in", dest="in_path", required=True)
     p.add_argument("--out", dest="out_path", required=True)
-    p.add_argument(
-        "--scale", type=int, default=2, help="upscale factor (integer)"
-    )
+    p.add_argument("--scale", type=int, default=2, help="upscale factor (integer)")
     p.add_argument("--clahe-clip", type=float, default=2.0)
     p.add_argument("--clahe-tile", type=int, default=8)
     p.add_argument(
@@ -113,15 +105,11 @@ def main():
             img = deskew_image(img)
         if args.binarize:
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            _, bw = cv2.threshold(
-                gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
-            )
+            _, bw = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
             img = cv2.cvtColor(bw, cv2.COLOR_GRAY2BGR)
         ok = cv2.imwrite(args.out_path, img)
         if not ok:
-            raise SystemExit(
-                f"failed to write final output image: {args.out_path}"
-            )
+            raise SystemExit(f"failed to write final output image: {args.out_path}")
 
 
 if __name__ == "__main__":

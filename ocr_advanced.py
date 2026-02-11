@@ -76,9 +76,7 @@ def ocr_page_advanced(image_path, lang="jpn_vert", psm=5):
         # -c preserve_interword_spaces=1: Keep spacing
         custom_config = f"--oem 3 --psm {psm} -c preserve_interword_spaces=1"
 
-        text = pytesseract.image_to_string(
-            pil_img, lang=lang, config=custom_config
-        )
+        text = pytesseract.image_to_string(pil_img, lang=lang, config=custom_config)
 
         # Get confidence data
         data = pytesseract.image_to_data(
@@ -119,9 +117,7 @@ if __name__ == "__main__":
         print(f"Processing {label} with lang={lang}, psm={psm}...")
 
         try:
-            text, conf, debug_process_path = ocr_page_advanced(
-                path, lang=lang, psm=psm
-            )
+            text, conf, debug_process_path = ocr_page_advanced(path, lang=lang, psm=psm)
 
             header = f"\n{'='*70}\n{label}\nLang: {lang}, PSM: {psm}\nConfidence: {conf:.2f}%\nProcessed Image: {debug_process_path}\n{'='*70}\n"
             print(header)
@@ -135,9 +131,7 @@ if __name__ == "__main__":
             output_lines.append(err_msg)
 
     # Save results
-    output_file = (
-        r"c:\Users\User\Downloads\日本帝國港灣統計_0001\ocr_advanced_test.txt"
-    )
+    output_file = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\ocr_advanced_test.txt"
     with open(output_file, "w", encoding="utf-8") as f:
         f.write("\n".join(output_lines))
 

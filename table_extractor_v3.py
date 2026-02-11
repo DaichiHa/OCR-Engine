@@ -65,9 +65,7 @@ def extract_table_structure_v3(image_path, debug_dir):
     vertical_proj = vertical_proj / 255
 
     # Vertical lines are often thinner/fainter, verify threshold
-    col_candidates = np.where(vertical_proj > (height * 0.1))[
-        0
-    ]  # Lower threshold
+    col_candidates = np.where(vertical_proj > (height * 0.1))[0]  # Lower threshold
 
     cols = []
     if len(col_candidates) > 0:
@@ -82,9 +80,7 @@ def extract_table_structure_v3(image_path, debug_dir):
                 current_group = [col_candidates[i]]
         cols.append(int(np.mean(current_group)))
 
-    print(
-        f"Detected {len(rows)} potential rows and {len(cols)} potential cols"
-    )
+    print(f"Detected {len(rows)} potential rows and {len(cols)} potential cols")
 
     # 3. Form Grid
     debug_img = img.copy()
@@ -128,9 +124,7 @@ def extract_table_structure_v3(image_path, debug_dir):
 
 
 if __name__ == "__main__":
-    test_page = (
-        r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_011.png"
-    )
+    test_page = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_011.png"
     debug_dir = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages"
 
     print(f"Testing V3 extraction on {test_page}...")

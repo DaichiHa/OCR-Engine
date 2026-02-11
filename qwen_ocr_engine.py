@@ -160,9 +160,7 @@ class QwenOCREngine:
             image = Image.open(image_path)
 
             # Use custom prompt or default
-            prompt = custom_prompt or self.prompts.get(
-                mode, self.prompts["structured"]
-            )
+            prompt = custom_prompt or self.prompts.get(mode, self.prompts["structured"])
 
             # Prepare messages for Qwen
             messages = [
@@ -180,9 +178,7 @@ class QwenOCREngine:
                 messages, tokenize=False, add_generation_prompt=True
             )
 
-            image_inputs, video_inputs = self.processor.process_vision_info(
-                messages
-            )
+            image_inputs, video_inputs = self.processor.process_vision_info(messages)
             inputs = self.processor(
                 text=[text],
                 images=image_inputs,
@@ -276,9 +272,7 @@ class QwenOCREngine:
 
 
 # Integration with existing OCR-Engine patterns
-def process_page_qwen(
-    image_path: str, output_path: str, model_name: str = None
-):
+def process_page_qwen(image_path: str, output_path: str, model_name: str = None):
     """
     Process single page compatible with OCR-Engine batch processing pattern
     Similar to gemini_ocr.py:process_page_ultra()
