@@ -9,7 +9,7 @@ def test_vision_api():
     try:
         with open("api_key.txt", "r") as f:
             api_key = f.read().strip()
-    except:
+    except Exception:
         print("Error: api_key.txt not found")
         return
 

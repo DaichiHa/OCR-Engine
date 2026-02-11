@@ -115,7 +115,7 @@ if __name__ == "__main__":
             num_str = f.split("_")[-1].split(".")[0]
             num = int(num_str)
             page_tasks.append((num, os.path.join(pages_dir, f), intermediate_dir))
-        except:
+        except Exception:
             continue
 
     # Sort by page number

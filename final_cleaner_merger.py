@@ -54,7 +54,7 @@ def merge_files(manual_file, intermediate_dir, output_file):
         filename = os.path.basename(file_path)
         try:
             page_num = int(filename.replace("page_", "").replace(".md", ""))
-        except:
+        except Exception:
             continue
 
         # Skip Intro pages (1-7) because Manual File has them better
