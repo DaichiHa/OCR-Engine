@@ -32,11 +32,22 @@ jobs:
           python ops/run_rapidocr_action.py
 
       - name: Collect OCR artifacts
+        shell: bash
+        run: |
+          mkdir -p artifacts/ocr-results
+          shopt -s nullglob || true
+          cp -v ops/rapid_page_*.json artifacts/ocr-results/ 2>/dev/null || true
+          cp -v ops/rapid_page_*.txt artifacts/ocr-results/ 2>/dev/null || true
+          cp -v ops/*rapid_page_*.json artifacts/ocr-results/ 2>/dev/null || true
+          cp -v ops/*rapid_page_*.txt artifacts/ocr-results/ 2>/dev/null || true
+
+      - name: Upload ocr-results artifact
         uses: actions/upload-artifact@v4
         with:
           name: ocr-results
-          path: |
-            ops/rapid_page_*.json
-            ops/rapid_page_*.txt
-            ops/*rapid_page_*.json
-            ops/*rapid_page_*.txt
+          path: artifacts/ocr-results
+
+      - name: Clean workspace generated files
+        shell: bash
+        run: |
+          git clean -fdX || true

@@ -6,6 +6,7 @@ into `vendor/tesseract/` and write a `manifest.json` describing included files.
 
 Be careful: adding binaries to git increases repo size. Review before pushing.
 """
+
 import json
 import shutil
 from pathlib import Path

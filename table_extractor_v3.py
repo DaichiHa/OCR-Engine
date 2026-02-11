@@ -4,9 +4,11 @@ Detects table grid by sum of pixels along rows/cols.
 Robust for faint lines if the layout is aligned.
 """
 
+import os
+
 import cv2
 import numpy as np
-import os
+
 
 def read_image_robust(path):
     stream = open(path, "rb")
@@ -16,6 +18,7 @@ def read_image_robust(path):
     stream.close()
     return img
 
+
 def extract_table_structure_v3(image_path, debug_dir):
     filename = os.path.basename(image_path)
     img = read_image_robust(image_path)
@@ -24,10 +27,11 @@ def extract_table_structure_v3(image_path, debug_dir):
         return 0, None
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    
+
     # Adaptive threshold for clean binary
-    binary = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
-                                 cv2.THRESH_BINARY_INV, 15, 5)
+    binary = cv2.adaptiveThreshold(
+        gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 15, 5
+    )
 
     height, width = binary.shape
 
@@ -35,19 +39,21 @@ def extract_table_structure_v3(image_path, debug_dir):
     horizontal_proj = np.sum(binary, axis=1)
     # Normalize
     horizontal_proj = horizontal_proj / 255
-    
+
     # Threshold for detection (line candidate if > width * 0.2 pixels are black/white)
     # Since we inverted, relevant pixels are white (255)
     # Lines should be peaks
-    
-    row_candidates = np.where(horizontal_proj > (width * 0.5))[0] 
-    
+
+    row_candidates = np.where(horizontal_proj > (width * 0.5))[0]
+
     # Clean up adjacent lines (group close peaks)
     rows = []
     if len(row_candidates) > 0:
         current_group = [row_candidates[0]]
         for i in range(1, len(row_candidates)):
-            if row_candidates[i] - row_candidates[i-1] < 10: # If lines are within 10px
+            if (
+                row_candidates[i] - row_candidates[i - 1] < 10
+            ):  # If lines are within 10px
                 current_group.append(row_candidates[i])
             else:
                 rows.append(int(np.mean(current_group)))
@@ -57,15 +63,17 @@ def extract_table_structure_v3(image_path, debug_dir):
     # 2. Vertical Projection
     vertical_proj = np.sum(binary, axis=0)
     vertical_proj = vertical_proj / 255
-    
+
     # Vertical lines are often thinner/fainter, verify threshold
-    col_candidates = np.where(vertical_proj > (height * 0.1))[0] # Lower threshold
-    
+    col_candidates = np.where(vertical_proj > (height * 0.1))[0]  # Lower threshold
+
     cols = []
     if len(col_candidates) > 0:
         current_group = [col_candidates[0]]
         for i in range(1, len(col_candidates)):
-            if col_candidates[i] - col_candidates[i-1] < 20: # If lines are within 20px
+            if (
+                col_candidates[i] - col_candidates[i - 1] < 20
+            ):  # If lines are within 20px
                 current_group.append(col_candidates[i])
             else:
                 cols.append(int(np.mean(current_group)))
@@ -77,7 +85,7 @@ def extract_table_structure_v3(image_path, debug_dir):
     # 3. Form Grid
     debug_img = img.copy()
     cells = []
-    
+
     # Draw Lines
     for r in rows:
         cv2.line(debug_img, (0, r), (width, r), (0, 0, 255), 2)
@@ -87,18 +95,18 @@ def extract_table_structure_v3(image_path, debug_dir):
     # Extract Cells (Gaps between lines)
     # We need to find intersections
     # Simple approach: Iterate row/col intervals
-    
+
     if len(rows) > 1 and len(cols) > 1:
         for i in range(len(rows) - 1):
             for j in range(len(cols) - 1):
                 y1 = rows[i]
-                y2 = rows[i+1]
+                y2 = rows[i + 1]
                 x1 = cols[j]
-                x2 = cols[j+1]
-                
+                x2 = cols[j + 1]
+
                 h_cell = y2 - y1
                 w_cell = x2 - x1
-                
+
                 # Filter noise
                 if h_cell > 10 and w_cell > 10:
                     cells.append((x1, y1, w_cell, h_cell))
@@ -114,10 +122,11 @@ def extract_table_structure_v3(image_path, debug_dir):
 
     return len(cells), debug_path
 
+
 if __name__ == "__main__":
     test_page = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_011.png"
     debug_dir = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages"
-    
+
     print(f"Testing V3 extraction on {test_page}...")
     try:
         count, path = extract_table_structure_v3(test_page, debug_dir)

@@ -1,6 +1,6 @@
-
 import os
 import time
+
 import google.generativeai as genai
 
 # --- 配置 (HYBRID-ULTRA テスト) ---
@@ -30,16 +30,19 @@ HYBRID_CORRECTION_PROMPT = """
 Markdownテーブルのみを出力せよ。
 """
 
+
 def load_key():
     with open(KEY_FILE, "r") as f:
         return f.read().strip()
 
+
 def process_hybrid_ultra():
-    if not os.path.exists(OUTPUT_DIR): os.makedirs(OUTPUT_DIR)
-    
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
+
     genai.configure(api_key=load_key())
     # テキスト処理能力に優れたモデルを使用
-    model = genai.GenerativeModel('gemini-2.0-flash')
+    model = genai.GenerativeModel("gemini-2.0-flash")
 
     draft_path = os.path.join(DRAFT_DIR, f"{TARGET_PAGE}.txt")
     if not os.path.exists(draft_path):
@@ -49,21 +52,28 @@ def process_hybrid_ultra():
     with open(draft_path, "r", encoding="utf-8") as f:
         draft_text = f.read()
 
-    print(f"[{time.strftime('%H:%M:%S')}] Hybrid-ULTRA: Refining draft for {TARGET_PAGE}...")
-    
+    print(
+        f"[{time.strftime('%H:%M:%S')}] Hybrid-ULTRA: Refining draft for {TARGET_PAGE}..."
+    )
+
     try:
         # 画像なし、テキストのみのリクエスト（制限が非常に緩い）
-        response = model.generate_content(HYBRID_CORRECTION_PROMPT.format(draft_text=draft_text))
-        
+        response = model.generate_content(
+            HYBRID_CORRECTION_PROMPT.format(draft_text=draft_text)
+        )
+
         out_path = os.path.join(OUTPUT_DIR, f"{TARGET_PAGE}.md")
         with open(out_path, "w", encoding="utf-8") as f:
             f.write(response.text)
-            
+
         print(f"--- Hybrid-ULTRA Success: {out_path} ---")
-        print("Text-only request completed. This method is 100x more stable against 429 errors.")
-        
+        print(
+            "Text-only request completed. This method is 100x more stable against 429 errors."
+        )
+
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     process_hybrid_ultra()

@@ -3,11 +3,14 @@ Advanced OCR Script for Japanese Historical Document
 Uses OpenCV for advanced preprocessing and Tesseract for OCR
 """
 
+import os
+
 import cv2
 import numpy as np
 import pytesseract
 from PIL import Image
-import os
+
+
 
 def save_debug_image(image, output_path):
     """
@@ -20,6 +23,7 @@ def save_debug_image(image, output_path):
     if result:
         with open(output_path, "wb") as f:
             f.write(encoded_img)
+
 
 def order_points(pts):
     """
@@ -34,6 +38,7 @@ def order_points(pts):
     rect[1] = pts[np.argmin(diff)]
     rect[3] = pts[np.argmax(diff)]
     return rect
+
 
 def find_document_corners(gray):
     """
@@ -56,6 +61,7 @@ def find_document_corners(gray):
         return box.astype("float32")
     return None
 
+
 def apply_perspective_correction(image, debug_dir=None, debug_prefix="debug"):
     """
     Apply perspective correction if document corners are detected.
@@ -66,7 +72,7 @@ def apply_perspective_correction(image, debug_dir=None, debug_prefix="debug"):
         return image, False
 
     rect = order_points(corners)
-    (tl, tr, br, bl) = rect
+    tl, tr, br, bl = rect
 
     width_a = np.linalg.norm(br - bl)
     width_b = np.linalg.norm(tr - tl)
@@ -76,29 +82,34 @@ def apply_perspective_correction(image, debug_dir=None, debug_prefix="debug"):
     height_b = np.linalg.norm(tl - bl)
     max_height = int(max(height_a, height_b))
 
-    dst = np.array([
-        [0, 0],
-        [max_width - 1, 0],
-        [max_width - 1, max_height - 1],
-        [0, max_height - 1]
-    ], dtype="float32")
+    dst = np.array(
+        [
+            [0, 0],
+            [max_width - 1, 0],
+            [max_width - 1, max_height - 1],
+            [0, max_height - 1],
+        ],
+        dtype="float32",
+    )
 
     matrix = cv2.getPerspectiveTransform(rect, dst)
     warped = cv2.warpPerspective(image, matrix, (max_width, max_height))
 
     if debug_dir:
         save_debug_image(
-            warped,
-            os.path.join(debug_dir, f"{debug_prefix}_perspective.png")
+            warped, os.path.join(debug_dir, f"{debug_prefix}_perspective.png")
         )
     return warped, True
+
 
 def estimate_skew_angle(gray):
     """
     Estimate skew angle using Hough lines, fallback to minAreaRect.
     """
     edges = cv2.Canny(gray, 50, 150)
-    lines = cv2.HoughLinesP(edges, 1, np.pi / 180, threshold=100, minLineLength=100, maxLineGap=10)
+    lines = cv2.HoughLinesP(
+        edges, 1, np.pi / 180, threshold=100, minLineLength=100, maxLineGap=10
+    )
     angles = []
 
     if lines is not None:
@@ -121,23 +132,24 @@ def estimate_skew_angle(gray):
         angle = 90 + angle
     return float(angle)
 
+
 def deskew_image(image, angle, debug_dir=None, debug_prefix="debug"):
     """
     Rotate image to correct skew.
     """
     if abs(angle) < 0.1:
         return image, False
-    (h, w) = image.shape[:2]
+    h, w = image.shape[:2]
     center = (w // 2, h // 2)
     matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
-    rotated = cv2.warpAffine(image, matrix, (w, h), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
+    rotated = cv2.warpAffine(
+        image, matrix, (w, h), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE
+    )
 
     if debug_dir:
-        save_debug_image(
-            rotated,
-            os.path.join(debug_dir, f"{debug_prefix}_deskew.png")
-        )
+        save_debug_image(rotated, os.path.join(debug_dir, f"{debug_prefix}_deskew.png"))
     return rotated, True
+
 
 def estimate_curvature_strength(binary):
     """
@@ -164,12 +176,25 @@ def estimate_curvature_strength(binary):
     curvature = float(np.mean(np.abs(quad_vals - linear_vals)))
     return curvature, quadratic_fit, linear_fit
 
-def apply_curvature_correction(image, binary, strength_threshold=3.0, enabled=False, debug_dir=None, debug_prefix="debug"):
+
+def apply_curvature_correction(
+    image,
+    binary,
+    strength_threshold=3.0,
+    enabled=False,
+    debug_dir=None,
+    debug_prefix="debug",
+):
     """
     Apply curvature correction based on quadratic fit of the top edge.
     """
     curvature, quad_fit, linear_fit = estimate_curvature_strength(binary)
-    if not enabled or quad_fit is None or linear_fit is None or curvature < strength_threshold:
+    if (
+        not enabled
+        or quad_fit is None
+        or linear_fit is None
+        or curvature < strength_threshold
+    ):
         return image, False, curvature
 
     h, w = binary.shape
@@ -182,16 +207,20 @@ def apply_curvature_correction(image, binary, strength_threshold=3.0, enabled=Fa
     for x in range(w):
         map_y[:, x] = np.clip(map_y[:, x] + shift[x], 0, h - 1)
 
-    corrected = cv2.remap(image, map_x.astype(np.float32), map_y.astype(np.float32), cv2.INTER_LINEAR)
+    corrected = cv2.remap(
+        image, map_x.astype(np.float32), map_y.astype(np.float32), cv2.INTER_LINEAR
+    )
 
     if debug_dir:
         save_debug_image(
-            corrected,
-            os.path.join(debug_dir, f"{debug_prefix}_curvature.png")
+            corrected, os.path.join(debug_dir, f"{debug_prefix}_curvature.png")
         )
     return corrected, True, curvature
 
-def preprocess_image_advanced(image_path, debug_save_dir=None, apply_curvature=False, curvature_threshold=3.0):
+
+def preprocess_image_advanced(
+    image_path, debug_save_dir=None, apply_curvature=False, curvature_threshold=3.0
+):
     """
     Apply advanced preprocessing using OpenCV
     """
@@ -202,19 +231,18 @@ def preprocess_image_advanced(image_path, debug_save_dir=None, apply_curvature=F
     numpyarray = np.asarray(bytes, dtype=np.uint8)
     img = cv2.imdecode(numpyarray, cv2.IMREAD_UNCHANGED)
     stream.close()
-    
+
     if img is None:
         raise ValueError(f"Could not read image: {image_path}")
 
     if debug_save_dir:
         os.makedirs(debug_save_dir, exist_ok=True)
-        save_debug_image(
-            img,
-            os.path.join(debug_save_dir, "debug_original.png")
-        )
+        save_debug_image(img, os.path.join(debug_save_dir, "debug_original.png"))
 
     # Perspective correction
-    img, _ = apply_perspective_correction(img, debug_dir=debug_save_dir, debug_prefix="debug")
+    img, _ = apply_perspective_correction(
+        img, debug_dir=debug_save_dir, debug_prefix="debug"
+    )
 
     # Gray scale
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -229,59 +257,36 @@ def preprocess_image_advanced(image_path, debug_save_dir=None, apply_curvature=F
 
     # Adaptive Thresholding (Gaussian C) - Handles uneven lighting/aging
     # Block size 11, C=2 (standard starting points)
-    thresh = cv2.adaptiveThreshold(denoised, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
-                                 cv2.THRESH_BINARY, 11, 2)
-
-    # Curvature correction (optional, for strongly curved pages)
-    img_after_curvature, curvature_applied, _ = apply_curvature_correction(
-        img,
-        thresh,
-        strength_threshold=curvature_threshold,
-        enabled=apply_curvature,
-        debug_dir=debug_save_dir,
-        debug_prefix="debug"
+    thresh = cv2.adaptiveThreshold(
+        denoised, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
     )
-    if curvature_applied:
-        gray = cv2.cvtColor(img_after_curvature, cv2.COLOR_BGR2GRAY)
-        denoised = cv2.fastNlMeansDenoising(gray, None, 10, 7, 21)
-        thresh = cv2.adaptiveThreshold(
-            denoised, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-            cv2.THRESH_BINARY, 11, 2
-        )
 
     # Morphological operations to clean up dots/noise
-    kernel = np.ones((1, 1), np.uint8) # Very small kernel to avoid damaging thin strokes
-    
+    _kernel = np.ones(
+        (1, 1), np.uint8
+    )  # Very small kernel to avoid damaging thin strokes
+
     # Slight dilation to connect broken characters (common in old print)
     # dilate = cv2.dilate(thresh, kernel, iterations=1)
-    
+
     # For debugging - save using cv2.imencode for non-ASCII paths
     if debug_save_dir:
-        save_debug_image(
-            thresh,
-            os.path.join(debug_save_dir, "debug_preprocessed.png")
-        )
+        save_debug_image(thresh, os.path.join(debug_save_dir, "debug_preprocessed.png"))
 
     return thresh
 
-def ocr_page_advanced(image_path, lang='jpn_vert', psm=5, apply_curvature=False, curvature_threshold=3.0):
+
+def ocr_page_advanced(image_path, lang="jpn_vert", psm=5):
     """
     Perform OCR on a single page image with advanced settings
     """
     try:
         # Preprocess
-        debug_dir = os.path.join(
-            os.path.dirname(image_path),
-            f"debug_{os.path.splitext(os.path.basename(image_path))[0]}"
-        )
-        
-        preprocessed_img = preprocess_image_advanced(
-            image_path,
-            debug_save_dir=debug_dir,
-            apply_curvature=apply_curvature,
-            curvature_threshold=curvature_threshold
-        )
-        
+        debug_filename = f"debug_preprocessed_{os.path.basename(image_path)}"
+        debug_path = os.path.join(os.path.dirname(image_path), debug_filename)
+
+        preprocessed_img = preprocess_image_advanced(image_path, debug_path)
+
         # Convert back to PIL for Tesseract
         pil_img = Image.fromarray(preprocessed_img)
 
@@ -289,39 +294,50 @@ def ocr_page_advanced(image_path, lang='jpn_vert', psm=5, apply_curvature=False,
         # --oem 3: Default LSTM engine
         # --psm: Page segmentation mode passed as argument
         # -c preserve_interword_spaces=1: Keep spacing
-        custom_config = f'--oem 3 --psm {psm} -c preserve_interword_spaces=1'
-        
+        custom_config = f"--oem 3 --psm {psm} -c preserve_interword_spaces=1"
+
         text = pytesseract.image_to_string(pil_img, lang=lang, config=custom_config)
-        
+
         # Get confidence data
-        data = pytesseract.image_to_data(pil_img, lang=lang, config=custom_config, output_type=pytesseract.Output.DICT)
-        conf_list = [int(x) for x in data['conf'] if x != '-1']
+        data = pytesseract.image_to_data(
+            pil_img,
+            lang=lang,
+            config=custom_config,
+            _output_type=pytesseract.Output.DICT,
+        )
+        conf_list = [int(x) for x in data["conf"] if x != "-1"]
         avg_conf = sum(conf_list) / len(conf_list) if conf_list else 0
 
         return text, avg_conf, debug_dir
     except Exception as e:
         return f"Error: {str(e)}", 0, None
 
+
 if __name__ == "__main__":
     # Test on Text Page (003) and Table Page (011)
     base_dir = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages"
     test_pages = [
-        ("Page 003 (Text)", os.path.join(base_dir, "page_003.png"), 'jpn_vert', 5),
-        ("Page 011 (Table)", os.path.join(base_dir, "page_011.png"), 'jpn', 6) # Tables usually better with psm 6 or 4 in horizontal mode if they are standard tables, but vertical PDF tables are tricky.
+        ("Page 003 (Text)", os.path.join(base_dir, "page_003.png"), "jpn_vert", 5),
+        (
+            "Page 011 (Table)",
+            os.path.join(base_dir, "page_011.png"),
+            "jpn",
+            6,
+        ),  # Tables usually better with psm 6 or 4 in horizontal mode if they are standard tables, but vertical PDF tables are tricky.
     ]
-    
+
     output_lines = []
-    
+
     for label, path, lang, psm in test_pages:
         print(f"Processing {label} with lang={lang}, psm={psm}...")
-        
+
         try:
             text, conf, debug_process_path = ocr_page_advanced(path, lang=lang, psm=psm)
-            
+
             header = f"\n{'='*70}\n{label}\nLang: {lang}, PSM: {psm}\nConfidence: {conf:.2f}%\nProcessed Image: {debug_process_path}\n{'='*70}\n"
             print(header)
-            print(text[:500]) # Preview
-            
+            print(text[:500])  # Preview
+
             output_lines.append(header)
             output_lines.append(text)
         except Exception as e:
@@ -331,7 +347,7 @@ if __name__ == "__main__":
 
     # Save results
     output_file = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\ocr_advanced_test.txt"
-    with open(output_file, 'w', encoding='utf-8') as f:
-        f.write('\n'.join(output_lines))
-    
+    with open(output_file, "w", encoding="utf-8") as f:
+        f.write("\n".join(output_lines))
+
     print(f"\n\nResults saved to: {output_file}")

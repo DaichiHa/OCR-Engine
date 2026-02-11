@@ -1,0 +1,19 @@
+name: ocr-eng
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pillow
+  - numpy
+  - opencv
+  - tesseract
+  - pytesseract
+  - pip:
+    - opencv-python-headless
+    - rapidfuzz
+    - python-Levenshtein
+    - matplotlib
+    - pandas
+    - scikit-image
+    - tqdm

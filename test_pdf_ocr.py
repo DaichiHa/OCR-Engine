@@ -1,6 +1,4 @@
 
-import os
-import time
 import google.generativeai as genai
 from PIL import Image
 
@@ -26,31 +24,33 @@ PROMPT = """
    - Markdownのみ。説明不要。
 """
 
+
 def main():
     api_key = open(KEY_FILE, "r").read().strip()
     genai.configure(api_key=api_key)
     # 現在成功している gemini-2.0-flash を使用
-    model = genai.GenerativeModel('gemini-2.0-flash-lite')
+    model = genai.GenerativeModel("gemini-2.0-flash-lite")
 
     print(f"Testing the current ULTRA method on: {IMAGE_PATH}")
-    
+
     try:
         img = Image.open(IMAGE_PATH)
         # 高精度維持のためリサイズせず、または大きめに維持
         img.thumbnail((3072, 3072))
-        
+
         response = model.generate_content([PROMPT, img])
-        
+
         content = response.text
         with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
             f.write(content)
-        
+
         print(f"Success! Result saved to {OUTPUT_FILE}")
         print("\n--- Result Preview ---")
-        print(content[:1000]) # 最初の1000文字を表示
+        print(content[:1000])  # 最初の1000文字を表示
         print("--- End Preview ---")
     except Exception as e:
         print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     main()
