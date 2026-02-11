@@ -50,9 +50,9 @@ def preprocess(
     # deskewing is handled by module-level helper when requested in main
 
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
-    l, a, b = cv2.split(lab)
+    l_channel, a, b = cv2.split(lab)
     clahe = cv2.createCLAHE(clipLimit=clahe_clip, tileGridSize=(clahe_tile, clahe_tile))
-    cl = clahe.apply(l)
+    cl = clahe.apply(l_channel)
     limg = cv2.merge((cl, a, b))
     final = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
 
