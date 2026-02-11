@@ -1,4 +1,3 @@
-
 import google.generativeai as genai
 
 api_key = open("gemini_api_key.txt").read().strip()

@@ -35,11 +35,25 @@ jobs:
             exit 0
           fi
 
-      - name: Upload inputs and results
+      - name: Collect and upload inputs and results
+        shell: bash
+        run: |
+          mkdir -p artifacts/clahe-sweep
+          # copy expected outputs if they exist
+          shopt -s nullglob || true
+          cp -v ops/page_010_clahe_*.png artifacts/clahe-sweep/ 2>/dev/null || true
+          cp -v ops/clahe_sweep_page010_results.json artifacts/clahe-sweep/ 2>/dev/null || true
+          cp -v ops/clahe_sweep_*.rapid.txt artifacts/clahe-sweep/ 2>/dev/null || true
+          # upload via actions/upload-artifact step
+
+      - name: Upload clahe-sweep artifact
         uses: actions/upload-artifact@v4
         with:
           name: clahe-sweep-results
-          path: |
-            ops/page_010_clahe_*.png
-            ops/clahe_sweep_page010_results.json
-            ops/clahe_sweep_*.rapid.txt
+          path: artifacts/clahe-sweep
+
+      - name: Clean workspace generated files
+        shell: bash
+        run: |
+          # remove any generated files to avoid accidental commits
+          git clean -fdX || true

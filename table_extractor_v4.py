@@ -30,7 +30,9 @@ def extract_table_structure_v4(image_path, debug_dir):
     filename = os.path.basename(image_path)
     img = read_image_robust(image_path)
     if img is None:
-        return 0, None
+        return [], None
+
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Handle various image channel layouts robustly
     # keep a BGR copy for drawing/debugging and obtain a gray image for processing
@@ -117,20 +119,17 @@ def extract_table_structure_v4(image_path, debug_dir):
         cv2.line(debug_grid, (c, 0), (c, img_height), (0, 255, 0), 2)
 
     # Calculate Cells (Intersections)
-    # Build full grid of cells (including small ones) so we can merge tiny adjacent cells
     cells = []
-    grid = []
     if len(rows) > 1 and len(cols) > 1:
         for i in range(len(rows) - 1):
-            row_cells = []
             for j in range(len(cols) - 1):
                 y1 = rows[i]
                 y2 = rows[i + 1]
                 x1 = cols[j]
                 x2 = cols[j + 1]
 
-                h = int(y2 - y1)
-                w = int(x2 - x1)
+                h = y2 - y1
+                w = x2 - x1
 
                 row_cells.append([int(x1), int(y1), int(w), int(h)])
             grid.append(row_cells)
@@ -332,7 +331,7 @@ def extract_table_structure_v4(image_path, debug_dir):
                 x, y, w, h = grid[i][j]
                 # Filter logical cell sizes post-merge
                 if h > 15 and w > 15:
-                    cells.append((x, y, w, h))
+                    cells.append((x1, y1, w, h))
 
         # Re-cluster cells after merging to coalesce fragmented row spans
     # We group by vertical center and then merge horizontally-close cells within each row cluster
@@ -409,8 +408,8 @@ if __name__ == "__main__":
 
     print(f"Testing V4 (LSD) extraction on {test_page}...")
     try:
-        count, path = extract_table_structure_v4(test_page, debug_dir)
-        print(f"Detected {count} cells.")
+        cells, path = extract_table_structure_v4(test_page, debug_dir)
+        print(f"Detected {len(cells)} cells.")
         print(f"Saved debug to {path}")
     except Exception as e:
         print(f"Error: {e}")

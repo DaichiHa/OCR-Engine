@@ -1,0 +1,11 @@
+{
+  "tesseract": "C:\\Program Files\\Tesseract-OCR\\tesseract.exe",
+  "ollama": "C:\\Users\\User\\AppData\\Local\\Programs\\Ollama\\ollama.EXE",
+  "conda": "C:\\Users\\User\\Miniconda3\\Library\\bin\\conda.BAT",
+  "python": "C:\\Users\\User\\Miniconda3\\python.EXE",
+  "pip": "C:\\Users\\User\\Miniconda3\\Scripts\\pip.EXE",
+  "paddle_python": "C:\\Users\\User\\Miniconda3\\envs\\paddle-ocr\\python.EXE",
+  "paddle_env": "C:\\Users\\User\\Miniconda3\\envs\\paddle-ocr",
+  "git": "C:\\Program Files\\Git\\cmd\\git.EXE",
+  "docker": null
+}

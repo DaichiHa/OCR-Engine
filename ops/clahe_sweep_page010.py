@@ -198,10 +198,10 @@ for i, combo in enumerate(combos, start=1):
     with open(txt_path, "w", encoding="utf-8") as f:
         for item in dets:
             try:
-                box, text, score = item
+                _, text, _ = item
             except Exception:
                 if len(item) >= 3:
-                    box, text, score = item[0], item[1], item[2]
+                    _, text, _ = item[0], item[1], item[2]
                 else:
                     continue
             f.write(str(text) + "\n")
