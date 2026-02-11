@@ -121,11 +121,11 @@ if os.environ.get("GITHUB_ACTIONS", "").lower() == "true":
     os.environ.setdefault("PADDLE_DISABLE_ONEDNN", "1")
     os.environ.setdefault("PADDLE_WITH_MKL", "0")
     print("Detected CI environment: set Paddle/OneDNN disable env vars")
-from itertools import product
+from itertools import product  # noqa: E402
 
-import pytesseract
-from PIL import Image
-from postprocess_and_score import process_and_score
+import pytesseract  # noqa: E402
+from PIL import Image  # noqa: E402
+from postprocess_and_score import process_and_score  # noqa: E402
 
 # broader grid of SR scales + CLAHE combos: (scale, clip, tile, denoise_h)
 scales = [2, 3]
@@ -228,7 +228,7 @@ for i, combo in enumerate(combos, start=1):
     )
 
 # write results
-import json
+import json  # noqa: E402
 
 with open("ops/clahe_sweep_page010_results.json", "w", encoding="utf-8") as f:
     json.dump(results, f, ensure_ascii=False, indent=2)
