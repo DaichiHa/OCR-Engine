@@ -19,7 +19,9 @@ def process_cell_ocr():
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # 二値化 (線を強調)
-    thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+    thresh = cv2.threshold(
+        gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU
+    )[1]
 
     # 横線の検出
     horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (40, 1))
@@ -34,17 +36,22 @@ def process_cell_ocr():
     )
 
     # 罫線の結合
-    table_mask = cv2.addWeighted(detect_horizontal, 0.5, detect_vertical, 0.5, 0)
+    table_mask = cv2.addWeighted(
+        detect_horizontal, 0.5, detect_vertical, 0.5, 0
+    )
     table_mask = cv2.threshold(table_mask, 0, 255, cv2.THRESH_BINARY)[1]
 
     # セルの輪郭を抽出
-    contours, _ = cv2.findContours(table_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(
+        table_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
+    )
 
     # 矩形情報の取得
     rects = [cv2.boundingRect(c) for c in contours]
     # 小さすぎるノイズを除去、かつ座標順にソート (Y, X)
     rects = sorted(
-        [r for r in rects if r[2] > 20 and r[3] > 10], key=lambda x: (x[1], x[0])
+        [r for r in rects if r[2] > 20 and r[3] > 10],
+        key=lambda x: (x[1], x[0]),
     )
 
     print(f"Detected {len(rects)} cells. Starting Local-Cell-OCR...")
@@ -72,7 +79,9 @@ def process_cell_ocr():
             )
 
             # OCR実行
-            text = pytesseract.image_to_string(cell, config=TESS_CONFIG).strip()
+            text = pytesseract.image_to_string(
+                cell, config=TESS_CONFIG
+            ).strip()
             # 改行やパイプをエスケープ
             clean_text = text.replace("\n", " ").replace("|", "\\|")
             row_text.append(clean_text)

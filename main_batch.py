@@ -28,7 +28,9 @@ def process_single_page_task(page_info):
             # Table Mode
             rows = hybrid_extractor.extract_table_content(image_path)
             if not rows:
-                result = f"\n\n## Page {page_num}\n\n(No table data detected)\n"
+                result = (
+                    f"\n\n## Page {page_num}\n\n(No table data detected)\n"
+                )
             else:
                 lines = []
                 lines.append(f"\n\n## Page {page_num}")
@@ -48,10 +50,14 @@ def process_single_page_task(page_info):
 
 if __name__ == "__main__":
     pages_dir = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages"
-    output_file = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\Full_Output_Draft.md"
+    output_file = (
+        r"c:\Users\User\Downloads\日本帝國港灣統計_0001\Full_Output_Draft.md"
+    )
 
     # Get all page files
-    files = sorted([f for f in os.listdir(pages_dir) if f.lower().endswith(".png")])
+    files = sorted(
+        [f for f in os.listdir(pages_dir) if f.lower().endswith(".png")]
+    )
 
     # Map filenames to page numbers (assuming page_XXX.png)
     page_list = []
@@ -82,7 +88,9 @@ if __name__ == "__main__":
     # Tesseract releases GIL, so threading is fine.
 
     max_workers = 4
-    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=max_workers
+    ) as executor:
         # Submit all tasks
         future_to_page = {
             executor.submit(process_single_page_task, p): p for p in page_list

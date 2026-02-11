@@ -37,8 +37,12 @@ def analyze_hybrid_structure(image_path, debug_dir):
     if lines is not None:
         for line in lines:
             x1, y1, x2, y2 = line[0]
-            if abs(x1 - x2) < 5 and abs(y1 - y2) > 50:  # Verticalish and long enough
-                vertical_lines.append(((x1 + x2) / 2, min(y1, y2), max(y1, y2)))
+            if (
+                abs(x1 - x2) < 5 and abs(y1 - y2) > 50
+            ):  # Verticalish and long enough
+                vertical_lines.append(
+                    ((x1 + x2) / 2, min(y1, y2), max(y1, y2))
+                )
 
     # Cluster Vertical Lines (Columns)
     vertical_lines.sort(key=lambda x: x[0])
@@ -62,7 +66,10 @@ def analyze_hybrid_structure(image_path, debug_dir):
     custom_config = r"--oem 3 --psm 6"
     pil_img = Image.fromarray(gray)
     data = pytesseract.image_to_data(
-        pil_img, lang="jpn", config=custom_config, output_type=pytesseract.Output.DICT
+        pil_img,
+        lang="jpn",
+        config=custom_config,
+        output_type=pytesseract.Output.DICT,
     )
 
     # Filter valid text blocks

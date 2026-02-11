@@ -2,7 +2,6 @@ import os
 import subprocess
 import time
 
-
 # --- 設定 (LOCAL-ULTRA 追及テスト) ---
 INPUT_DIR = "pages_ultra_preprocessed"  # 今回作成した軽量・高精細画像を使用
 OUTPUT_DIR = "local_ultra_results"
@@ -18,7 +17,9 @@ def process_local_ultra(img_path):
         page_base = filename.replace(".png", "")
         out_txt_base = os.path.join(OUTPUT_DIR, page_base)
 
-        print(f"[{time.strftime('%H:%M:%S')}] Local-ULTRA analyzing: {filename}...")
+        print(
+            f"[{time.strftime('%H:%M:%S')}] Local-ULTRA analyzing: {filename}..."
+        )
 
         # 1. ローカル実行 (Tesseract)
         # プレプロセス済みの画像を使用するため、認識率は通常より格段に上がるはず

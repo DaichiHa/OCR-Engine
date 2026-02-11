@@ -20,7 +20,9 @@ if not client_id or not client_secret:
     print("Missing client_id or client_secret in .env")
     raise SystemExit(1)
 
-token_file = Path(__file__).resolve().parent.joinpath(".secrets", "oauth_token.json")
+token_file = (
+    Path(__file__).resolve().parent.joinpath(".secrets", "oauth_token.json")
+)
 if not token_file.exists():
     print("Token file not found:", token_file)
     raise SystemExit(1)
@@ -38,7 +40,9 @@ req.add_header("Accept", "application/vnd.github+json")
 req.add_header("Content-Type", "application/json")
 # Basic auth with client_id:client_secret
 creds = f"{client_id}:{client_secret}"
-req.add_header("Authorization", "Basic " + base64.b64encode(creds.encode()).decode())
+req.add_header(
+    "Authorization", "Basic " + base64.b64encode(creds.encode()).decode()
+)
 
 out_path = Path(__file__).resolve().parent.joinpath("revoke_result.json")
 try:
@@ -50,7 +54,9 @@ except urllib.error.HTTPError as e:
     code = e.code
 
 out_path.write_text(
-    json.dumps({"status": code, "response": resp}, ensure_ascii=False, indent=2),
+    json.dumps(
+        {"status": code, "response": resp}, ensure_ascii=False, indent=2
+    ),
     encoding="utf-8",
 )
 print("Wrote", out_path)

@@ -55,9 +55,7 @@ def clean_markdown_table(md_content):
 
 if __name__ == "__main__":
     # Test on page_008.md
-    input_path = (
-        r"c:\Users\User\Downloads\日本帝國港灣統計_0001\intermediate_md\page_008.md"
-    )
+    input_path = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\intermediate_md\page_008.md"
     output_path = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\intermediate_md\page_008_cleaned.md"
 
     if os.path.exists(input_path):

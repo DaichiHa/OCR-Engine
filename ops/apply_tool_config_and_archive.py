@@ -25,7 +25,10 @@ if not tools["executables"].get("tesseract", {}).get("path"):
             tools["executables"]["tesseract"] = {"path": str(p)}
             try:
                 proc = subprocess.run(
-                    [str(p), "--version"], capture_output=True, text=True, timeout=10
+                    [str(p), "--version"],
+                    capture_output=True,
+                    text=True,
+                    timeout=10,
                 )
                 ver = proc.stdout.strip() or proc.stderr.strip()
                 tools["executables"]["tesseract"]["version_probe"] = (
@@ -124,7 +127,10 @@ for p in root.iterdir():
 summary = root / "archive" / "page_010_archive_summary.json"
 with open(summary, "w", encoding="utf-8") as f:
     json.dump(
-        {"moved": moved, "kept": sorted(list(keep))}, f, indent=2, ensure_ascii=False
+        {"moved": moved, "kept": sorted(list(keep))},
+        f,
+        indent=2,
+        ensure_ascii=False,
     )
 
 print("Updated", tools_json)

@@ -71,13 +71,17 @@ def main():
 
         success = False
         while not success:
-            print(f"[{time.strftime('%H:%M:%S')}] Processing Gap: Page {page_num}...")
+            print(
+                f"[{time.strftime('%H:%M:%S')}] Processing Gap: Page {page_num}..."
+            )
             try:
                 model = genai.GenerativeModel(MODEL_NAME)
                 img = Image.open(img_path)
                 img.thumbnail((3072, 3072))
 
-                response = model.generate_content([ULTRA_PRECISION_PROMPT, img])
+                response = model.generate_content(
+                    [ULTRA_PRECISION_PROMPT, img]
+                )
 
                 if response.text and len(response.text) > 10:
                     with open(out_path, "w", encoding="utf-8") as f:
@@ -91,7 +95,9 @@ def main():
             except Exception as e:
                 err_str = str(e)
                 if "429" in err_str or "402" in err_str:
-                    print(f"   [Limit] Deep Rest Required. Waiting {QUOTA_WAIT}s...")
+                    print(
+                        f"   [Limit] Deep Rest Required. Waiting {QUOTA_WAIT}s..."
+                    )
                     time.sleep(QUOTA_WAIT)
                     # 5分待ってもダメな場合はモデルをスイッチする予備ロジック
                 else:

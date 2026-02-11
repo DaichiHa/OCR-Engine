@@ -9,18 +9,18 @@
     "rapid": {
       "in": "ops\\page_010_clahe_1.rapid.normalized.txt",
       "out": "ops\\page_010_clahe_1.rapid.clean.txt",
-      "before_jp_rate2_fix": 0.18854415274463007,
-      "before_noise_rate2_fix": 0.04608294930875576,
-      "after_jp_rate2_fix": 0.18944844124700239,
-      "after_noise_rate2_fix": 0.046296296296296294
+      "before_jp_rate2_fix": 0.0,
+      "before_noise_rate2_fix": 0.0,
+      "after_jp_rate2_fix": 0.0,
+      "after_noise_rate2_fix": 0.0
     },
     "tesseract_psm11": {
       "in": "ops\\page_010_clahe_1.tess.psm11.normalized.txt",
       "out": "ops\\page_010_clahe_1.tess.psm11.clean.txt",
-      "before_jp_rate2_fix": 0.330173775671406,
-      "before_noise_rate2_fix": 0.15821812596006143,
-      "after_jp_rate2_fix": 0.3281004709576138,
-      "after_noise_rate2_fix": 0.0893939393939394
+      "before_jp_rate2_fix": 0.8650137741046832,
+      "before_noise_rate2_fix": 0.0777479892761394,
+      "after_jp_rate2_fix": 0.8674033149171271,
+      "after_noise_rate2_fix": 0.06684491978609626
     }
   },
   {
@@ -33,18 +33,18 @@
     "rapid": {
       "in": "ops\\page_010_clahe_2.rapid.normalized.txt",
       "out": "ops\\page_010_clahe_2.rapid.clean.txt",
-      "before_jp_rate2_fix": 0.19856459330143542,
-      "before_noise_rate2_fix": 0.05057471264367816,
-      "after_jp_rate2_fix": 0.2,
-      "after_noise_rate2_fix": 0.04861111111111111
+      "before_jp_rate2_fix": 0.0,
+      "before_noise_rate2_fix": 0.0,
+      "after_jp_rate2_fix": 0.0,
+      "after_noise_rate2_fix": 0.0
     },
     "tesseract_psm11": {
       "in": "ops\\page_010_clahe_2.tess.psm11.normalized.txt",
       "out": "ops\\page_010_clahe_2.tess.psm11.clean.txt",
-      "before_jp_rate2_fix": 0.3404605263157895,
-      "before_noise_rate2_fix": 0.1282051282051282,
-      "after_jp_rate2_fix": 0.33713355048859933,
-      "after_noise_rate2_fix": 0.05246422893481717
+      "before_jp_rate2_fix": 0.871313672922252,
+      "before_noise_rate2_fix": 0.07853403141361257,
+      "after_jp_rate2_fix": 0.876010781671159,
+      "after_noise_rate2_fix": 0.07493540051679587
     }
   }
 ]

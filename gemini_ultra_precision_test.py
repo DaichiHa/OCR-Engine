@@ -66,7 +66,9 @@ def main():
                 # 品質維持のためリサイズを最小限に (3072px)
                 img.thumbnail((3072, 3072))
 
-                response = model.generate_content([ULTRA_EXTRACTION_PROMPT, img])
+                response = model.generate_content(
+                    [ULTRA_EXTRACTION_PROMPT, img]
+                )
 
                 # 品質チェック: 中身が空でないか
                 if response.text and len(response.text) > 50:
@@ -82,7 +84,9 @@ def main():
             except Exception as e:
                 err_str = str(e)
                 if "429" in err_str or "402" in err_str:
-                    print(f"Quota Hit. Waiting {retry_delay}s and scaling up...")
+                    print(
+                        f"Quota Hit. Waiting {retry_delay}s and scaling up..."
+                    )
                     time.sleep(retry_delay)
                     retry_delay = min(retry_delay * 2, 120)  # 指数バックオフ
                 else:
@@ -90,7 +94,9 @@ def main():
                     time.sleep(10)
                     break  # 重大なエラーはスキップ
 
-    print(f"\n--- ULTRA PDCA Test Complete in {time.time() - start_all:.2f}s ---")
+    print(
+        f"\n--- ULTRA PDCA Test Complete in {time.time() - start_all:.2f}s ---"
+    )
 
 
 if __name__ == "__main__":

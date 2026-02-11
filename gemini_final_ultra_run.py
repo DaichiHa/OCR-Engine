@@ -104,7 +104,9 @@ def main():
     print("--- STARTING FINAL ULTRA RUN ---")
     print(f"Target: {len(tasks)} pages | Workers: {MAX_WORKERS}")
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=MAX_WORKERS
+    ) as executor:
         executor.map(process_page_hyper, tasks)
 
     print("--- ALL PROCESSING COMPLETE ---")

@@ -3,7 +3,6 @@ Hybrid Extractor Module
 Reusable function for table page processing.
 """
 
-
 import cv2
 import numpy as np
 import pytesseract
@@ -43,7 +42,9 @@ def extract_table_content(image_path, debug_dir=None):
             x1, y1, x2, y2 = line[0]
             # More lenient filter for vertical lines
             if abs(x1 - x2) < 10 and abs(y1 - y2) > 30:
-                vertical_lines.append(((x1 + x2) / 2, min(y1, y2), max(y1, y2)))
+                vertical_lines.append(
+                    ((x1 + x2) / 2, min(y1, y2), max(y1, y2))
+                )
 
     # Cluster Columns
     vertical_lines.sort(key=lambda x: x[0])
@@ -75,12 +76,17 @@ def extract_table_content(image_path, debug_dir=None):
     enhanced = clahe.apply(denoised)
 
     # 3. Robust Thresholding
-    thresh = cv2.threshold(enhanced, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+    thresh = cv2.threshold(
+        enhanced, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU
+    )[1]
     pil_img = Image.fromarray(thresh)
 
     try:
         data = pytesseract.image_to_data(
-            pil_img, lang="jpn", config=config, output_type=pytesseract.Output.DICT
+            pil_img,
+            lang="jpn",
+            config=config,
+            output_type=pytesseract.Output.DICT,
         )
     except Exception:
         return []
@@ -157,7 +163,9 @@ def extract_vertical_text(image_path):
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
     enhanced = clahe.apply(denoised)
 
-    thresh = cv2.threshold(enhanced, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+    thresh = cv2.threshold(
+        enhanced, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU
+    )[1]
     pil_img = Image.fromarray(thresh)
 
     config = r"--oem 3 --psm 5"  # Vertical text block

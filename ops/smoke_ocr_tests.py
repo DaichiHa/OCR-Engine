@@ -1,8 +1,8 @@
 import json
-import sys
-from pathlib import Path
 import os
 import shutil
+import sys
+from pathlib import Path
 
 # Ensure repo root is on sys.path so imports like `ocr_ensemble` work
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -16,7 +16,10 @@ def _locate_tesseract():
     if cand.exists():
         return str(cand.resolve())
     # common install locations
-    for p in (Path("C:/Program Files/Tesseract-OCR/tesseract.exe"), Path("C:/Program Files (x86)/Tesseract-OCR/tesseract.exe")):
+    for p in (
+        Path("C:/Program Files/Tesseract-OCR/tesseract.exe"),
+        Path("C:/Program Files (x86)/Tesseract-OCR/tesseract.exe"),
+    ):
         if p.exists():
             return str(p)
     # fallback to system PATH
@@ -39,7 +42,9 @@ if tess:
         pass
     print("Using tesseract:", tess)
 else:
-    print("tesseract not found; subprocesses may fail if Tesseract isn't installed or bundled")
+    print(
+        "tesseract not found; subprocesses may fail if Tesseract isn't installed or bundled"
+    )
 
 OUT = Path("ops") / "smoke_out"
 OUT.mkdir(parents=True, exist_ok=True)

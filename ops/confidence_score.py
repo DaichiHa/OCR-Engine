@@ -47,7 +47,8 @@ def gather_candidates(base: Path):
             # consider files with .clean.txt, .normalized.txt, .ppocr.txt, .ollama.suggested.txt
             s = str(p.name)
             if any(
-                k in s for k in (".clean", ".normalized", ".ppocr", ".tess", "ollama")
+                k in s
+                for k in (".clean", ".normalized", ".ppocr", ".tess", "ollama")
             ):
                 candidates.append(p)
     return candidates
@@ -65,7 +66,10 @@ def score_file(p: Path, group_counts: dict) -> dict:
     ocr_conf = base_ocr_confidence(name)
     # consensus proxy: how many siblings share same base prefix
     prefix = re.sub(
-        r"\.(clean|normalized|ppocr|tess|txt|ollama|suggested).*", "", name, flags=re.I
+        r"\.(clean|normalized|ppocr|tess|txt|ollama|suggested).*",
+        "",
+        name,
+        flags=re.I,
     )
     consensus = min(1.0, group_counts.get(prefix.lower(), 1) / 3.0)
     lm_agreement = (

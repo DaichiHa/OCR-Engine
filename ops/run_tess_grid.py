@@ -99,7 +99,11 @@ def main(smoke=False, assist=False):
 
         tess_txt = out_dir / f"{name}.tess.tiled.psm11.txt"
         # score tesseract output
-        cmd_score = [sys.executable, "ops/postprocess_and_score.py", str(tess_txt)]
+        cmd_score = [
+            sys.executable,
+            "ops/postprocess_and_score.py",
+            str(tess_txt),
+        ]
         r = run(cmd_score)
         summary = None
         if r.returncode == 0:
@@ -112,7 +116,12 @@ def main(smoke=False, assist=False):
             except Exception:
                 summary = {"error": "parse_failed", "raw": out}
 
-        entry = {"idx": idx, "name": name, "params": params, "tesseract": summary}
+        entry = {
+            "idx": idx,
+            "name": name,
+            "params": params,
+            "tesseract": summary,
+        }
 
         # if rapid normalized exists for this name, ensemble and score
         rapid_norm = out_dir / f"{name}.rapid.normalized.txt"
@@ -140,7 +149,9 @@ def main(smoke=False, assist=False):
         if assist:
             assist_in = None
             # prefer ensemble clean if present
-            ensemble_clean = out_dir / f"{name}.rapid.normalized.ensemble.clean.txt"
+            ensemble_clean = (
+                out_dir / f"{name}.rapid.normalized.ensemble.clean.txt"
+            )
             if ensemble_clean.exists():
                 assist_in = ensemble_clean
             elif tess_norm.exists():

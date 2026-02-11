@@ -19,11 +19,21 @@ except Exception:
 def load_config(path: str = "ops/ollama_config.json") -> dict:
     cfgp = Path(path)
     if not cfgp.exists():
-        return {"host": None, "model": "llama2:latest", "timeout": 10, "use_cli": False}
+        return {
+            "host": None,
+            "model": "llama2:latest",
+            "timeout": 10,
+            "use_cli": False,
+        }
     try:
         return json.loads(cfgp.read_text(encoding="utf-8"))
     except Exception:
-        return {"host": None, "model": "llama2:latest", "timeout": 10, "use_cli": False}
+        return {
+            "host": None,
+            "model": "llama2:latest",
+            "timeout": 10,
+            "use_cli": False,
+        }
 
 
 def has_ollama_cli(cli_path: str = None) -> bool:
@@ -62,7 +72,9 @@ def call_ollama_cli(
 
         tmp = None
         try:
-            tmpf = tempfile.NamedTemporaryFile(delete=False, mode="w", encoding="utf-8")
+            tmpf = tempfile.NamedTemporaryFile(
+                delete=False, mode="w", encoding="utf-8"
+            )
             tmpf.write(prompt)
             tmpf.close()
             tmp = tmpf.name
@@ -154,7 +166,9 @@ def call_ollama_http(
 
 def generate(prompt: str, cfg: dict) -> Optional[str]:
     cli_path = (
-        cfg.get("cli_path") or get_path("ollama") if isinstance(cfg, dict) else None
+        cfg.get("cli_path") or get_path("ollama")
+        if isinstance(cfg, dict)
+        else None
     )
     if cfg.get("use_cli", True) and has_ollama_cli(cli_path):
         # Try CLI invocations (prefer stdin first)
@@ -233,7 +247,10 @@ def call_ollama_cli_with_form(
             out = out_b.decode("utf-8", errors="replace")
         else:
             out = subprocess.check_output(
-                cmd, stderr=subprocess.STDOUT, timeout=timeout, universal_newlines=True
+                cmd,
+                stderr=subprocess.STDOUT,
+                timeout=timeout,
+                universal_newlines=True,
             )
         return out
     except subprocess.CalledProcessError as e:

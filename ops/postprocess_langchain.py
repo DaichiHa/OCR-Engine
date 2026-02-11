@@ -17,7 +17,9 @@ def basic_cleanup(text, mappings=None):
     t = t.replace("·", ".")
     # remove stray non-CJK letters immediately before digits (e.g. OCR noise like '카59')
     t = re.sub(
-        r"([^\u4E00-\u9FFF\u3040-\u30FF\u3130-\u318F\uAC00-\uD7AF\d\w])(?=\d)", "", t
+        r"([^\u4E00-\u9FFF\u3040-\u30FF\u3130-\u318F\uAC00-\uD7AF\d\w])(?=\d)",
+        "",
+        t,
     )
     # apply mapping replacements
     if mappings:
@@ -115,7 +117,9 @@ def main():
             chain = LLMChain(llm=llm, prompt=prompt)
             # chunk large text
             chunk_size = 4000
-            parts = [src[i : i + chunk_size] for i in range(0, len(src), chunk_size)]
+            parts = [
+                src[i : i + chunk_size] for i in range(0, len(src), chunk_size)
+            ]
             out_parts = []
             for p in parts:
                 res = chain.run(text=p)

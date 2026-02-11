@@ -156,18 +156,8 @@ def extract_table_structure_v4(image_path, debug_dir):
 
     if grid:
         # Compute typical cell size (median) to detect 'small' cells
-        widths = [
-            c[2]
-            for r in grid
-            for c in r
-            if c[2] > 0
-        ]
-        heights = [
-            c[3]
-            for r in grid
-            for c in r
-            if c[3] > 0
-        ]
+        widths = [c[2] for r in grid for c in r if c[2] > 0]
+        heights = [c[3] for r in grid for c in r if c[3] > 0]
         if widths and heights:
             median_w = int(np.median(widths))
             median_h = int(np.median(heights))
@@ -187,9 +177,7 @@ def extract_table_structure_v4(image_path, debug_dir):
         col_medians = []
         for j in range(cols_n):
             col_ws = [
-                grid[i][j][2]
-                for i in range(rows_n)
-                if grid[i][j][2] > 0
+                grid[i][j][2] for i in range(rows_n) if grid[i][j][2] > 0
             ]
             if col_ws:
                 col_medians.append(int(np.median(col_ws)))
@@ -445,10 +433,7 @@ if __name__ == "__main__":
         "c:\\Users\\User\\Downloads\\日本帝國港灣統計_0001\\pages\\"
         + "page_011.png"
     )
-    debug_dir = (
-        "c:\\Users\\User\\Downloads\\日本帝國港灣統計_0001\\"
-        + "pages"
-    )
+    debug_dir = "c:\\Users\\User\\Downloads\\日本帝國港灣統計_0001\\" + "pages"
 
     print(f"Testing V4 (LSD) extraction on {test_page}...")
     try:

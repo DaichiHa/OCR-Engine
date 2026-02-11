@@ -100,7 +100,9 @@ def main():
 
         # 3. ページごとにタスクを作成
         img_files = sorted(glob.glob(os.path.join(img_dir, "*.png")))
-        print(f"PDF '{pdf_name}' has {len(img_files)} pages. Starting conversion...")
+        print(
+            f"PDF '{pdf_name}' has {len(img_files)} pages. Starting conversion..."
+        )
 
         for i, img_path in enumerate(img_files):
             page_name = os.path.basename(img_path).replace(".png", ".md")

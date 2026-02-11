@@ -19,12 +19,14 @@ def simple_ensemble(rapid_path: Path, tess_path: Path) -> str:
         else:
             out = t
         out_lines.append(out)
-    return "\n".join([l for l in out_lines if l])
+    return "\n".join([s for s in out_lines if s])
 
 
 def main():
     if len(sys.argv) < 3:
-        print("Usage: ensemble_and_score.py rapid.normalized.txt tess.normalized.txt")
+        print(
+            "Usage: ensemble_and_score.py rapid.normalized.txt tess.normalized.txt"
+        )
         sys.exit(1)
     rapid = Path(sys.argv[1])
     tess = Path(sys.argv[2])

@@ -100,7 +100,9 @@ def main():
         f"Total: {len(tasks)} pages | Parallel: {MAX_WORKERS} | Target Cooldown: {COOLDOWN}s"
     )
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=MAX_WORKERS
+    ) as executor:
         executor.map(process_page_stable, tasks)
 
     print("--- ALL PROCESSING COMPLETE ---")
