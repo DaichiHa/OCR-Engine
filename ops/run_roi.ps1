@@ -1,8 +1,8 @@
 ﻿param(
   [int]$Pr = 20,
-  [string]$PageMid = "C:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_011_mid.png",
-  [string]$PageHi  = "C:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_011_hi.png",
-  [string]$OutDir  = "C:\Users\User\Downloads\PDF_OCR_OUT",
+  [string]$PageMid = "$HOME\\Downloads\\日本帝國港灣統計_0001\\pages\\page_011_mid.png",
+  [string]$PageHi  = "$HOME\\Downloads\\日本帝國港灣統計_0001\\pages\\page_011_hi.png",
+  [string]$OutDir  = "$HOME\\Downloads\\PDF_OCR_OUT",
   [int]$N = 6,
   [double]$InkMin = 0.010,
   [int]$Row = 1,

@@ -2,8 +2,9 @@ import collections
 import os
 import re
 import sys
+from pathlib import Path
 
-root = r"C:\Users\User\Downloads\OCR-Engine"
+root = str(Path.home() / "Downloads" / "OCR-Engine")
 groups = collections.defaultdict(list)
 for dirpath, dirnames, filenames in os.walk(root):
     for d in dirnames:

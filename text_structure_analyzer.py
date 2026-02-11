@@ -158,8 +158,12 @@ def analyze_hybrid_structure(image_path, debug_dir):
 
 
 if __name__ == "__main__":
-    test_page = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_011.png"
-    debug_dir = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages"
+    from pathlib import Path
+
+    home = Path.home()
+    sample_root = home / "Downloads" / "日本帝國港灣統計_0001"
+    test_page = str(sample_root / "pages" / "page_011.png")
+    debug_dir = str(sample_root / "pages")
 
     print(f"Testing Hybrid Extraction on {test_page}...")
     rows, path = analyze_hybrid_structure(test_page, debug_dir)
@@ -170,10 +174,7 @@ if __name__ == "__main__":
         print("| " + " | ".join(row) + " |")
 
     # Save md
-    with open(
-        r"c:\Users\User\Downloads\日本帝國港灣統計_0001\page_011_hybrid.md",
-        "w",
-        _encoding="utf-8",
-    ) as f:
+    out_md = sample_root / "page_011_hybrid.md"
+    with out_md.open("w", encoding="utf-8") as f:
         for row in rows:
             f.write("| " + " | ".join(row) + " |\n")

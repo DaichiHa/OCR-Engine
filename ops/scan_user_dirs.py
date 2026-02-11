@@ -1,10 +1,11 @@
 import collections
 import os
 import sys
+from pathlib import Path
 
 
 def main():
-    p = r"C:\Users\User"
+    p = str(Path.home())
     try:
         dirs = [name for name in os.listdir(p) if os.path.isdir(os.path.join(p, name))]
     except Exception as e:

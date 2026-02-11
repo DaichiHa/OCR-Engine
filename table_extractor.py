@@ -92,8 +92,12 @@ def extract_table_structure(image_path, debug_dir):
 
 
 if __name__ == "__main__":
-    test_page = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_011.png"
-    debug_dir = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages"
+    from pathlib import Path
+
+    home = Path.home()
+    sample_root = home / "Downloads" / "日本帝國港灣統計_0001"
+    test_page = str(sample_root / "pages" / "page_011.png")
+    debug_dir = str(sample_root / "pages")
 
     print(f"Extracting table from {test_page}...")
     count, debug_path = extract_table_structure(test_page, debug_dir)

@@ -2,6 +2,7 @@ import collections
 import os
 import re
 import sys
+from pathlib import Path
 
 
 def norm(name):
@@ -10,7 +11,7 @@ def norm(name):
 
 
 def main():
-    root = r"C:\Users\User"
+    root = str(Path.home())
     max_depth = 3
     groups = collections.defaultdict(list)
     for dirpath, dirnames, filenames in os.walk(root):

@@ -60,13 +60,13 @@ for group in sorted([d for d in la.iterdir() if d.is_dir()]):
         except Exception:
             return
         for line in txt.splitlines():
-            s = l.strip()
+            s = line.strip()
             if not s:
                 continue
             if s in seen:
                 continue
             seen.add(s)
-            lines.append(l)
+            lines.append(s)
 
     # start with canonical
     add_lines(canonical)

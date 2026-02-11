@@ -81,13 +81,35 @@ def _parse_args():
 
 args = _parse_args()
 page = args.page
-miniconda_py = r"C:/Users/User/Miniconda3/envs/ocr311/python.exe"
+
+
+def _find_conda_env_python(preferred_env: str = "ocr311") -> Optional[str]:
+    home = Path.home()
+    conda_envs = home / "Miniconda3" / "envs"
+    try:
+        if conda_envs.exists():
+            pref = conda_envs / preferred_env
+            if pref.exists():
+                py = pref / ("python.exe" if os.name == "nt" else "bin/python")
+                if py.exists():
+                    return str(py)
+            for env in conda_envs.iterdir():
+                py = env / ("python.exe" if os.name == "nt" else "bin/python")
+                if py.exists():
+                    return str(py)
+    except Exception:
+        pass
+    return None
+
+
+miniconda_py = _find_conda_env_python()
 if args.preprocess_python:
     preprocess_python = args.preprocess_python
 else:
-    preprocess_python = miniconda_py if Path(miniconda_py).exists() else sys.executable
+    preprocess_python = miniconda_py if miniconda_py else sys.executable
 
-user_src = Path(f"C:/Users/User/Downloads/PDF/_img/page_{page}.png")
+# Prefer user Downloads/PDF/_img if present; otherwise look in repo ops/
+user_src = Path.home() / "Downloads" / "PDF" / "_img" / f"page_{page}.png"
 repo_src = Path(f"ops/page_{page}.png")
 if user_src.exists():
     src = user_src
@@ -126,6 +148,10 @@ from itertools import product
 import pytesseract
 from PIL import Image
 from postprocess_and_score import process_and_score
+
+
+def _normalize_text(text: str) -> str:
+    return " ".join(str(text).strip().split())
 
 # broader grid of SR scales + CLAHE combos: (scale, clip, tile, denoise_h)
 scales = [2, 3]
@@ -204,7 +230,7 @@ for i, combo in enumerate(combos, start=1):
                     box, text, score = item[0], item[1], item[2]
                 else:
                     continue
-            f.write(str(text) + "\n")
+            f.write(_normalize_text(text) + "\n")
     print("Wrote rapid txt:", txt_path)
     # Postprocess KPI for rapid output
     _, summary_rapid = process_and_score(str(txt_path))
@@ -217,7 +243,7 @@ for i, combo in enumerate(combos, start=1):
     except Exception:
         tess_txt = ""
     with open(tess_path, "w", encoding="utf-8") as f:
-        f.write(tess_txt)
+        f.write(_normalize_text(tess_txt))
     _, summary_tess = process_and_score(str(tess_path))
     results.append(
         {

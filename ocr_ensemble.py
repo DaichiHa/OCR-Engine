@@ -80,7 +80,7 @@ def _order_lines(
     if not lines:
         return []
     tolerance = y_tolerance if y_tolerance is not None else _default_y_tolerance(lines)
-    sorted_lines = sorted(lines, key=lambda line: (_line_center_y(l), l.bbox[0]))
+    sorted_lines = sorted(lines, key=lambda line: (_line_center_y(line), line.bbox[0]))
 
     rows: List[dict] = []
     for line in sorted_lines:
@@ -98,7 +98,7 @@ def _order_lines(
 
     ordered: List[OcrLine] = []
     for row in rows:
-        ordered.extend(sorted(row["lines"], key=lambda line: l.bbox[0]))
+        ordered.extend(sorted(row["lines"], key=lambda line: line.bbox[0]))
     return ordered
 
 
@@ -106,13 +106,22 @@ def _normalize_text(text: str) -> str:
     return " ".join(text.strip().split())
 
 
+def _normalize_bbox(bbox: Tuple[int, int, int, int]) -> Tuple[int, int, int, int]:
+    # Ensure ints and (x1,y1,x2,y2) ordering
+    x1, y1, x2, y2 = bbox
+    x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+    lx, rx = sorted((x1, x2))
+    ty, by = sorted((y1, y2))
+    return (lx, ty, rx, by)
+
+
 def run_tesseract_lines(image_path: str, lang: str = "jpn") -> List[OcrLine]:
     image = Image.open(image_path)
     data = pytesseract.image_to_data(
         image,
         lang=lang,
-        _config="--oem 3 --psm 6",
-        _output_type=pytesseract.Output.DICT,
+        config="--oem 3 --psm 6",
+        output_type=pytesseract.Output.DICT,
     )
 
     lines: List[OcrLine] = []
@@ -126,7 +135,7 @@ def run_tesseract_lines(image_path: str, lang: str = "jpn") -> List[OcrLine]:
         top = int(data["top"][idx])
         width = int(data["width"][idx])
         height = int(data["height"][idx])
-        bbox = (left, top, left + width, top + height)
+        bbox = _normalize_bbox((left, top, left + width, top + height))
         conf = _safe_float(data["conf"][idx], default=0.0) / 100.0
         lines.append(OcrLine(text=text, bbox=bbox, conf=conf, engine="tesseract"))
     return _order_lines(lines)
@@ -155,7 +164,7 @@ def run_paddle_lines(image_path: str, lang: str = "japan") -> List[OcrLine]:
                 continue
             xs = [pt[0] for pt in points]
             ys = [pt[1] for pt in points]
-            bbox = (int(min(xs)), int(min(ys)), int(max(xs)), int(max(ys)))
+            bbox = _normalize_bbox((int(min(xs)), int(min(ys)), int(max(xs)), int(max(ys))))
             lines.append(
                 OcrLine(text=clean_text, bbox=bbox, conf=float(conf), engine="paddle")
             )

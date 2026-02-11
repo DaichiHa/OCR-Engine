@@ -5,12 +5,12 @@ from pathlib import Path
 
 def score_text(text: str) -> float:
     # simple readability: fraction of lines with >=3 alpha chars
-    lines = [line for line in text.splitlines() if l.strip()]
+    lines = [line for line in text.splitlines() if line.strip()]
     if not lines:
         return 0.0
     good = 0
     for line in lines:
-        alpha = sum(1 for ch in l if ch.isalpha())
+        alpha = sum(1 for ch in line if ch.isalpha())
         if alpha >= 3:
             good += 1
     return good / len(lines)

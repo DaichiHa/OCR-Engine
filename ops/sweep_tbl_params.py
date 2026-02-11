@@ -1,6 +1,7 @@
 import os
 import subprocess
 from itertools import product
+from pathlib import Path
 
 py = os.path.join(".", ".venv", "Scripts", "python.exe")
 if not os.path.exists(py):
@@ -31,7 +32,7 @@ for mf, rf, hg in product(merge_factors, row_factors, h_gaps):
         py,
         os.path.join("ops", "mini_runner.py"),
         "--page",
-        r"C:\Users\User\Downloads\PDF\_img\page_001.png",
+        str(Path.home() / "Downloads" / "PDF" / "_img" / "page_001.png"),
         "--out",
         outdir,
         "--lang",
