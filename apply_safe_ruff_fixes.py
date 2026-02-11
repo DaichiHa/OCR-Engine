@@ -10,11 +10,11 @@ Usage:
 
 The script creates a `.bak-applysafe` backup for each modified file.
 """
+
 import argparse
 import re
 import subprocess
 from pathlib import Path
-
 
 SKIP_DIRS = {".git", "__pycache__", "venv", ".venv", "env", ".env"}
 _PY_EXT = ".py"
@@ -50,9 +50,14 @@ def find_py_files(root: Path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--commit", action="store_true", help="git add + commit modified files")
-    parser.add_argument("--message", default="chore(lint): convert bare except to except Exception",
-                        help="commit message when using --commit")
+    parser.add_argument(
+        "--commit", action="store_true", help="git add + commit modified files"
+    )
+    parser.add_argument(
+        "--message",
+        default="chore(lint): convert bare except to except Exception",
+        help="commit message when using --commit",
+    )
     args = parser.parse_args()
 
     root = Path.cwd()

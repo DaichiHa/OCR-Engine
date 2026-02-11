@@ -7,9 +7,9 @@ Conservative auto-fixes for ruff warnings:
 
 This script is intentionally conservative and creates a `.bak-safe` backup for each file modified.
 """
-from pathlib import Path
 import re
 import subprocess
+from pathlib import Path
 
 SKIP_DIRS = {".git", "__pycache__", "venv", ".venv", "env", ".env"}
 

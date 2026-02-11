@@ -7,9 +7,10 @@ Conservative auto-fixes for ruff warnings:
 
 This script is intentionally conservative and creates a `.bak-safe` backup for each file modified.
 """
-from pathlib import Path
+
 import re
 import subprocess
+from pathlib import Path
 
 SKIP_DIRS = {".git", "__pycache__", "venv", ".venv", "env", ".env"}
 
@@ -56,7 +57,9 @@ def transform_text(text: str) -> (str, bool):
         if occurrences <= 1:
             # replace the first assignment occurrence
             pattern = r"(^\s*)\b" + re.escape(name) + r"\b(\s*=)"
-            new_text, nsub = re.subn(pattern, r"\1_" + name + r"\2", text, count=1, flags=re.MULTILINE)
+            new_text, nsub = re.subn(
+                pattern, r"\1_" + name + r"\2", text, count=1, flags=re.MULTILINE
+            )
             if nsub:
                 text = new_text
                 changed = True
@@ -103,7 +106,15 @@ def main():
     # commit
     try:
         subprocess.run(["git", "add", "-A"], check=True)
-        subprocess.run(["git", "commit", "-m", "chore(lint): auto-fix safe issues (rename 'l' -> 'line', prefix unused locals)"], check=True)
+        subprocess.run(
+            [
+                "git",
+                "commit",
+                "-m",
+                "chore(lint): auto-fix safe issues (rename 'l' -> 'line', prefix unused locals)",
+            ],
+            check=True,
+        )
         print("Committed changes.")
     except subprocess.CalledProcessError as e:
         print("Git commit failed:", e)

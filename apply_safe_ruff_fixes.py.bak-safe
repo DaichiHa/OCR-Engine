@@ -16,7 +16,6 @@ import re
 import subprocess
 from pathlib import Path
 
-
 SKIP_DIRS = {".git", "__pycache__", "venv", ".venv", "env", ".env"}
 PY_EXT = ".py"
 

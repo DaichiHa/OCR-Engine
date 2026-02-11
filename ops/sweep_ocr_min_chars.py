@@ -37,7 +37,7 @@ for minc in min_chars_list:
         env["TESS_OEM"] = "3"
         cmd = [
             py,
-            "ops\mini_runner.py",
+            r"ops\mini_runner.py",
             "--page",
             img,
             "--out",
