@@ -1,7 +1,7 @@
-
-import os
 import base64
+import os
 import time
+
 from openai import OpenAI
 
 # --- 配置 ---
@@ -23,23 +23,28 @@ ULTRA_EXTRACTION_PROMPT = """
 6. 不鮮明な箇所も文脈から判断し、確定した文字を出力せよ。
 """
 
+
 def load_openai_key():
     with open(OPENAI_KEY_FILE, "r") as f:
         return f.read().strip()
 
+
 def encode_image(image_path):
     with open(image_path, "rb") as image_file:
-        return base64.b64encode(image_file.read()).decode('utf-8')
+        return base64.b64encode(image_file.read()).decode("utf-8")
+
 
 def process_with_gpt4o(image_path, out_path, client):
-    print(f"[{time.strftime('%H:%M:%S')}] GPT-4o processing: {os.path.basename(image_path)}...")
-    
+    print(
+        f"[{time.strftime('%H:%M:%S')}] GPT-4o processing: {os.path.basename(image_path)}..."
+    )
+
     base64_image = encode_image(image_path)
-    
+
     try:
         response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
+            _model="gpt-4o",
+            _messages=[
                 {
                     "role": "user",
                     "content": [
@@ -48,27 +53,28 @@ def process_with_gpt4o(image_path, out_path, client):
                             "type": "image_url",
                             "image_url": {
                                 "url": f"data:image/png;base64,{base64_image}",
-                                "detail": "high"
+                                "detail": "high",
                             },
                         },
                     ],
                 }
             ],
-            max_tokens=4096,
+            _max_tokens=4096,
         )
-        
+
         content = response.choices[0].message.content
         # マークダウンフェンスを除去
         content = content.replace("```markdown", "").replace("```", "").strip()
-        
+
         with open(out_path, "w", encoding="utf-8") as f:
             f.write(content)
-        
+
         print(f"Success (GPT-4o): {os.path.basename(image_path)}")
         return True
     except Exception as e:
         print(f"Error (GPT-4o): {e}")
         return False
+
 
 def main():
     if not os.path.exists(OUTPUT_DIR):
@@ -78,19 +84,20 @@ def main():
 
     # ターゲット: これまでGeminiで苦戦していた P8, P9, P11
     target_pages = ["page_008.png", "page_009.png", "page_011.png"]
-    
+
     print("--- GPT-4o ULTRA PRECISION TEST ---")
     start_time = time.time()
 
     for filename in target_pages:
         img_path = os.path.join(INPUT_DIR, filename)
         out_path = os.path.join(OUTPUT_DIR, filename.replace(".png", ".md"))
-        
+
         # 15秒のインターバルを置きつつ実行 (OpenAIはクォータに余裕がある想定)
         process_with_gpt4o(img_path, out_path, client)
-        time.sleep(5) # OpenAIは15秒待たなくても比較的安定
+        time.sleep(5)  # OpenAIは15秒待たなくても比較的安定
 
     print(f"\n--- GPT Test Complete in {time.time() - start_time:.2f}s ---")
+
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,6 @@
-
 import os
 import time
+
 import google.generativeai as genai
 from PIL import Image
 
@@ -26,38 +26,41 @@ PROMPT = """
    - Markdownのテキストのみ。前後の説明は一切不要です。
 """
 
+
 def load_key():
     with open(KEY_FILE, "r") as f:
         return f.read().strip()
 
+
 def main():
     api_key = load_key()
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-2.0-flash')
+    model = genai.GenerativeModel("gemini-2.0-flash")
 
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
 
     # テスト対象のページ
     test_pages = ["page_001.png", "page_003.png", "page_008.png"]
-    
+
     for filename in test_pages:
         file_path = os.path.join(INPUT_DIR, filename)
         page_num = filename.replace("page_", "").replace(".png", "")
         print(f"Testing Page {page_num}...")
-        
+
         try:
             img = Image.open(file_path)
             response = model.generate_content([PROMPT, img])
-            
+
             out_path = os.path.join(OUTPUT_DIR, f"test_page_{page_num}.md")
             with open(out_path, "w", encoding="utf-8") as f:
                 f.write(response.text)
             print(f"Page {page_num} Success.")
         except Exception as e:
             print(f"Page {page_num} Failed: {e}")
-        
+
         time.sleep(10)
+
 
 if __name__ == "__main__":
     main()

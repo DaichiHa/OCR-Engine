@@ -3,16 +3,19 @@ Table Structure Extractor V4 - Line Segment Detector (LSD)
 Uses LSD for high-precision line detection, robust against broken/faint lines.
 """
 
+import math
+import os
+
 import cv2
 import numpy as np
-import os
-import math
+
 try:
     import pytesseract
     from PIL import Image
 except Exception:
     pytesseract = None
     Image = None
+
 
 def read_image_robust(path):
     stream = open(path, "rb")
@@ -21,6 +24,7 @@ def read_image_robust(path):
     img = cv2.imdecode(numpyarray, cv2.IMREAD_UNCHANGED)
     stream.close()
     return img
+
 
 def extract_table_structure_v4(image_path, debug_dir):
     filename = os.path.basename(image_path)
@@ -40,13 +44,13 @@ def extract_table_structure_v4(image_path, debug_dir):
         else:
             bgr = img.copy()
         gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
-    
+
     # Create LSD
     lsd = cv2.createLineSegmentDetector(0)
-    
+
     # Detect lines
     lines, width, prec, nfa = lsd.detect(gray)
-    
+
     # Draw detected raw lines for debug (use BGR copy)
     debug_raw = bgr.copy()
     lsd.drawSegments(debug_raw, lines)
@@ -54,7 +58,7 @@ def extract_table_structure_v4(image_path, debug_dir):
     # Filter Lines
     horizontal_lines = []
     vertical_lines = []
-    
+
     img_width = bgr.shape[1]
     img_height = bgr.shape[0]
 
@@ -63,31 +67,32 @@ def extract_table_structure_v4(image_path, debug_dir):
             x1, y1, x2, y2 = line[0]
             dx = x2 - x1
             dy = y2 - y1
-            length = math.sqrt(dx*dx + dy*dy)
-            
-            if length < 30: # Ignore very short noise (tuned down from 50)
+            length = math.sqrt(dx * dx + dy * dy)
+
+            if length < 30:  # Ignore very short noise (tuned down from 50)
                 continue
-                
+
             angle = math.degrees(math.atan2(dy, dx))
             # Horizontal: angle near 0 or 180
             if abs(angle) < 5 or abs(angle) > 175:
                 # Store (y, x1, x2) - use average Y
-                horizontal_lines.append(( (y1+y2)/2, min(x1, x2), max(x1, x2) ))
-            
+                horizontal_lines.append(((y1 + y2) / 2, min(x1, x2), max(x1, x2)))
+
             # Vertical: angle near 90 or -90
             elif abs(abs(angle) - 90) < 5:
                 # Store (x, y1, y2)
-                vertical_lines.append(( (x1+x2)/2, min(y1, y2), max(y1, y2) ))
+                vertical_lines.append(((x1 + x2) / 2, min(y1, y2), max(y1, y2)))
 
     # Cluster Lines
     def cluster_lines(lines, tolerance=10):
-        if not lines: return []
-        lines.sort(key=lambda x: x[0]) # Sort by main coordinate
+        if not lines:
+            return []
+        lines.sort(key=lambda x: x[0])  # Sort by main coordinate
         clusters = []
         current = [lines[0][0]]
-        
+
         for i in range(1, len(lines)):
-            if lines[i][0] - lines[i-1][0] < tolerance:
+            if lines[i][0] - lines[i - 1][0] < tolerance:
                 current.append(lines[i][0])
             else:
                 clusters.append(int(np.mean(current)))
@@ -95,15 +100,15 @@ def extract_table_structure_v4(image_path, debug_dir):
         clusters.append(int(np.mean(current)))
         return clusters
 
-    rows = cluster_lines(horizontal_lines, tolerance=10) # Tuned down from 20
-    cols = cluster_lines(vertical_lines, tolerance=10) # Tuned down from 20
+    rows = cluster_lines(horizontal_lines, tolerance=10)  # Tuned down from 20
+    cols = cluster_lines(vertical_lines, tolerance=10)  # Tuned down from 20
 
     print(f"Detected {len(horizontal_lines)} raw H-lines -> {len(rows)} Row Clusters")
     print(f"Detected {len(vertical_lines)} raw V-lines -> {len(cols)} Col Clusters")
 
     # Filter Grid - Remove edges if necessary or just keep all
     # Usually the first/last detected line is the border.
-    
+
     # Visualize Grid (use BGR copy)
     debug_grid = bgr.copy()
     for r in rows:
@@ -120,9 +125,9 @@ def extract_table_structure_v4(image_path, debug_dir):
             row_cells = []
             for j in range(len(cols) - 1):
                 y1 = rows[i]
-                y2 = rows[i+1]
+                y2 = rows[i + 1]
                 x1 = cols[j]
-                x2 = cols[j+1]
+                x2 = cols[j + 1]
 
                 h = int(y2 - y1)
                 w = int(x2 - x1)
@@ -133,7 +138,7 @@ def extract_table_structure_v4(image_path, debug_dir):
     # If grid is empty, skip merging
     # Allow adjusting merge aggressiveness via env var `TBL_MERGE_FACTOR` (float, default 0.6)
     try:
-        merge_factor = float(os.environ.get('TBL_MERGE_FACTOR', '0.8'))
+        merge_factor = float(os.environ.get("TBL_MERGE_FACTOR", "0.8"))
     except Exception:
         merge_factor = 0.8
 
@@ -150,7 +155,7 @@ def extract_table_structure_v4(image_path, debug_dir):
         # Merge small cells: prefer merging to the right, fallback to merging downward
         rows_n = len(grid)
         cols_n = len(grid[0])
-        merged = [[False]*cols_n for _ in range(rows_n)]
+        merged = [[False] * cols_n for _ in range(rows_n)]
 
         # First: merge entire narrow column spans into their right neighbor (or left for last col)
         # This helps when an entire column is consistently too narrow (e.g., index/sep columns)
@@ -177,12 +182,16 @@ def extract_table_structure_v4(image_path, debug_dir):
                 continue
             # start of run
             run_start = j
-            while j+1 < cols_n and narrow_flags[j+1]:
+            while j + 1 < cols_n and narrow_flags[j + 1]:
                 j += 1
             run_end = j
 
             # choose target: prefer right of run, else left
-            target_j = run_end + 1 if run_end + 1 < cols_n else (run_start - 1 if run_start - 1 >= 0 else None)
+            target_j = (
+                run_end + 1
+                if run_end + 1 < cols_n
+                else (run_start - 1 if run_start - 1 >= 0 else None)
+            )
             if target_j is not None:
                 for i in range(rows_n):
                     # accumulate widths from run into target
@@ -194,7 +203,7 @@ def extract_table_structure_v4(image_path, debug_dir):
                     ry = grid[i][run_start][1]
                     rw = grid[i][run_start][2]
                     rh = grid[i][run_start][3]
-                    for k in range(run_start+1, run_end+1):
+                    for k in range(run_start + 1, run_end + 1):
                         kx, ky, kw, kh = grid[i][k]
                         rx = min(rx, kx)
                         ry = min(ry, ky)
@@ -207,7 +216,7 @@ def extract_table_structure_v4(image_path, debug_dir):
                     new_h = max(rh, th)
                     grid[i][target_j] = [new_x, new_y, new_w, new_h]
                     # mark run slots as merged-away (except target)
-                    for k in range(run_start, run_end+1):
+                    for k in range(run_start, run_end + 1):
                         if k != target_j:
                             merged[i][k] = True
             j += 1
@@ -226,41 +235,41 @@ def extract_table_structure_v4(image_path, debug_dir):
                 small_w = (median_w > 0) and (w < median_w * merge_factor)
                 small_h = (median_h > 0) and (h < median_h * merge_factor)
 
-                if small_w and j+1 < cols_n and not merged[i][j+1]:
+                if small_w and j + 1 < cols_n and not merged[i][j + 1]:
                     # merge with right neighbor
-                    nx, ny, nw, nh = grid[i][j+1]
+                    nx, ny, nw, nh = grid[i][j + 1]
                     new_x = min(x, nx)
                     new_y = min(y, ny)
                     new_w = w + nw
                     new_h = max(h, nh)
                     grid[i][j] = [new_x, new_y, new_w, new_h]
-                    merged[i][j+1] = True
+                    merged[i][j + 1] = True
                     merged[i][j] = False
-                elif small_h and i+1 < rows_n and not merged[i+1][j]:
+                elif small_h and i + 1 < rows_n and not merged[i + 1][j]:
                     # merge with cell below
-                    nx, ny, nw, nh = grid[i+1][j]
+                    nx, ny, nw, nh = grid[i + 1][j]
                     new_x = min(x, nx)
                     new_y = min(y, ny)
                     new_w = max(w, nw)
                     new_h = h + nh
                     grid[i][j] = [new_x, new_y, new_w, new_h]
-                    merged[i+1][j] = True
+                    merged[i + 1][j] = True
                     merged[i][j] = False
 
         # Optional: merge small cells by content density using a lightweight OCR pass
         # Controlled by env var `TBL_OCR_MERGE` (1 to enable), `TBL_OCR_MIN_CHARS` (int threshold),
         # and `TBL_OCR_LANG` (lang for tesseract, default 'jpn').
         try:
-            ocr_merge_enabled = int(os.environ.get('TBL_OCR_MERGE', '1')) == 1
+            ocr_merge_enabled = int(os.environ.get("TBL_OCR_MERGE", "1")) == 1
         except Exception:
             ocr_merge_enabled = True
 
         try:
-            ocr_min_chars = int(os.environ.get('TBL_OCR_MIN_CHARS', '2'))
+            ocr_min_chars = int(os.environ.get("TBL_OCR_MIN_CHARS", "2"))
         except Exception:
             ocr_min_chars = 2
 
-        ocr_lang = os.environ.get('TBL_OCR_LANG', 'jpn')
+        ocr_lang = os.environ.get("TBL_OCR_LANG", "jpn")
 
         if ocr_merge_enabled and pytesseract is not None and Image is not None:
             for i in range(rows_n):
@@ -289,28 +298,30 @@ def extract_table_structure_v4(image_path, debug_dir):
                         rgb = cv2.cvtColor(crop, cv2.COLOR_BGR2RGB)
                         pil = Image.fromarray(rgb)
                         # use a compact config for speed
-                        txt = pytesseract.image_to_string(pil, lang=ocr_lang, config='--psm 6')
+                        txt = pytesseract.image_to_string(
+                            pil, lang=ocr_lang, config="--psm 6"
+                        )
                         txt = txt.strip()
                     except Exception:
-                        txt = ''
+                        txt = ""
 
                     if len(txt) < ocr_min_chars:
                         # merge into right neighbor if possible, else below
-                        if j+1 < cols_n and not merged[i][j+1]:
-                            nx, ny, nw, nh = grid[i][j+1]
+                        if j + 1 < cols_n and not merged[i][j + 1]:
+                            nx, ny, nw, nh = grid[i][j + 1]
                             new_x = min(x, nx)
                             new_y = min(y, ny)
                             new_w = w + nw
                             new_h = max(h, nh)
-                            grid[i][j+1] = [new_x, new_y, new_w, new_h]
+                            grid[i][j + 1] = [new_x, new_y, new_w, new_h]
                             merged[i][j] = True
-                        elif i+1 < rows_n and not merged[i+1][j]:
-                            nx, ny, nw, nh = grid[i+1][j]
+                        elif i + 1 < rows_n and not merged[i + 1][j]:
+                            nx, ny, nw, nh = grid[i + 1][j]
                             new_x = min(x, nx)
                             new_y = min(y, ny)
                             new_w = max(w, nw)
                             new_h = h + nh
-                            grid[i+1][j] = [new_x, new_y, new_w, new_h]
+                            grid[i + 1][j] = [new_x, new_y, new_w, new_h]
                             merged[i][j] = True
 
         # Flatten grid into cells, skipping merged-away slots
@@ -328,11 +339,11 @@ def extract_table_structure_v4(image_path, debug_dir):
     # Allow tuning of row tolerance and horizontal gap via env vars:
     # `TBL_ROW_TOL_FACTOR` (multiplier of median_h, default 0.5) and `TBL_H_GAP` (pixels, default 15)
     try:
-        row_tol_factor = float(os.environ.get('TBL_ROW_TOL_FACTOR', '0.5'))
+        row_tol_factor = float(os.environ.get("TBL_ROW_TOL_FACTOR", "0.5"))
     except Exception:
         row_tol_factor = 0.5
     try:
-        h_gap = int(os.environ.get('TBL_H_GAP', '15'))
+        h_gap = int(os.environ.get("TBL_H_GAP", "15"))
     except Exception:
         h_gap = 15
 
@@ -345,7 +356,7 @@ def extract_table_structure_v4(image_path, debug_dir):
         groups = []
         current = [centers[0][1]]
         for k in range(1, len(centers)):
-            if centers[k][0] - centers[k-1][0] < row_tol:
+            if centers[k][0] - centers[k - 1][0] < row_tol:
                 current.append(centers[k][1])
             else:
                 groups.append(current)
@@ -391,10 +402,11 @@ def extract_table_structure_v4(image_path, debug_dir):
 
     return cells, debug_path
 
+
 if __name__ == "__main__":
     test_page = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages\page_011.png"
     debug_dir = r"c:\Users\User\Downloads\日本帝國港灣統計_0001\pages"
-    
+
     print(f"Testing V4 (LSD) extraction on {test_page}...")
     try:
         count, path = extract_table_structure_v4(test_page, debug_dir)

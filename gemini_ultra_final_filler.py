@@ -1,8 +1,6 @@
-
 import os
-import glob
 import time
-import re
+
 import google.generativeai as genai
 from PIL import Image
 
@@ -11,7 +9,7 @@ KEY_FILE = "gemini_api_key.txt"
 INPUT_DIR = "pages"
 OUTPUT_DIR = "intermediate_md_ultra_final"
 INTERVAL = 60  # 1ページごとに60秒休む (無料枠の絶対安定速度)
-MAX_WORKERS = 1  # 1本に絞って確実に進める
+_MAX_WORKERS = 1  # 1本に絞って確実に進める
 
 # 【究極・正確性特化型プロンプト】
 ULTRA_PRECISION_PROMPT = """
@@ -30,9 +28,11 @@ ULTRA_PRECISION_PROMPT = """
 これはデジタルアーカイブのマスターデータとなる。歴史的価値を損なわないよう、一字一句を正確に複製せよ。
 """
 
+
 def load_key():
     with open(KEY_FILE, "r") as f:
         return f.read().strip()
+
 
 def main():
     if not os.path.exists(OUTPUT_DIR):
@@ -41,45 +41,45 @@ def main():
     api_key = load_key()
     genai.configure(api_key=api_key)
     # 視覚能力が最も安定している最新世代を使用
-    model = genai.GenerativeModel('gemini-2.0-flash')
+    model = genai.GenerativeModel("gemini-2.0-flash")
 
     # 1. 1ページから151ページまでの全リストを作成 (抜け漏れチェック用)
     all_target_pages = [f"page_{i:03}.png" for i in range(1, 152)]
-    
+
     print("--- [ULTRA-PRECISION MODE] Starting Page-by-Page Completion ---")
     print(f"Target: {len(all_target_pages)} pages (Checking for gaps...)")
-    
+
     overall_start = time.time()
-    
+
     for filename in all_target_pages:
         img_path = os.path.join(INPUT_DIR, filename)
         if not os.path.exists(img_path):
             print(f"[Warning] Source image not found: {filename}")
             continue
-            
+
         md_filename = filename.replace(".png", ".md")
         out_path = os.path.join(OUTPUT_DIR, md_filename)
-        
+
         # 既に存在し、かつ十分なサイズがある場合はスキップ (100バイト以下は失敗とみなす)
         if os.path.exists(out_path) and os.path.getsize(out_path) > 100:
             continue
-            
+
         # 未処理または失敗ページを処理
         page_num = filename.replace("page_", "").replace(".png", "")
         print(f"[{time.strftime('%H:%M:%S')}] Processing Gap: Page {page_num}...")
-        
+
         success = False
-        retry_delay = 120 # 429時は2分休む
-        
+        retry_delay = 120  # 429時は2分休む
+
         while not success:
             try:
                 img = Image.open(img_path)
                 # 最大解像度で視認性を確保
                 if img.width > 3072 or img.height > 3072:
                     img.thumbnail((3072, 3072))
-                
+
                 response = model.generate_content([ULTRA_PRECISION_PROMPT, img])
-                
+
                 if response.text and len(response.text) > 10:
                     with open(out_path, "w", encoding="utf-8") as f:
                         f.write(response.text)
@@ -89,9 +89,11 @@ def main():
                     print(f"   Waiting {INTERVAL}s for next step...")
                     time.sleep(INTERVAL)
                 else:
-                    print(f"   -> Error: Response empty for Page {page_num}. Retrying...")
+                    print(
+                        f"   -> Error: Response empty for Page {page_num}. Retrying..."
+                    )
                     time.sleep(10)
-                    
+
             except Exception as e:
                 err_str = str(e)
                 if "429" in err_str or "402" in err_str:
@@ -104,6 +106,7 @@ def main():
 
     print(f"\n--- [COMPLETED] Final output generated in {OUTPUT_DIR} ---")
     print(f"Total time elapsed: {(time.time() - overall_start)/60:.1f} minutes.")
+
 
 if __name__ == "__main__":
     main()

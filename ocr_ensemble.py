@@ -13,8 +13,8 @@ from functools import lru_cache
 from statistics import median
 from typing import Iterable, List, Optional, Tuple
 
-from PIL import Image
 import pytesseract
+from PIL import Image
 
 
 @dataclass(frozen=True)
@@ -74,11 +74,13 @@ def _default_y_tolerance(lines: Iterable[OcrLine]) -> int:
     return max(10, int(median(heights) * 0.6))
 
 
-def _order_lines(lines: List[OcrLine], y_tolerance: Optional[int] = None) -> List[OcrLine]:
+def _order_lines(
+    lines: List[OcrLine], y_tolerance: Optional[int] = None
+) -> List[OcrLine]:
     if not lines:
         return []
     tolerance = y_tolerance if y_tolerance is not None else _default_y_tolerance(lines)
-    sorted_lines = sorted(lines, key=lambda l: (_line_center_y(l), l.bbox[0]))
+    sorted_lines = sorted(lines, key=lambda line: (_line_center_y(line), line.bbox[0]))
 
     rows: List[dict] = []
     for line in sorted_lines:
@@ -96,7 +98,7 @@ def _order_lines(lines: List[OcrLine], y_tolerance: Optional[int] = None) -> Lis
 
     ordered: List[OcrLine] = []
     for row in rows:
-        ordered.extend(sorted(row["lines"], key=lambda l: l.bbox[0]))
+        ordered.extend(sorted(row["lines"], key=lambda line: line.bbox[0]))
     return ordered
 
 
@@ -109,8 +111,8 @@ def run_tesseract_lines(image_path: str, lang: str = "jpn") -> List[OcrLine]:
     data = pytesseract.image_to_data(
         image,
         lang=lang,
-        config="--oem 3 --psm 6",
-        output_type=pytesseract.Output.DICT,
+        _config="--oem 3 --psm 6",
+        _output_type=pytesseract.Output.DICT,
     )
 
     lines: List[OcrLine] = []
@@ -154,7 +156,9 @@ def run_paddle_lines(image_path: str, lang: str = "japan") -> List[OcrLine]:
             xs = [pt[0] for pt in points]
             ys = [pt[1] for pt in points]
             bbox = (int(min(xs)), int(min(ys)), int(max(xs)), int(max(ys)))
-            lines.append(OcrLine(text=clean_text, bbox=bbox, conf=float(conf), engine="paddle"))
+            lines.append(
+                OcrLine(text=clean_text, bbox=bbox, conf=float(conf), engine="paddle")
+            )
     return _order_lines(lines)
 
 
@@ -163,7 +167,11 @@ def _match_lines(
     p_lines: List[OcrLine],
     y_tolerance: Optional[int] = None,
 ) -> Tuple[List[Tuple[Optional[OcrLine], Optional[OcrLine]]], List[OcrLine]]:
-    tolerance = y_tolerance if y_tolerance is not None else _default_y_tolerance(t_lines + p_lines)
+    tolerance = (
+        y_tolerance
+        if y_tolerance is not None
+        else _default_y_tolerance(t_lines + p_lines)
+    )
     matches: List[Tuple[Optional[OcrLine], Optional[OcrLine]]] = []
     used_paddle: set[int] = set()
 

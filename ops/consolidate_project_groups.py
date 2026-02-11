@@ -1,21 +1,30 @@
-import os
-import shutil
 import collections
+import os
 import re
+import shutil
 
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-OUT = os.path.join(ROOT, 'ops', 'local_artifacts')
-EXCLUDE_DIRS = {'.git', '.venv', 'venv', '__pycache__', 'ops/local_artifacts', 'node_modules'}
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+OUT = os.path.join(ROOT, "ops", "local_artifacts")
+EXCLUDE_DIRS = {
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "ops/local_artifacts",
+    "node_modules",
+}
+
 
 def norm(name):
-    return re.sub(r'[^A-Za-z0-9]', '', name.lower())[:30]
+    return re.sub(r"[^A-Za-z0-9]", "", name.lower())[:30]
+
 
 def gather():
     groups = collections.defaultdict(list)
     for dirpath, dirnames, filenames in os.walk(ROOT):
         # skip excluded paths
         rel = os.path.relpath(dirpath, ROOT)
-        if rel.startswith('.'):
+        if rel.startswith("."):
             continue
         if any(part in EXCLUDE_DIRS for part in rel.split(os.sep)):
             dirnames[:] = []
@@ -29,10 +38,12 @@ def gather():
             if depth > 4:
                 continue
             groups[norm(d)].append(full)
-    return {k:v for k,v in groups.items() if len(v) > 1}
+    return {k: v for k, v in groups.items() if len(v) > 1}
+
 
 def ensure_out():
     os.makedirs(OUT, exist_ok=True)
+
 
 def move_groups(groups):
     moved = []
@@ -48,24 +59,26 @@ def move_groups(groups):
                 while os.path.exists(dest + f"_{i}"):
                     i += 1
                 dest = dest + f"_{i}"
-            print(f'Moving: {p} -> {dest}')
+            print(f"Moving: {p} -> {dest}")
             shutil.move(p, dest)
             moved.append((p, dest))
     return moved
+
 
 def main():
     ensure_out()
     groups = gather()
     if not groups:
-        print('No candidate groups found to consolidate.')
+        print("No candidate groups found to consolidate.")
         return 0
-    print('Found groups:')
-    for k,v in groups.items():
-        print(f' - {k}: {len(v)} items')
-    print('\nProceeding to move all found groups into ops/local_artifacts/')
+    print("Found groups:")
+    for k, v in groups.items():
+        print(f" - {k}: {len(v)} items")
+    print("\nProceeding to move all found groups into ops/local_artifacts/")
     moved = move_groups(groups)
-    print(f'Completed moves: {len(moved)} items')
+    print(f"Completed moves: {len(moved)} items")
     return 0
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     raise SystemExit(main())

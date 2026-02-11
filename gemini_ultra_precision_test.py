@@ -1,7 +1,6 @@
-
 import os
-import glob
 import time
+
 import google.generativeai as genai
 from PIL import Image
 
@@ -11,8 +10,8 @@ INPUT_DIR = "pages"
 OUTPUT_DIR = "intermediate_md_ultra_final"
 
 # 15秒をベースにしつつ、エラー時はAPIの指示に従う
-BASE_INTERVAL = 15 
-MAX_WORKERS = 1
+BASE_INTERVAL = 15
+_MAX_WORKERS = 1
 
 # 【超・抽出特化型プロンプト】 - 挨拶・要約を一切排除し、データの正確性のみを追求
 ULTRA_EXTRACTION_PROMPT = """
@@ -31,9 +30,11 @@ ULTRA_EXTRACTION_PROMPT = """
 デジタルアーカイブのマスターデータとなる「究極の複製」を作成せよ。
 """
 
+
 def load_key():
     with open(KEY_FILE, "r") as f:
         return f.read().strip()
+
 
 def main():
     if not os.path.exists(OUTPUT_DIR):
@@ -42,31 +43,31 @@ def main():
     api_key = load_key()
     genai.configure(api_key=api_key)
     # 視覚認識能力が最も高い最新モデルを使用
-    model = genai.GenerativeModel('gemini-2.0-flash-001')
+    model = genai.GenerativeModel("gemini-2.0-flash-001")
 
     # PDCAテスト：P8, P9, P11 (統計表とテキストが混在する重要ページ)
     test_pages = ["page_008.png", "page_009.png", "page_011.png"]
-    
+
     print(f"--- ULTRA-PRECISION ADAPTIVE TEST (Base: {BASE_INTERVAL}s) ---")
     start_all = time.time()
 
     for filename in test_pages:
         img_path = os.path.join(INPUT_DIR, filename)
         out_path = os.path.join(OUTPUT_DIR, filename.replace(".png", ".md"))
-        
+
         print(f"[{time.strftime('%H:%M:%S')}] Target: {filename}...")
-        
+
         success = False
         retry_delay = BASE_INTERVAL
-        
+
         while not success:
             try:
                 img = Image.open(img_path)
                 # 品質維持のためリサイズを最小限に (3072px)
                 img.thumbnail((3072, 3072))
-                
+
                 response = model.generate_content([ULTRA_EXTRACTION_PROMPT, img])
-                
+
                 # 品質チェック: 中身が空でないか
                 if response.text and len(response.text) > 50:
                     with open(out_path, "w", encoding="utf-8") as f:
@@ -77,19 +78,20 @@ def main():
                     time.sleep(BASE_INTERVAL)
                 else:
                     raise Exception("Incomplete content generated.")
-                    
+
             except Exception as e:
                 err_str = str(e)
                 if "429" in err_str or "402" in err_str:
                     print(f"Quota Hit. Waiting {retry_delay}s and scaling up...")
                     time.sleep(retry_delay)
-                    retry_delay = min(retry_delay * 2, 120) # 指数バックオフ
+                    retry_delay = min(retry_delay * 2, 120)  # 指数バックオフ
                 else:
                     print(f"Error: {err_str[:150]}")
                     time.sleep(10)
-                    break # 重大なエラーはスキップ
+                    break  # 重大なエラーはスキップ
 
     print(f"\n--- ULTRA PDCA Test Complete in {time.time() - start_all:.2f}s ---")
+
 
 if __name__ == "__main__":
     main()
