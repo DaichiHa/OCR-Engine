@@ -100,7 +100,7 @@ def main():
         executor.map(process_page_hyper, tasks)
 
     overall_dur = time.time() - overall_start
-    print(f"\n--- Hyper Test Complete ---")
+    print("\n--- Hyper Test Complete ---")
     print(f"Total Pages: {len(pages_to_test)}")
     print(f"Total Time:  {overall_dur:.2f}s")
     print(f"Efficiency:  {overall_dur/len(pages_to_test):.2f} s/page")

@@ -89,7 +89,7 @@ def merge_files(manual_file, intermediate_dir, output_file):
     ]
     
     # Simple manual merge for this specific multi-folder case
-    with open(manual_path, 'r', encoding='utf-8') as f:
+    with open(manual_file, 'r', encoding='utf-8') as f:
         final_content = f.read()
     
     final_content += "\n\n# --- 精密解析結果 (Gemini/HQ) ---\n\n"

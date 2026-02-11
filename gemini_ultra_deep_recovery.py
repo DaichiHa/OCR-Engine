@@ -48,7 +48,7 @@ def main():
     # 1ページから151ページまでの全リストを作成
     all_target_pages = [f"page_{i:03}.png" for i in range(1, 152)]
     
-    print(f"--- [ULTRA-PRECISION DEEP RECOVERY] ---")
+    print("--- [ULTRA-PRECISION DEEP RECOVERY] ---")
     print(f"Model: {MODEL_NAME} | Quota Wait: {QUOTA_WAIT}s")
     
     # モデルの機嫌を伺うため、最初は少し長めに待機してからスタート
@@ -86,7 +86,7 @@ def main():
                     success = True
                     time.sleep(SUCCESS_INTERVAL)
                 else:
-                    print(f"   -> Empty response. Waiting 30s...")
+                    print("   -> Empty response. Waiting 30s...")
                     time.sleep(30)
             except Exception as e:
                 err_str = str(e)
@@ -98,7 +98,7 @@ def main():
                     print(f"   [Error] {err_str[:150]}. Waiting 60s...")
                     time.sleep(60)
 
-    print(f"--- [COMPLETED] ---")
+    print("--- [COMPLETED] ---")
 
 if __name__ == "__main__":
     main()

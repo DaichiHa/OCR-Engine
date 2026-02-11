@@ -96,13 +96,13 @@ def main():
         model_name = MODEL_POOL[i % len(MODEL_POOL)]
         tasks.append((file_path, out_path, model_name, page_num))
 
-    print(f"--- STARTING FINAL ULTRA RUN ---")
+    print("--- STARTING FINAL ULTRA RUN ---")
     print(f"Target: {len(tasks)} pages | Workers: {MAX_WORKERS}")
     
     with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         executor.map(process_page_hyper, tasks)
 
-    print(f"--- ALL PROCESSING COMPLETE ---")
+    print("--- ALL PROCESSING COMPLETE ---")
 
 if __name__ == "__main__":
     main()

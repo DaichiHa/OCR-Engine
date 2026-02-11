@@ -199,7 +199,7 @@ def main():
         txt = postprocess_text(scrub(txt))
         md = "\n" + txt
         buf=io.StringIO()
-        buf.write(f"PAGE-ONLY OCR\n")
+        buf.write("PAGE-ONLY OCR\n")
         buf.write(str(txt))
     else:
         import ocr_manager as m

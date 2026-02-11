@@ -71,7 +71,7 @@ def process_limit_break():
                 print(f"Success: {part_name} segment scanned.")
                 time.sleep(10) # セグメント間は短く冷却
             except Exception as e:
-                print(f"Quota Hit during segment scan. Waiting 60s...")
+                print("Quota Hit during segment scan. Waiting 60s...")
                 time.sleep(60)
 
     # 論理的結合

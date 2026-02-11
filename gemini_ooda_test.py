@@ -65,7 +65,7 @@ def main():
             print(f"Waiting {INTERVAL}s interval...")
             time.sleep(INTERVAL)
 
-    print(f"\n--- Test Results ---")
+    print("\n--- Test Results ---")
     print(f"Success: {success_count}/{len(test_pages)}")
     print(f"Total Time: {time.time() - start_all:.2f}s")
     print("--------------------")

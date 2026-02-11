@@ -80,7 +80,7 @@ def main():
                     
             except Exception as e:
                 err_str = str(e)
-                if "429" in err_str or "402" in err_msg if 'err_msg' in locals() else "429" in err_str:
+                if "429" in err_str or "402" in err_str:
                     print(f"Quota Hit. Waiting {retry_delay}s and scaling up...")
                     time.sleep(retry_delay)
                     retry_delay = min(retry_delay * 2, 120) # 指数バックオフ

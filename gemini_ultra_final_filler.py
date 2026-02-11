@@ -46,7 +46,7 @@ def main():
     # 1. 1ページから151ページまでの全リストを作成 (抜け漏れチェック用)
     all_target_pages = [f"page_{i:03}.png" for i in range(1, 152)]
     
-    print(f"--- [ULTRA-PRECISION MODE] Starting Page-by-Page Completion ---")
+    print("--- [ULTRA-PRECISION MODE] Starting Page-by-Page Completion ---")
     print(f"Target: {len(all_target_pages)} pages (Checking for gaps...)")
     
     overall_start = time.time()

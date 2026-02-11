@@ -122,7 +122,7 @@ def call_ollama_http(model: str, prompt: str, host: str, timeout: int = 15) -> O
         import requests
     except Exception:
         return None
-    url = host.rstrip('/') + f'/api/generate'
+    url = host.rstrip('/') + '/api/generate'
     payload = {
         'model': model,
         'prompt': prompt,

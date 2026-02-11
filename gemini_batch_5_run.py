@@ -59,7 +59,7 @@ def main():
     all_pages = [f"page_{i:03}.png" for i in range(1, 152)]
     processed_this_batch = 0
     
-    print(f"--- 5-PAGE BATCH MODE START ---")
+    print("--- 5-PAGE BATCH MODE START ---")
     
     for filename in all_pages:
         if processed_this_batch >= BATCH_SIZE:
@@ -77,8 +77,8 @@ def main():
             if processed_this_batch < BATCH_SIZE:
                 print(f"   Cooling down {INTERVAL}s...")
                 time.sleep(INTERVAL)
-        else:
-            print(f"   Waiting for retry...")
+            else:
+                print("   Waiting for retry...")
             time.sleep(120)
 
     print(f"\n--- Batch of {processed_this_batch} Pages Complete ---")

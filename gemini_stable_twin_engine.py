@@ -90,13 +90,13 @@ def main():
         model_name = MODELS[i % len(MODELS)]
         tasks.append((file_path, out_path, model_name, page_num))
 
-    print(f"--- LAUNCHING STABLE TWIN-ENGINE OCR ---")
+    print("--- LAUNCHING STABLE TWIN-ENGINE OCR ---")
     print(f"Total: {len(tasks)} pages | Parallel: {MAX_WORKERS} | Target Cooldown: {COOLDOWN}s")
     
     with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         executor.map(process_page_stable, tasks)
 
-    print(f"--- ALL PROCESSING COMPLETE ---")
+    print("--- ALL PROCESSING COMPLETE ---")
 
 if __name__ == "__main__":
     main()
