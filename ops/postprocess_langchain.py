@@ -103,7 +103,8 @@ def main():
                 src = f.read()
             prompt_text = (
                 "You are a specialist in correcting OCR output from Showa-era Japanese statistical tables.\n"
-                "Correct OCR errors, normalize old kanji to modern equivalents, fix numbers and punctuation, and preserve layout.\n"
+                "Correct OCR errors, normalize old kanji to modern equivalents, fix numbers and punctuation, "
+                "and preserve layout.\n"
                 "Return only the corrected text.\n\nInput:\n{text}\n\nCorrected:"
             )
             prompt = PromptTemplate(

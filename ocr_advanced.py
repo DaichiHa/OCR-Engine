@@ -106,7 +106,9 @@ if __name__ == "__main__":
             os.path.join(base_dir, "page_011.png"),
             "jpn",
             6,
-        ),  # Tables usually better with psm 6 or 4 in horizontal mode if they are standard tables, but vertical PDF tables are tricky.
+        )
+        # Tables usually better with psm 6 or 4 in horizontal mode if they are
+        # standard tables. Vertical PDF tables are trickier.
     ]
 
     output_lines = []
