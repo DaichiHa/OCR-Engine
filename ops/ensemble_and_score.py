@@ -19,7 +19,7 @@ def simple_ensemble(rapid_path: Path, tess_path: Path) -> str:
         else:
             out = t
         out_lines.append(out)
-    return "\n".join([line for line in out_lines if l])
+    return "\n".join([line for line in out_lines if line])
 
 
 def main():

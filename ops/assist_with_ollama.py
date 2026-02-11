@@ -116,7 +116,7 @@ def main():
         return 4
 
     # naive split by lines — user can review
-    out_lines = [line.strip() for line in res.splitlines() if l.strip()]
+    out_lines = [line.strip() for line in res.splitlines() if line.strip()]
     # merge back: replace candidate lines in original with suggestions by order
     out = []
     ci = 0
