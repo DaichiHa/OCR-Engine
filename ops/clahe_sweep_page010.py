@@ -42,7 +42,7 @@ def _make_fallback_ocr():
             def __call__(self, img_path):
                 img = Image.open(img_path)
                 txt = pytesseract.image_to_string(img, lang="jpn")
-                lines = [line.strip() for line in txt.splitlines() if line.strip()]
+                lines = [l.strip() for l in txt.splitlines() if l.strip()]
                 dets = []
                 for t in lines:
                     dets.append((None, t, 1.0))
@@ -121,11 +121,11 @@ if os.environ.get("GITHUB_ACTIONS", "").lower() == "true":
     os.environ.setdefault("PADDLE_DISABLE_ONEDNN", "1")
     os.environ.setdefault("PADDLE_WITH_MKL", "0")
     print("Detected CI environment: set Paddle/OneDNN disable env vars")
-from itertools import product  # noqa: E402
+from itertools import product
 
-import pytesseract  # noqa: E402
-from PIL import Image  # noqa: E402
-from postprocess_and_score import process_and_score  # noqa: E402
+import pytesseract
+from PIL import Image
+from postprocess_and_score import process_and_score
 
 # broader grid of SR scales + CLAHE combos: (scale, clip, tile, denoise_h)
 scales = [2, 3]
@@ -198,10 +198,10 @@ for i, combo in enumerate(combos, start=1):
     with open(txt_path, "w", encoding="utf-8") as f:
         for item in dets:
             try:
-                _, text, _ = item
+                box, text, score = item
             except Exception:
                 if len(item) >= 3:
-                    _, text, _ = item[0], item[1], item[2]
+                    box, text, score = item[0], item[1], item[2]
                 else:
                     continue
             f.write(str(text) + "\n")
@@ -228,7 +228,7 @@ for i, combo in enumerate(combos, start=1):
     )
 
 # write results
-import json  # noqa: E402
+import json
 
 with open("ops/clahe_sweep_page010_results.json", "w", encoding="utf-8") as f:
     json.dump(results, f, ensure_ascii=False, indent=2)

@@ -80,7 +80,7 @@ def _order_lines(
     if not lines:
         return []
     tolerance = y_tolerance if y_tolerance is not None else _default_y_tolerance(lines)
-    sorted_lines = sorted(lines, key=lambda line: (_line_center_y(line), line.bbox[0]))
+    sorted_lines = sorted(lines, key=lambda line: (_line_center_y(l), l.bbox[0]))
 
     rows: List[dict] = []
     for line in sorted_lines:
@@ -98,7 +98,7 @@ def _order_lines(
 
     ordered: List[OcrLine] = []
     for row in rows:
-        ordered.extend(sorted(row["lines"], key=lambda line: line.bbox[0]))
+        ordered.extend(sorted(row["lines"], key=lambda line: l.bbox[0]))
     return ordered
 
 

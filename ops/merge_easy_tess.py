@@ -32,12 +32,12 @@ def tess_words(img_path):
         txt = (data["text"][i] or "").strip()
         if txt == "":
             continue
-        left = int(data["left"][i])
+        l = int(data["left"][i])
         t = int(data["top"][i])
         w = int(data["width"][i])
         h = int(data["height"][i])
         conf = float(data["conf"][i]) if data["conf"][i] not in (None, "") else -1.0
-        box = [left, t, left + w, t + h]
+        box = [line, t, l + w, t + h]
         words.append({"box": box, "text": txt, "conf": conf, "source": "tess"})
     return words
 

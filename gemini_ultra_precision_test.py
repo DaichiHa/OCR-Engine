@@ -11,7 +11,7 @@ OUTPUT_DIR = "intermediate_md_ultra_final"
 
 # 15秒をベースにしつつ、エラー時はAPIの指示に従う
 BASE_INTERVAL = 15
-_MAX_WORKERS = 1
+MAX_WORKERS = 1
 
 # 【超・抽出特化型プロンプト】 - 挨拶・要約を一切排除し、データの正確性のみを追求
 ULTRA_EXTRACTION_PROMPT = """

@@ -6,10 +6,10 @@ BASE = Path(__file__).parent / "local_artifacts"
 
 
 def readability_score(text: str) -> float:
-    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    lines = [line.strip() for line in text.splitlines() if l.strip()]
     if not lines:
         return 0.0
-    total_words = sum(len(re.findall(r"\w+", line)) for line in lines)
+    total_words = sum(len(re.findall(r"\w+", l)) for line in lines)
     avg_words = total_words / len(lines)
     # normalize: 0 words ->0, 1-20 words -> map to 0-1 (cap at 20)
     val = min(avg_words, 20) / 20.0
