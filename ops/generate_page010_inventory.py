@@ -75,7 +75,7 @@ for base, lst in base_map.items():
 with open(csv_path, "w", newline="", encoding="utf-8") as csvf:
     writer = csv.DictWriter(
         csvf,
-        fieldnames=[
+        _fieldnames=[
             "filename",
             "path",
             "size_bytes",

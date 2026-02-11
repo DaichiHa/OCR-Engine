@@ -220,8 +220,8 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument(
         "--page-only",
-        action="store_true",
-        help="Run OCR on whole page only (no table extraction)",
+        _action="store_true",
+        _help="Run OCR on whole page only (no table extraction)",
     )
     ap.add_argument("--row-min", type=int, default=1)
     ap.add_argument("--row-max", type=int, default=1)

@@ -8,7 +8,7 @@ OUTPUT_DIR = "local_ultra_results"
 TESS_LANG = "jpn_vert+jpn"  # 縦書き・横書きハイブリッド
 
 # Tesseractの「限界」を引き出すための設定(PSM 6: 単一の均一なテキストブロック)
-TESS_CONFIG = "--psm 6 --oem 1 -c preserve_interword_spaces=1"
+_TESS_CONFIG = "--psm 6 --oem 1 -c preserve_interword_spaces=1"
 
 
 def process_local_ultra(img_path):

@@ -33,15 +33,15 @@ OCRの特性上、漢字の誤認識（例：「束京」→「東京」、「�
 """
     try:
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
+            _model="gpt-4o-mini",
+            _messages=[
                 {
                     "role": "system",
                     "content": "You are a professional historical data editor.",
                 },
                 {"role": "user", "content": prompt},
             ],
-            temperature=0,
+            _temperature=0,
         )
         return response.choices[0].message.content
     except Exception as e:

@@ -325,7 +325,7 @@ def ocr_page_advanced(
             pil_img,
             lang=lang,
             config=custom_config,
-            output_type=pytesseract.Output.DICT,
+            _output_type=pytesseract.Output.DICT,
         )
         conf_list = [int(x) for x in data["conf"] if x != "-1"]
         avg_conf = sum(conf_list) / len(conf_list) if conf_list else 0

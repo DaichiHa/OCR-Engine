@@ -49,7 +49,7 @@ def simple_merge(tile_texts):
 
 def main():
     p = argparse.ArgumentParser(
-        description="Tile an image and run PaddleOCR on each tile"
+        _description="Tile an image and run PaddleOCR on each tile"
     )
     p.add_argument("--in", dest="in_path", required=True)
     p.add_argument("--out-dir", dest="out_dir", default="ops")
@@ -58,8 +58,8 @@ def main():
     p.add_argument("--overlap", type=int, default=200)
     p.add_argument(
         "--disable-onednn",
-        action="store_true",
-        help="Try to disable OneDNN before import",
+        _action="store_true",
+        _help="Try to disable OneDNN before import",
     )
     args = p.parse_args()
 

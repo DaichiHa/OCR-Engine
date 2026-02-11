@@ -46,12 +46,12 @@ for minc in min_chars_list:
             "jpn",
         ]
         try:
-            proc = subprocess.run(
+            _proc = subprocess.run(
                 cmd,
                 env=env,
-                stdout=open(os.path.join(outdir, "out.txt"), "w", encoding="utf-8"),
-                stderr=open(os.path.join(outdir, "err.txt"), "w", encoding="utf-8"),
-                timeout=90,
+                _stdout=open(os.path.join(outdir, "out.txt"), "w", encoding="utf-8"),
+                _stderr=open(os.path.join(outdir, "err.txt"), "w", encoding="utf-8"),
+                _timeout=90,
             )
         except subprocess.TimeoutExpired:
             print(f"TIMEOUT min={minc} page={p}")

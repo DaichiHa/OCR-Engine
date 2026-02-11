@@ -51,8 +51,8 @@ with open(summary, "w", encoding="utf-8") as f:
     json.dump(
         {"moved": moved, "groups": [d.name for d in outdir.iterdir() if d.is_dir()]},
         f,
-        indent=2,
-        ensure_ascii=False,
+        _indent=2,
+        _ensure_ascii=False,
     )
 
 print("Moved", len(moved), "files to", outdir)

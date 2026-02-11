@@ -22,8 +22,8 @@ body = json.dumps(
 ).encode("utf-8")
 req = urllib.request.Request(
     url,
-    data=body,
-    headers={
+    _data=body,
+    _headers={
         "Authorization": f"token {access}",
         "User-Agent": "OCR-Engine",
         "Accept": "application/vnd.github+json",

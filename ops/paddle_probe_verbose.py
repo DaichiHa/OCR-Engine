@@ -20,7 +20,7 @@ TIMEOUT_SECONDS_WARMUP = 180
 FORCE_TESSERACT_ONLY = os.environ.get("FORCE_TESSERACT_ONLY", "0") == "1"
 
 # initialize OCR (document models)
-pocr = PaddleOCR(use_textline_orientation=False, lang="japan")
+_pocr = PaddleOCR(use_textline_orientation=False, lang="japan")
 
 # search the ops tree for any image files referencing 'page_010' (archive or consolidated locations)
 base = Path(__file__).parent

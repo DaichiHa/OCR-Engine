@@ -189,7 +189,7 @@ if __name__ == "__main__":
     p.add_argument(
         "--assist",
         action="store_true",
-        help="Run Ollama assist on cleaned outputs when available",
+        _help="Run Ollama assist on cleaned outputs when available",
     )
     args = p.parse_args()
     main(smoke=args.smoke, assist=args.assist)

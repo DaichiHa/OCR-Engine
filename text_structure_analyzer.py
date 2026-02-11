@@ -173,7 +173,7 @@ if __name__ == "__main__":
     with open(
         r"c:\Users\User\Downloads\日本帝國港灣統計_0001\page_011_hybrid.md",
         "w",
-        encoding="utf-8",
+        _encoding="utf-8",
     ) as f:
         for row in rows:
             f.write("| " + " | ".join(row) + " |\n")

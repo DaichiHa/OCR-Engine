@@ -42,8 +42,8 @@ class QwenOCREngine:
         # Load model with optimizations
         self.model = Qwen2VLForConditionalGeneration.from_pretrained(
             model_name,
-            torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-            device_map=device,
+            _torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
+            _device_map=device,
             trust_remote_code=True,
         )
 
@@ -178,9 +178,9 @@ class QwenOCREngine:
             inputs = self.processor(
                 text=[text],
                 images=image_inputs,
-                videos=video_inputs,
-                padding=True,
-                return_tensors="pt",
+                _videos=video_inputs,
+                _padding=True,
+                _return_tensors="pt",
             )
             inputs = {k: v.to(self.model.device) for k, v in inputs.items()}
 
@@ -188,9 +188,9 @@ class QwenOCREngine:
             with torch.no_grad():
                 generated_ids = self.model.generate(
                     **inputs,
-                    max_new_tokens=4096,
-                    do_sample=False,
-                    temperature=0.1,
+                    _max_new_tokens=4096,
+                    _do_sample=False,
+                    _temperature=0.1,
                     pad_token_id=self.processor.tokenizer.pad_token_id,
                 )
 
@@ -201,8 +201,8 @@ class QwenOCREngine:
 
                 output_text = self.processor.batch_decode(
                     generated_ids_trimmed,
-                    skip_special_tokens=True,
-                    clean_up_tokenization_spaces=False,
+                    _skip_special_tokens=True,
+                    _clean_up_tokenization_spaces=False,
                 )[0]
 
             # Parse result based on mode

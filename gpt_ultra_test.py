@@ -43,8 +43,8 @@ def process_with_gpt4o(image_path, out_path, client):
 
     try:
         response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
+            _model="gpt-4o",
+            _messages=[
                 {
                     "role": "user",
                     "content": [
@@ -59,7 +59,7 @@ def process_with_gpt4o(image_path, out_path, client):
                     ],
                 }
             ],
-            max_tokens=4096,
+            _max_tokens=4096,
         )
 
         content = response.choices[0].message.content

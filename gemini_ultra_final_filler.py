@@ -9,7 +9,7 @@ KEY_FILE = "gemini_api_key.txt"
 INPUT_DIR = "pages"
 OUTPUT_DIR = "intermediate_md_ultra_final"
 INTERVAL = 60  # 1ページごとに60秒休む (無料枠の絶対安定速度)
-MAX_WORKERS = 1  # 1本に絞って確実に進める
+_MAX_WORKERS = 1  # 1本に絞って確実に進める
 
 # 【究極・正確性特化型プロンプト】
 ULTRA_PRECISION_PROMPT = """

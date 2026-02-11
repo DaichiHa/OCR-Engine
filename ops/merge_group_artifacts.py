@@ -59,7 +59,7 @@ for group in sorted([d for d in la.iterdir() if d.is_dir()]):
             txt = p.read_text(encoding="utf-8", errors="replace")
         except Exception:
             return
-        for l in txt.splitlines():
+        for line in txt.splitlines():
             s = l.strip()
             if not s:
                 continue

@@ -11,7 +11,7 @@ if not access:
 
 req = urllib.request.Request(
     "https://api.github.com/user",
-    headers={"Authorization": f"token {access}", "User-Agent": "OCR-Engine"},
+    _headers={"Authorization": f"token {access}", "User-Agent": "OCR-Engine"},
 )
 with urllib.request.urlopen(req) as r:
     out = r.read().decode("utf-8")

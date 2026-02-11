@@ -9,7 +9,7 @@ KEY_FILE = "gemini_api_key.txt"
 INPUT_DIR = "pages"
 OUTPUT_DIR = "intermediate_md_ultra_final"
 INTERVAL = 15  # User requested 15s interval
-MAX_WORKERS = 1  # Single thread as requested
+_MAX_WORKERS = 1  # Single thread as requested
 
 MODELS = ["gemini-2.0-flash"]  # Most stable for fast intervals
 

@@ -5,7 +5,7 @@ import cv2
 from onnxocr.onnx_paddleocr import ONNXPaddleOcr
 
 ocr = ONNXPaddleOcr(
-    use_angle_cls=True, use_gpu=False, use_dml=False, use_openvino=False
+    _use_angle_cls=True, use_gpu=False, use_dml=False, use_openvino=False
 )
 
 

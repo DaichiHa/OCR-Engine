@@ -42,7 +42,7 @@ def _make_fallback_ocr():
             def __call__(self, img_path):
                 img = Image.open(img_path)
                 txt = pytesseract.image_to_string(img, lang="jpn")
-                lines = [l.strip() for l in txt.splitlines() if l.strip()]
+                lines = [line.strip() for line in txt.splitlines() if l.strip()]
                 dets = []
                 for t in lines:
                     dets.append((None, t, 1.0))

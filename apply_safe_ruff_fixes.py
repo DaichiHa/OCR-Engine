@@ -18,7 +18,7 @@ from pathlib import Path
 
 
 SKIP_DIRS = {".git", "__pycache__", "venv", ".venv", "env", ".env"}
-PY_EXT = ".py"
+_PY_EXT = ".py"
 
 
 def should_skip(path: Path) -> bool:

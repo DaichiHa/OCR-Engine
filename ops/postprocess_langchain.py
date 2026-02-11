@@ -86,8 +86,8 @@ def main():
     ap.add_argument("--out", dest="out_path", required=True)
     ap.add_argument(
         "--use-llm",
-        action="store_true",
-        help="If set and API key present, attempt LangChain LLM pass",
+        _action="store_true",
+        _help="If set and API key present, attempt LangChain LLM pass",
     )
     args = ap.parse_args()
 
@@ -104,8 +104,8 @@ def main():
             with open(args.in_path, "r", encoding="utf-8") as f:
                 src = f.read()
             prompt = PromptTemplate(
-                input_variables=["text"],
-                template=(
+                _input_variables=["text"],
+                _template=(
                     "You are a specialist in correcting OCR output from Showa-era Japanese statistical tables. "
                     "Correct OCR errors, normalize old kanji to modern equivalents, fix numbers and punctuation, and preserve layout. "
                     "Return only the corrected text.\n\nInput:\n{text}\n\nCorrected:"

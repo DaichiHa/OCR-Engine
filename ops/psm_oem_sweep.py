@@ -95,7 +95,7 @@ print("WROTE:", summary_csv)
 # print top 5
 rows_sorted = sorted(
     rows,
-    key=lambda r: (-float(r["jp_rate"]), float(r["noise_rate"]), float(r["elapsed_s"])),
+    _key=lambda r: (-float(r["jp_rate"]), float(r["noise_rate"]), float(r["elapsed_s"])),
 )
 print("\n--- Top 5 PSM/OEM ---")
 for r in rows_sorted[:5]:

@@ -19,7 +19,7 @@ from qwen_ocr_engine import QwenOCREngine
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    _level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -351,7 +351,7 @@ def main():
     Main CLI interface for Hybrid OCR Runner
     """
     parser = argparse.ArgumentParser(
-        description="Hybrid OCR Runner - Qwen + Traditional OCR"
+        _description="Hybrid OCR Runner - Qwen + Traditional OCR"
     )
 
     parser.add_argument(
