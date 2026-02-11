@@ -23,7 +23,6 @@ def should_skip(path: Path) -> bool:
 
 
 def transform_text(text: str) -> (str, bool):
-    _orig = text
     changed = False
 
     # 1) Rename lambda parameter `l` -> `line` (simple pattern)

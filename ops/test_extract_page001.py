@@ -4,9 +4,9 @@ import sys
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 )
-from pathlib import Path
+from pathlib import Path  # noqa: E402
 
-from table_extractor_v4 import extract_table_structure_v4
+from table_extractor_v4 import extract_table_structure_v4  # noqa: E402
 
 home = Path.home()
 img = str(home / "Downloads" / "PDF" / "_img" / "page_001.png")

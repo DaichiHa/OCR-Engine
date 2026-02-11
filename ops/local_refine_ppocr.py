@@ -102,7 +102,6 @@ def run(
         if rapid_ok:
             try:
                 r = rapid(str(crop_path))
-                _cand = None
                 if isinstance(r, tuple) or isinstance(r, list):
                     dets = r[0] if len(r) > 0 else r
                 else:

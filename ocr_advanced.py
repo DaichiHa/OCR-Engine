@@ -39,7 +39,7 @@ def preprocess_image_advanced(image_path, debug_save_path=None):
     )
 
     # Morphological operations to clean up dots/noise
-    kernel = np.ones(
+    _kernel = np.ones(
         (1, 1), np.uint8
     )  # Very small kernel to avoid damaging thin strokes
 

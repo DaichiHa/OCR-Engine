@@ -10,7 +10,7 @@ os.environ.setdefault("PADDLE_WITH_ONEDNN", "0")
 os.environ.setdefault("PADDLE_DISABLE_ONEDNN", "1")
 os.environ.setdefault("PADDLE_WITH_MKL", "0")
 
-from paddleocr import PaddleOCR
+from paddleocr import PaddleOCR  # noqa: E402
 
 # per-image timeout (seconds)
 TIMEOUT_SECONDS = 30
