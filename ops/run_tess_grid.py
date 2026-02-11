@@ -16,10 +16,25 @@ COMBOS = {
 
 def run(cmd):
     print('RUN:', ' '.join(cmd))
-    r = subprocess.run(cmd, capture_output=True, text=True)
-    if r.returncode != 0:
-        print('ERR:', r.stderr)
-    return r
+    try:
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=90)
+        if r.returncode != 0:
+            print('ERR:', r.stderr)
+        return r
+    except subprocess.TimeoutExpired as e:
+        print('TIMEOUT:', ' '.join(cmd))
+        class _R:
+            returncode = -1
+            stdout = ''
+            stderr = f'TimeoutExpired after {e.timeout}s'
+        return _R()
+    except Exception as e:
+        print('RUN ERROR:', e)
+        class _R2:
+            returncode = -2
+            stdout = ''
+            stderr = str(e)
+        return _R2()
 
 
 def main(smoke=False, assist=False):

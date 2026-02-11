@@ -34,10 +34,15 @@ def main():
     print('Wrote ensemble:', out)
     # score via existing pipeline script
     cmd = [sys.executable, 'ops/postprocess_and_score.py', str(out)]
-    r = subprocess.run(cmd, capture_output=True, text=True)
-    print(r.stdout)
-    if r.returncode != 0:
-        print('postprocess_and_score failed:', r.stderr)
+    try:
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+        print(r.stdout)
+        if r.returncode != 0:
+            print('postprocess_and_score failed:', r.stderr)
+    except subprocess.TimeoutExpired:
+        print('postprocess_and_score timed out for', out)
+    except Exception as e:
+        print('postprocess_and_score error:', e)
 
 
 if __name__ == '__main__':
