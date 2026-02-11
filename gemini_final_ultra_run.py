@@ -72,9 +72,7 @@ def process_page_hyper(task):
             err_msg = str(e)
             if "429" in err_msg:
                 wait = 60  # クォータ制限時はしっかり1分休む
-                print(
-                    f"[Limit] Page {page_num} (429) on {model_name}. Waiting {wait}s..."
-                )
+                print(f"[Limit] Page {page_num} (429) on {model_name}. Waiting {wait}s...")
                 time.sleep(wait)
             elif "500" in err_msg or "503" in err_msg:
                 print(f"[Server Error] Page {page_num}. Retrying in 10s...")

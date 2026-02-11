@@ -14,11 +14,7 @@ for dirpath, dirnames, filenames in os.walk(root):
         key = re.sub(r"[^A-Za-z0-9]", "", d.lower())[:20]
         groups[key].append(full)
 
-found = {
-    k: v
-    for k, v in groups.items()
-    if any(target_sub in p.replace("/", "\\") for p in v)
-}
+found = {k: v for k, v in groups.items() if any(target_sub in p.replace("/", "\\") for p in v)}
 if not found:
     print("No groups under Downloads\\OCR-Engine found")
     sys.exit(0)

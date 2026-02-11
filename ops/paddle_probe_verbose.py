@@ -25,13 +25,7 @@ _pocr = PaddleOCR(use_textline_orientation=False, lang="japan")
 # search the ops tree for any image files referencing 'page_010' (archive or consolidated locations)
 base = Path(__file__).parent
 exts = (".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp")
-imgs = sorted(
-    [
-        p
-        for p in base.rglob("*")
-        if p.is_file() and "page_010" in p.name.lower() and p.suffix.lower() in exts
-    ]
-)
+imgs = sorted([p for p in base.rglob("*") if p.is_file() and "page_010" in p.name.lower() and p.suffix.lower() in exts])
 if not imgs:
     print("No page_010 images found under", base)
 

@@ -65,9 +65,7 @@ def main():
     # テスト対象ページ (P24-P29: 2回分のバッチ)
     test_pages = [f"{i:03}" for i in range(24, 30)]
 
-    print(
-        f"--- Stable Multi-Model Test (Batch Size: {BATCH_SIZE}, Cooldown: {COOLDOWN}s) ---"
-    )
+    print(f"--- Stable Multi-Model Test (Batch Size: {BATCH_SIZE}, Cooldown: {COOLDOWN}s) ---")
     start_time = time.time()
 
     # 3ページずつのバッチ処理

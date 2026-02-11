@@ -42,9 +42,7 @@ if tess:
         pass
     print("Using tesseract:", tess)
 else:
-    print(
-        "tesseract not found; subprocesses may fail if Tesseract isn't installed or bundled"
-    )
+    print("tesseract not found; subprocesses may fail if Tesseract isn't installed or bundled")
 
 OUT = Path("ops") / "smoke_out"
 OUT.mkdir(parents=True, exist_ok=True)

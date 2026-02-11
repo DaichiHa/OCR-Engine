@@ -46,9 +46,7 @@ def gather_candidates(base: Path):
         if p.is_file() and p.suffix.lower().endswith(".txt"):
             # consider files with .clean.txt, .normalized.txt, .ppocr.txt, .ollama.suggested.txt
             s = str(p.name)
-            if any(
-                k in s for k in (".clean", ".normalized", ".ppocr", ".tess", "ollama")
-            ):
+            if any(k in s for k in (".clean", ".normalized", ".ppocr", ".tess", "ollama")):
                 candidates.append(p)
     return candidates
 
@@ -71,12 +69,7 @@ def score_file(p: Path, group_counts: dict) -> dict:
         flags=re.I,
     )
     consensus = min(1.0, group_counts.get(prefix.lower(), 1) / 3.0)
-    lm_agreement = (
-        1.0
-        if ".ollama.suggested" in name
-        or (p.with_suffix(".ollama.suggested.txt").exists())
-        else 0.0
-    )
+    lm_agreement = 1.0 if ".ollama.suggested" in name or (p.with_suffix(".ollama.suggested.txt").exists()) else 0.0
 
     weights = {
         "ocr_conf": 0.4,
@@ -131,9 +124,7 @@ def main():
         "all": out_sorted,
     }
     target = Path(__file__).parent / "confidence_summary.json"
-    target.write_text(
-        json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    target.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print("Wrote", target, "entries=", len(out_sorted))
 
 

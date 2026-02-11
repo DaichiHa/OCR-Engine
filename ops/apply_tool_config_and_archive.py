@@ -31,9 +31,7 @@ if not tools["executables"].get("tesseract", {}).get("path"):
                     timeout=10,
                 )
                 ver = proc.stdout.strip() or proc.stderr.strip()
-                tools["executables"]["tesseract"]["version_probe"] = (
-                    ver.splitlines()[0] if ver else ""
-                )
+                tools["executables"]["tesseract"]["version_probe"] = ver.splitlines()[0] if ver else ""
             except Exception:
                 tools["executables"]["tesseract"]["version_probe"] = ""
             break

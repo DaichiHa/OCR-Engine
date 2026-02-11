@@ -44,16 +44,12 @@ class QwenOCREngine:
         # Load model with optimizations
         self.model = Qwen2VLForConditionalGeneration.from_pretrained(
             model_name,
-            _torch_dtype=(
-                torch.float16 if torch.cuda.is_available() else torch.float32
-            ),
+            _torch_dtype=(torch.float16 if torch.cuda.is_available() else torch.float32),
             _device_map=device,
             trust_remote_code=True,
         )
 
-        self.processor = AutoProcessor.from_pretrained(
-            model_name, trust_remote_code=True
-        )
+        self.processor = AutoProcessor.from_pretrained(model_name, trust_remote_code=True)
 
         # Japanese historical document prompts
         self.prompts = {
@@ -174,9 +170,7 @@ class QwenOCREngine:
             ]
 
             # Process with Qwen
-            text = self.processor.apply_chat_template(
-                messages, tokenize=False, add_generation_prompt=True
-            )
+            text = self.processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
 
             image_inputs, video_inputs = self.processor.process_vision_info(messages)
             inputs = self.processor(
@@ -199,8 +193,7 @@ class QwenOCREngine:
                 )
 
                 generated_ids_trimmed = [
-                    out_ids[len(in_ids) :]
-                    for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
+                    out_ids[len(in_ids) :] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
                 ]
 
                 output_text = self.processor.batch_decode(

@@ -11,9 +11,7 @@ KEY_FILE = "gemini_api_key.txt"
 INPUT_DIR = "pages"
 OUTPUT_DIR = "intermediate_md_ultra_final"
 MAX_WORKERS = 2  # 2本並列
-INTERVAL = (
-    90  # 各スレッドが処理後に置くインターバル（並列時は長めに設定して干渉を防ぐ）
-)
+INTERVAL = 90  # 各スレッドが処理後に置くインターバル（並列時は長めに設定して干渉を防ぐ）
 
 # 利用可能なモデル（系統を分けてクォータ分散を狙う）
 MODELS = ["gemini-2.0-flash", "gemini-3-flash-preview"]
@@ -65,9 +63,7 @@ def process_page_twin(task):
             with open(out_path, "w", encoding="utf-8") as f:
                 f.write(response.text)
 
-            print(
-                f"[{time.strftime('%H:%M:%S')}] Success: Page {page_num} ({model_name})"
-            )
+            print(f"[{time.strftime('%H:%M:%S')}] Success: Page {page_num} ({model_name})")
             time.sleep(INTERVAL)
             return True
         except Exception as e:

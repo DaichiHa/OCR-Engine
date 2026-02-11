@@ -42,9 +42,7 @@ def extract_table_structure_v2(image_path, debug_dir):
     vertical_size = img.shape[0] // scale
 
     # Detection of horizontal lines
-    horizontal_structure = cv2.getStructuringElement(
-        cv2.MORPH_RECT, (horizontal_size, 1)
-    )
+    horizontal_structure = cv2.getStructuringElement(cv2.MORPH_RECT, (horizontal_size, 1))
     horizontal = cv2.erode(thresh, horizontal_structure)
     horizontal = cv2.dilate(horizontal, horizontal_structure)
 
@@ -55,9 +53,7 @@ def extract_table_structure_v2(image_path, debug_dir):
 
     # 3. Combine Grid
     # Dilate lines slightly to close gaps
-    horizontal = cv2.dilate(
-        horizontal, cv2.getStructuringElement(cv2.MORPH_RECT, (5, 1))
-    )
+    horizontal = cv2.dilate(horizontal, cv2.getStructuringElement(cv2.MORPH_RECT, (5, 1)))
     vertical = cv2.dilate(vertical, cv2.getStructuringElement(cv2.MORPH_RECT, (1, 5)))
 
     mask = horizontal + vertical

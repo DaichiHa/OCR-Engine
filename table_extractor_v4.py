@@ -199,11 +199,7 @@ def extract_table_structure_v4(image_path, debug_dir):
             run_end = j
 
             # choose target: prefer right of run, else left
-            target_j = (
-                run_end + 1
-                if run_end + 1 < cols_n
-                else (run_start - 1 if run_start - 1 >= 0 else None)
-            )
+            target_j = run_end + 1 if run_end + 1 < cols_n else (run_start - 1 if run_start - 1 >= 0 else None)
             if target_j is not None:
                 for i in range(rows_n):
                     # accumulate widths from run into target
@@ -313,9 +309,7 @@ def extract_table_structure_v4(image_path, debug_dir):
                         rgb = cv2.cvtColor(crop, cv2.COLOR_BGR2RGB)
                         pil = Image.fromarray(rgb)
                         # use a compact config for speed
-                        txt = pytesseract.image_to_string(
-                            pil, lang=ocr_lang, config="--psm 6"
-                        )
+                        txt = pytesseract.image_to_string(pil, lang=ocr_lang, config="--psm 6")
                         txt = txt.strip()
                     except Exception:
                         txt = ""
@@ -421,9 +415,7 @@ def extract_table_structure_v4(image_path, debug_dir):
 
 
 if __name__ == "__main__":
-    test_page = (
-        "c:\\Users\\User\\Downloads\\日本帝國港灣統計_0001\\pages\\" + "page_011.png"
-    )
+    test_page = "c:\\Users\\User\\Downloads\\日本帝國港灣統計_0001\\pages\\" + "page_011.png"
     debug_dir = "c:\\Users\\User\\Downloads\\日本帝國港灣統計_0001\\" + "pages"
 
     print(f"Testing V4 (LSD) extraction on {test_page}...")

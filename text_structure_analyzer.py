@@ -79,9 +79,7 @@ def analyze_hybrid_structure(image_path, debug_dir):
                 data["width"][i],
                 data["height"][i],
             )
-            text_blocks.append(
-                {"x": x, "y": y, "w": w, "h": h, "text": data["text"][i]}
-            )
+            text_blocks.append({"x": x, "y": y, "w": w, "h": h, "text": data["text"][i]})
 
     # 3. Assign Text to Rows based on Y-coordinate clustering
     # Sort by Y center

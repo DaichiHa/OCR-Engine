@@ -24,9 +24,7 @@ def process(img_path: Path):
                 continue
         out.append({"box": box, "text": text, "score": float(score)})
     # write json
-    json_path = img_path.parent / (
-        img_path.stem.replace("page_", "rapid_page_") + ".json"
-    )
+    json_path = img_path.parent / (img_path.stem.replace("page_", "rapid_page_") + ".json")
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=2)
 
@@ -36,9 +34,7 @@ def process(img_path: Path):
         return min(ys)
 
     sorted_out = sorted(out, key=lambda x: top_y(x["box"]))
-    txt_path = img_path.parent / (
-        img_path.stem.replace("page_", "rapid_page_") + ".txt"
-    )
+    txt_path = img_path.parent / (img_path.stem.replace("page_", "rapid_page_") + ".txt")
     with open(txt_path, "w", encoding="utf-8") as f:
         for o in sorted_out:
             f.write(f"{o['text']}\n")

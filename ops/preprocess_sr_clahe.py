@@ -21,9 +21,7 @@ def deskew_image(bgr):
     h, w = bgr.shape[:2]
     center = (w // 2, h // 2)
     M = cv2.getRotationMatrix2D(center, angle, 1.0)
-    rotated = cv2.warpAffine(
-        bgr, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE
-    )
+    rotated = cv2.warpAffine(bgr, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
     return rotated
 
 
@@ -98,9 +96,7 @@ def main():
     if args.deskew or args.binarize:
         img = cv2.imread(args.out_path)
         if img is None:
-            raise SystemExit(
-                f"failed to read intermediate output for postprocessing: {args.out_path}"
-            )
+            raise SystemExit(f"failed to read intermediate output for postprocessing: {args.out_path}")
         if args.deskew:
             img = deskew_image(img)
         if args.binarize:

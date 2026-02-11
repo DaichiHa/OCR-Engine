@@ -11,8 +11,6 @@ for img in imgs:
     with open(out_txt, "w", encoding="utf-8") as f:
         for line in res:
             for item in line:
-                text = (
-                    item[1][0] if isinstance(item[1], (list, tuple)) else str(item[1])
-                )
+                text = item[1][0] if isinstance(item[1], (list, tuple)) else str(item[1])
                 f.write(text + "\n")
     print("Wrote", out_txt)

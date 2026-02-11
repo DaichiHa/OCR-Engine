@@ -23,9 +23,7 @@ def iou(boxA, boxB):
 
 def tess_words(img_path):
     im = Image.open(img_path)
-    data = pytesseract.image_to_data(
-        im, output_type=pytesseract.Output.DICT, lang="jpn+eng"
-    )
+    data = pytesseract.image_to_data(im, output_type=pytesseract.Output.DICT, lang="jpn+eng")
     words = []
     n = len(data["text"])
     for i in range(n):
@@ -116,11 +114,7 @@ def layout_to_text(items):
     # sort by top then left
     items_sorted = sorted(items, key=lambda x: (x["box"][1], x["box"][0]))
     # compute median height
-    heights = [
-        b["box"][3] - b["box"][1]
-        for b in items_sorted
-        if (b["box"][3] - b["box"][1]) > 0
-    ]
+    heights = [b["box"][3] - b["box"][1] for b in items_sorted if (b["box"][3] - b["box"][1]) > 0]
     med_h = sorted(heights)[len(heights) // 2] if heights else 20
     lines = []
     cur_line = []

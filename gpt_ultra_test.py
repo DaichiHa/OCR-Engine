@@ -35,9 +35,7 @@ def encode_image(image_path):
 
 
 def process_with_gpt4o(image_path, out_path, client):
-    print(
-        f"[{time.strftime('%H:%M:%S')}] GPT-4o processing: {os.path.basename(image_path)}..."
-    )
+    print(f"[{time.strftime('%H:%M:%S')}] GPT-4o processing: {os.path.basename(image_path)}...")
 
     base64_image = encode_image(image_path)
 

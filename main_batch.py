@@ -84,9 +84,7 @@ if __name__ == "__main__":
     max_workers = 4
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         # Submit all tasks
-        future_to_page = {
-            executor.submit(process_single_page_task, p): p for p in page_list
-        }
+        future_to_page = {executor.submit(process_single_page_task, p): p for p in page_list}
 
         completed_count = 0
         total_count = len(page_list)
@@ -97,9 +95,7 @@ if __name__ == "__main__":
                 p_num, text, dur = future.result()
                 full_results[p_num] = text
                 completed_count += 1
-                print(
-                    f"[{completed_count}/{total_count}] Page {p_num} processed in {dur:.2f}s"
-                )
+                print(f"[{completed_count}/{total_count}] Page {p_num} processed in {dur:.2f}s")
             except Exception as exc:
                 print(f"Page {page_info[0]} generated an exception: {exc}")
 

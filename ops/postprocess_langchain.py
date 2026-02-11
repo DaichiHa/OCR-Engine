@@ -94,11 +94,7 @@ def main():
     args = ap.parse_args()
 
     # If LLM requested and env var present, attempt to call LangChain/OpenAI
-    if (
-        args.use_llm
-        and os.getenv("OPENAI_API_KEY")
-        and os.getenv("USE_LANGCHAIN", "1") != "0"
-    ):
+    if args.use_llm and os.getenv("OPENAI_API_KEY") and os.getenv("USE_LANGCHAIN", "1") != "0":
         try:
             from langchain import LLMChain, PromptTemplate
             from langchain.llms import OpenAI

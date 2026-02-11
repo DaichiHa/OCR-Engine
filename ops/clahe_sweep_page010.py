@@ -136,9 +136,7 @@ if user_src.exists():
 else:
     src = repo_src
     if not src.exists():
-        print(
-            f"Input image not found: {user_src} -- creating synthetic sample at {src} for CI"
-        )
+        print(f"Input image not found: {user_src} -- creating synthetic sample at {src} for CI")
         try:
             from PIL import Image, ImageDraw
 
@@ -256,9 +254,7 @@ for i, combo in enumerate(combos, start=1):
     # Also run Tesseract (PSM 11) as an additional engine and score it
     tess_path = out.with_suffix(".tess.psm11.txt")
     try:
-        tess_txt = pytesseract.image_to_string(
-            Image.open(out), lang="jpn", config="--psm 11 --oem 3"
-        )
+        tess_txt = pytesseract.image_to_string(Image.open(out), lang="jpn", config="--psm 11 --oem 3")
     except Exception:
         tess_txt = ""
     with open(tess_path, "w", encoding="utf-8") as f:

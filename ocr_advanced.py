@@ -34,9 +34,7 @@ def preprocess_image_advanced(image_path, debug_save_path=None):
 
     # Adaptive Thresholding (Gaussian C) - Handles uneven lighting/aging
     # Block size 11, C=2 (standard starting points)
-    thresh = cv2.adaptiveThreshold(
-        denoised, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
-    )
+    thresh = cv2.adaptiveThreshold(denoised, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
 
     # Morphological operations to clean up dots/noise
     # small kernel removed (unused) to satisfy lint

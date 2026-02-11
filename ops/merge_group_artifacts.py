@@ -18,9 +18,7 @@ TEXT_EXTS = [
 
 
 def is_text(p: Path):
-    return p.suffix.lower() in TEXT_EXTS or any(
-        str(p).endswith(ext) for ext in TEXT_EXTS
-    )
+    return p.suffix.lower() in TEXT_EXTS or any(str(p).endswith(ext) for ext in TEXT_EXTS)
 
 
 for group in sorted([d for d in la.iterdir() if d.is_dir()]):
@@ -84,7 +82,5 @@ for group in sorted([d for d in la.iterdir() if d.is_dir()]):
     )
 
 summary_path = la / "merged_summary.json"
-summary_path.write_text(
-    json.dumps(merged_summary, indent=2, ensure_ascii=False), encoding="utf-8"
-)
+summary_path.write_text(json.dumps(merged_summary, indent=2, ensure_ascii=False), encoding="utf-8")
 print("Wrote", summary_path)

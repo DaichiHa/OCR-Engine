@@ -100,9 +100,7 @@ def main():
         length = 0
         if Path(tess_out).exists():
             try:
-                length = (
-                    Path(tess_out).read_text(encoding="utf-8", errors="ignore").strip()
-                )
+                length = Path(tess_out).read_text(encoding="utf-8", errors="ignore").strip()
                 length = len(length)
             except Exception:
                 length = 0
@@ -139,10 +137,7 @@ def main():
         "input": str(infile),
         "best_rot": best_rot,
         "best_tess_out": str(best_tess),
-        "candidates": [
-            {k: v for k, v in r.items() if k != "raw_stdout" and k != "post_stdout"}
-            for r in results
-        ],
+        "candidates": [{k: v for k, v in r.items() if k != "raw_stdout" and k != "post_stdout"} for r in results],
     }
     print(json.dumps(summary, ensure_ascii=False))
 

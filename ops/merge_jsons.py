@@ -40,9 +40,7 @@ def main():
             all_items.append(data)
 
     combined = OUTDIR / "combined.json"
-    combined.write_text(
-        json.dumps(all_items, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    combined.write_text(json.dumps(all_items, ensure_ascii=False, indent=2), encoding="utf-8")
     combinedl = OUTDIR / "combined.jsonl"
     with combinedl.open("w", encoding="utf-8") as fh:
         for item in all_items:
@@ -51,9 +49,7 @@ def main():
     metafile = OUTDIR / "merge_meta.json"
     meta["out_json"] = str(combined.relative_to(ROOT))
     meta["out_jsonl"] = str(combinedl.relative_to(ROOT))
-    metafile.write_text(
-        json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    metafile.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
     print("Wrote", combined, "and", combinedl)
     print("Files processed:", meta["count_files"])
     return 0

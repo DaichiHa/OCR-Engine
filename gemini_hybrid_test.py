@@ -52,24 +52,18 @@ def process_hybrid_ultra():
     with open(draft_path, "r", encoding="utf-8") as f:
         draft_text = f.read()
 
-    print(
-        f"[{time.strftime('%H:%M:%S')}] Hybrid-ULTRA: Refining draft for {TARGET_PAGE}..."
-    )
+    print(f"[{time.strftime('%H:%M:%S')}] Hybrid-ULTRA: Refining draft for {TARGET_PAGE}...")
 
     try:
         # 画像なし、テキストのみのリクエスト（制限が非常に緩い）
-        response = model.generate_content(
-            HYBRID_CORRECTION_PROMPT.format(draft_text=draft_text)
-        )
+        response = model.generate_content(HYBRID_CORRECTION_PROMPT.format(draft_text=draft_text))
 
         out_path = os.path.join(OUTPUT_DIR, f"{TARGET_PAGE}.md")
         with open(out_path, "w", encoding="utf-8") as f:
             f.write(response.text)
 
         print(f"--- Hybrid-ULTRA Success: {out_path} ---")
-        print(
-            "Text-only request completed. This method is 100x more stable against 429 errors."
-        )
+        print("Text-only request completed. This method is 100x more stable against 429 errors.")
 
     except Exception as e:
         print(f"Error: {e}")

@@ -47,9 +47,7 @@ def has_ollama_cli(cli_path: str = None) -> bool:
     return shutil.which("ollama") is not None
 
 
-def call_ollama_cli(
-    model: str, prompt: str, timeout: int = 15, cli_path: str = None
-) -> Optional[str]:
+def call_ollama_cli(model: str, prompt: str, timeout: int = 15, cli_path: str = None) -> Optional[str]:
     exe = cli_path if cli_path else "ollama"
     base_cmds = [
         [exe, "run", model],
@@ -141,9 +139,7 @@ def call_ollama_cli(
     return None
 
 
-def call_ollama_http(
-    model: str, prompt: str, host: str, timeout: int = 15
-) -> Optional[str]:
+def call_ollama_http(model: str, prompt: str, host: str, timeout: int = 15) -> Optional[str]:
     try:
         import requests
     except Exception:
@@ -163,9 +159,7 @@ def call_ollama_http(
 
 
 def generate(prompt: str, cfg: dict) -> Optional[str]:
-    cli_path = (
-        cfg.get("cli_path") or get_path("ollama") if isinstance(cfg, dict) else None
-    )
+    cli_path = cfg.get("cli_path") or get_path("ollama") if isinstance(cfg, dict) else None
     if cfg.get("use_cli", True) and has_ollama_cli(cli_path):
         # Try CLI invocations (prefer stdin first)
         res = call_ollama_cli(

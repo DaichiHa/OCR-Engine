@@ -15,7 +15,5 @@ req = urllib.request.Request(
 )
 with urllib.request.urlopen(req) as r:
     out = r.read().decode("utf-8")
-    Path(__file__).resolve().parent.joinpath("oauth_user.json").write_text(
-        out, encoding="utf-8"
-    )
+    Path(__file__).resolve().parent.joinpath("oauth_user.json").write_text(out, encoding="utf-8")
     print("wrote ops/oauth_user.json")

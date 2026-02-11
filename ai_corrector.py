@@ -54,9 +54,7 @@ def main():
 
     api_key = load_key()
     if not api_key.startswith("sk-"):
-        print(
-            "Error: Invalid OpenAI API key format in openai_api_key.txt. Should start with 'sk-'."
-        )
+        print("Error: Invalid OpenAI API key format in openai_api_key.txt. Should start with 'sk-'.")
         return
 
     client = OpenAI(api_key=api_key)

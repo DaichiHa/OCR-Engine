@@ -18,9 +18,7 @@ from typing import Dict, List, Optional
 from qwen_ocr_engine import QwenOCREngine
 
 # Configure logging
-logging.basicConfig(
-    _level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(_level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -82,9 +80,7 @@ class HybridOCRRunner:
                 if gemini_api_key:
                     genai.configure(api_key=gemini_api_key)
                     self.gemini = genai.GenerativeModel("gemini-2.0-flash")
-                    logger.info(
-                        f"Gemini OCR Engine ready (NANO mode: max {self.max_gemini_requests} requests)"
-                    )
+                    logger.info(f"Gemini OCR Engine ready (NANO mode: max {self.max_gemini_requests} requests)")
                 else:
                     logger.warning("Gemini API key not provided, disabling Gemini")
                     self.use_gemini = False
@@ -92,9 +88,7 @@ class HybridOCRRunner:
                 logger.error(f"Failed to initialize Gemini: {e}")
                 self.use_gemini = False
 
-    def process_single_image(
-        self, image_path: str, output_dir: str, page_name: Optional[str] = None
-    ) -> Dict[str, any]:
+    def process_single_image(self, image_path: str, output_dir: str, page_name: Optional[str] = None) -> Dict[str, any]:
         """
         Process single image with all available engines
 
@@ -126,17 +120,11 @@ class HybridOCRRunner:
                 qwen_start = time.time()
 
                 # Extract both structured and table formats
-                structured_result = self.qwen_engine.extract_document(
-                    image_path, mode="structured"
-                )
-                table_result = self.qwen_engine.extract_document(
-                    image_path, mode="table"
-                )
+                structured_result = self.qwen_engine.extract_document(image_path, mode="structured")
+                table_result = self.qwen_engine.extract_document(image_path, mode="table")
 
                 # Save Qwen results
-                qwen_structured_path = os.path.join(
-                    output_dir, f"{page_name}_qwen_structured.json"
-                )
+                qwen_structured_path = os.path.join(output_dir, f"{page_name}_qwen_structured.json")
                 qwen_table_path = os.path.join(output_dir, f"{page_name}_qwen_table.md")
 
                 with open(qwen_structured_path, "w", encoding="utf-8") as f:
@@ -187,12 +175,8 @@ class HybridOCRRunner:
                 tesseract_results = {}
                 for lang, config in configs:
                     try:
-                        text = self.tesseract.image_to_string(
-                            img, lang=lang, config=config
-                        )
-                        tesseract_results[f"{lang}_{config.replace(' ', '_')}"] = (
-                            text.strip()
-                        )
+                        text = self.tesseract.image_to_string(img, lang=lang, config=config)
+                        tesseract_results[f"{lang}_{config.replace(' ', '_')}"] = text.strip()
                     except Exception as e:
                         logger.warning(f"Tesseract config {lang} {config} failed: {e}")
 
@@ -257,8 +241,7 @@ class HybridOCRRunner:
                     "processing_time": gemini_time,
                     "success": True,
                     "requests_used": self.gemini_requests_count,
-                    "requests_remaining": self.max_gemini_requests
-                    - self.gemini_requests_count,
+                    "requests_remaining": self.max_gemini_requests - self.gemini_requests_count,
                 }
 
                 logger.info(
@@ -313,10 +296,7 @@ class HybridOCRRunner:
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             # Submit all tasks
             future_to_image = {
-                executor.submit(
-                    self.process_single_image, img_file, output_dir
-                ): img_file
-                for img_file in image_files
+                executor.submit(self.process_single_image, img_file, output_dir): img_file for img_file in image_files
             }
 
             # Collect results
@@ -344,9 +324,7 @@ class HybridOCRRunner:
                     "total_images": len(image_files),
                     "successful": len([r for r in results if r.get("engines_used")]),
                     "failed": len([r for r in results if not r.get("engines_used")]),
-                    "engines_used": list(
-                        set().union(*[r.get("engines_used", []) for r in results])
-                    ),
+                    "engines_used": list(set().union(*[r.get("engines_used", []) for r in results])),
                     "results": results,
                 },
                 f,
@@ -363,17 +341,11 @@ def main():
     """
     Main CLI interface for Hybrid OCR Runner
     """
-    parser = argparse.ArgumentParser(
-        _description="Hybrid OCR Runner - Qwen + Traditional OCR"
-    )
+    parser = argparse.ArgumentParser(_description="Hybrid OCR Runner - Qwen + Traditional OCR")
 
-    parser.add_argument(
-        "--input", required=True, help="Input directory or single image file"
-    )
+    parser.add_argument("--input", required=True, help="Input directory or single image file")
     parser.add_argument("--output", required=True, help="Output directory")
-    parser.add_argument(
-        "--pattern", default="*.png", help="File pattern for batch processing"
-    )
+    parser.add_argument("--pattern", default="*.png", help="File pattern for batch processing")
     parser.add_argument(
         "--qwen-model",
         default="Qwen/Qwen2-VL-7B-Instruct",
@@ -395,9 +367,7 @@ def main():
         help="Enable Gemini API (NANO use - very limited)",
     )
     parser.add_argument("--gemini-key", help="Gemini API key file path")
-    parser.add_argument(
-        "--max-workers", type=int, default=2, help="Maximum parallel workers"
-    )
+    parser.add_argument("--max-workers", type=int, default=2, help="Maximum parallel workers")
     parser.add_argument("--single", action="store_true", help="Process single image")
 
     args = parser.parse_args()

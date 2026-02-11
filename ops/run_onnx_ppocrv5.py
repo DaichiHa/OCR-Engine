@@ -4,9 +4,7 @@ from pathlib import Path
 import cv2
 from onnxocr.onnx_paddleocr import ONNXPaddleOcr
 
-ocr = ONNXPaddleOcr(
-    _use_angle_cls=True, use_gpu=False, use_dml=False, use_openvino=False
-)
+ocr = ONNXPaddleOcr(_use_angle_cls=True, use_gpu=False, use_dml=False, use_openvino=False)
 
 
 def process(img_path: Path):

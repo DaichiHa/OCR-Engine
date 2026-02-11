@@ -58,12 +58,7 @@ base_map = {}
 for r in rows:
     name = r["filename"]
     # normalize by removing known modifiers
-    base = (
-        name.replace(".resized", "")
-        .replace(".orig", "")
-        .replace(".rot90", "")
-        .replace(".rot270", "")
-    )
+    base = name.replace(".resized", "").replace(".orig", "").replace(".rot90", "").replace(".rot270", "")
     base = base.replace(".tess", "").replace(".tiled", "")
     base = base.split(".tess.tile")[0]
     base_map.setdefault(base, []).append(r["filename"])

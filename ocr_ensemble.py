@@ -74,9 +74,7 @@ def _default_y_tolerance(lines: Iterable[OcrLine]) -> int:
     return max(10, int(median(heights) * 0.6))
 
 
-def _order_lines(
-    lines: List[OcrLine], y_tolerance: Optional[int] = None
-) -> List[OcrLine]:
+def _order_lines(lines: List[OcrLine], y_tolerance: Optional[int] = None) -> List[OcrLine]:
     if not lines:
         return []
     tolerance = y_tolerance if y_tolerance is not None else _default_y_tolerance(lines)
@@ -148,9 +146,7 @@ def _get_paddle_ocr(lang: str = "japan"):
     try:
         from paddleocr import PaddleOCR  # type: ignore
     except ImportError as exc:
-        raise ImportError(
-            "PaddleOCR is not installed. Install paddleocr to enable ensemble OCR."
-        ) from exc
+        raise ImportError("PaddleOCR is not installed. Install paddleocr to enable ensemble OCR.") from exc
     return PaddleOCR(lang=lang, use_angle_cls=True)
 
 
@@ -166,9 +162,7 @@ def run_paddle_lines(image_path: str, lang: str = "japan") -> List[OcrLine]:
                 continue
             xs = [pt[0] for pt in points]
             ys = [pt[1] for pt in points]
-            bbox = _normalize_bbox(
-                (int(min(xs)), int(min(ys)), int(max(xs)), int(max(ys)))
-            )
+            bbox = _normalize_bbox((int(min(xs)), int(min(ys)), int(max(xs)), int(max(ys))))
             lines.append(
                 OcrLine(
                     text=clean_text,
@@ -185,11 +179,7 @@ def _match_lines(
     p_lines: List[OcrLine],
     y_tolerance: Optional[int] = None,
 ) -> Tuple[List[Tuple[Optional[OcrLine], Optional[OcrLine]]], List[OcrLine]]:
-    tolerance = (
-        y_tolerance
-        if y_tolerance is not None
-        else _default_y_tolerance(t_lines + p_lines)
-    )
+    tolerance = y_tolerance if y_tolerance is not None else _default_y_tolerance(t_lines + p_lines)
     matches: List[Tuple[Optional[OcrLine], Optional[OcrLine]]] = []
     used_paddle: set[int] = set()
 

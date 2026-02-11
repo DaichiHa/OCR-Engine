@@ -34,11 +34,7 @@ def run(
     upscale=3,
 ):
     data = load_json(ppocr_json)
-    img = (
-        cv2.imdecode(np.fromfile(img_path, dtype=np.uint8), cv2.IMREAD_COLOR)
-        if False
-        else cv2.imread(str(img_path))
-    )
+    img = cv2.imdecode(np.fromfile(img_path, dtype=np.uint8), cv2.IMREAD_COLOR) if False else cv2.imread(str(img_path))
     if img is None:
         raise SystemExit("failed to read image: " + str(img_path))
     h, w = img.shape[:2]
@@ -83,9 +79,7 @@ def run(
         crop = img[y1:y2, x1:x2].copy()
         if crop.size == 0:
             continue
-        up = cv2.resize(
-            crop, None, fx=upscale, fy=upscale, interpolation=cv2.INTER_CUBIC
-        )
+        up = cv2.resize(crop, None, fx=upscale, fy=upscale, interpolation=cv2.INTER_CUBIC)
         crop_path = out_dir / f"crop_{idx}.png"
         cv2.imwrite(str(crop_path), up)
 
@@ -120,11 +114,7 @@ def run(
                 if res and isinstance(res, list) and len(res) > 0 and len(res[0]) > 0:
                     best = res[0][0]
                     txt = best[1][0] if isinstance(best[1], (list, tuple)) else best[1]
-                    sc = (
-                        float(best[1][1])
-                        if isinstance(best[1], (list, tuple)) and len(best[1]) > 1
-                        else None
-                    )
+                    sc = float(best[1][1]) if isinstance(best[1], (list, tuple)) and len(best[1]) > 1 else None
                     entry["ppocr"] = {"text": txt, "score": sc}
                 else:
                     entry["ppocr"] = {"text": None, "score": None}
@@ -133,9 +123,7 @@ def run(
 
         out.append(entry)
 
-    Path(out_report).write_text(
-        json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    Path(out_report).write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
     print("Wrote", out_report)
 
 

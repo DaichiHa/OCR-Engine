@@ -28,11 +28,7 @@ def main():
         print(json.dumps({"error": "missing input", "in": str(infile)}))
         return 2
 
-    out = (
-        Path(args.outfile)
-        if args.outfile
-        else infile.with_name(infile.stem + ".resized" + infile.suffix)
-    )
+    out = Path(args.outfile) if args.outfile else infile.with_name(infile.stem + ".resized" + infile.suffix)
 
     with Image.open(infile) as im:
         w, h = im.size

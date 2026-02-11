@@ -89,9 +89,7 @@ def main():
                     print(f"   Waiting {INTERVAL}s for next step...")
                     time.sleep(INTERVAL)
                 else:
-                    print(
-                        f"   -> Error: Response empty for Page {page_num}. Retrying..."
-                    )
+                    print(f"   -> Error: Response empty for Page {page_num}. Retrying...")
                     time.sleep(10)
 
             except Exception as e:

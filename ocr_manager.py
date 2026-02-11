@@ -56,9 +56,7 @@ def ocr_cell(img_path, cell_box, margin=2):
     config = r"--oem 3 --psm 7"
     text = pytesseract.image_to_string(pil_img, lang="jpn", config=config)
 
-    return (
-        text.strip().replace("\n", " ").replace("|", "")
-    )  # Remove pipe to avoid markdown break
+    return text.strip().replace("\n", " ").replace("|", "")  # Remove pipe to avoid markdown break
 
 
 def process_page(image_path, output_dir):

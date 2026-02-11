@@ -184,9 +184,7 @@ def main(smoke=False, assist=False):
 
         results.append(entry)
 
-    (out_dir / "clahe_grid_tess_results.json").write_text(
-        json.dumps(results, indent=2), encoding="utf-8"
-    )
+    (out_dir / "clahe_grid_tess_results.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
     print("WROTE ops/clahe_grid_tess_results.json")
 
 

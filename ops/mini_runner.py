@@ -38,9 +38,7 @@ INK_MIN = float(os.getenv("INK_MIN", "0.005"))
 SOBEL_TH = float(os.getenv("SOBEL_TH", "1.25"))  # gy/gx > th => vertical-ish
 # Adjusted table-extraction divisors to reduce over-splitting on this dataset
 HK_DIV = float(os.getenv("HK_DIV", "8.0"))  # bigger => shorter kernel
-VK_DIV = float(
-    os.getenv("VK_DIV", "6.0")
-)  # smaller => longer vertical kernel (remove v-lines)
+VK_DIV = float(os.getenv("VK_DIV", "6.0"))  # smaller => longer vertical kernel (remove v-lines)
 TIMEOUT = float(os.getenv("TESS_TIMEOUT", "8.0"))
 
 
@@ -56,9 +54,7 @@ def preprocess(pil_img):
     # revert upscale to 2.0 (keep INK_MIN lowered) to isolate effect
     gray = cv2.resize(gray, None, fx=2.0, fy=2.0, interpolation=cv2.INTER_CUBIC)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
-    th = cv2.adaptiveThreshold(
-        gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 35, 11
-    )
+    th = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 35, 11)
     if th.mean() < 127:
         th = 255 - th
 

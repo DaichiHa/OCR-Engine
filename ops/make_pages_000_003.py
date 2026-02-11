@@ -12,8 +12,7 @@ for i in pages:
     except Exception:
         fnt = None
     lines = [
-        f"Page {i:03d} - Sample OCR test line {j+1}: The quick brown fox jumps over 13 lazy dogs."
-        for j in range(20)
+        f"Page {i:03d} - Sample OCR test line {j+1}: The quick brown fox jumps over 13 lazy dogs." for j in range(20)
     ]
     y = 50
     for line in lines:

@@ -48,9 +48,7 @@ def main():
                                         txt = item[1][0]
                                     elif isinstance(item[1], str):
                                         txt = item[1]
-                                    elif (
-                                        isinstance(item[1], dict) and "text" in item[1]
-                                    ):
+                                    elif isinstance(item[1], dict) and "text" in item[1]:
                                         txt = item[1]["text"]
                                     if txt:
                                         f.write(str(txt) + "\n")

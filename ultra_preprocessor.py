@@ -28,9 +28,7 @@ def preprocess_image(file_path):
         # 2. 適応型二値化 (Adaptive Thresholding)
         # 影や汚れを飛ばし、文字の輪郭だけを浮き上がらせる
         # 統計表の罫線を残すために、ブロックサイズは大きめに(15程度)
-        thresh = cv2.adaptiveThreshold(
-            gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
-        )
+        thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
 
         # 3. ノイズ除去 (Denoising)
         # メディアンフィルタで点状の汚れを除去

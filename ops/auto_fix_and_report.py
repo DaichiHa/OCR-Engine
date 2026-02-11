@@ -32,9 +32,7 @@ def jp_noise_metrics(s: str):
     c = re.sub(r"[\s]", "", s)
     total = max(1, len(c))
     jp = len(re.findall(r"[\u3040-\u30ff\u3400-\u9fff]", c))
-    non_allowed = len(
-        re.findall(r"[^0-9A-Za-z\u3040-\u30ff\u3400-\u9fff,。.、\-\(%)]", c)
-    )
+    non_allowed = len(re.findall(r"[^0-9A-Za-z\u3040-\u30ff\u3400-\u9fff,。.、\-\(%)]", c))
     return {
         "chars": len(c),
         "jp_rate2_fix": round(jp / total, 6),
@@ -99,11 +97,7 @@ def process_page(page_tag: str, out_dir: Path):
         merged_post = Path("ops") / f"merge_{page_tag}" / "merged.md"
     if not merged_post.exists():
         # try baseline folder
-        merged_post = (
-            Path("ops")
-            / f"baseline_{page_tag}"
-            / 'mini_page_{page_tag.replace("page_","")}_r1-1_ink0p010.md'
-        )
+        merged_post = Path("ops") / f"baseline_{page_tag}" / 'mini_page_{page_tag.replace("page_","")}_r1-1_ink0p010.md'
     text = read_text(merged_post)
     before = jp_noise_metrics(text)
     fixed = auto_fix(text)
@@ -134,9 +128,7 @@ def main():
         res = process_page(page, out_dir)
         report["pages"].append(res)
     out_dir.mkdir(parents=True, exist_ok=True)
-    (out_dir / "report.json").write_text(
-        json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    (out_dir / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print("Wrote report to", out_dir / "report.json")
 
 
