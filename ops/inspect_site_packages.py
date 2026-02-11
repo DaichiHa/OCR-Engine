@@ -1,4 +1,5 @@
 import pkgutil
+import importlib
 
 pkgs = [
     m.name
@@ -9,8 +10,6 @@ pkgs = [
     or ("onnx" in m.name and "ocr" in m.name)
 ]
 print("candidate pkgs:", pkgs)
-
-import importlib
 
 for name in pkgs:
     try:
