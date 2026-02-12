@@ -55,7 +55,10 @@ def _locate_tesseract():
 def process_image_pytesseract(img_path: Path, tess_cmd: str | None):
     try:
         import pytesseract
-        from PIL import Image
+
+        # Image is not used directly here but kept for compatibility checks
+        # and to surface import errors early.
+        from PIL import Image  # noqa: F401
     except Exception as e:
         return None, f"import_error: {e}"
 
@@ -97,7 +100,7 @@ def main():
 
     exts = {".png", ".jpg", ".jpeg", ".tif", ".tiff"}
     if args.recursive:
-        images = [p for p in inp.rglob('*') if p.suffix.lower() in exts]
+        images = [p for p in inp.rglob("*") if p.suffix.lower() in exts]
     else:
         images = [p for p in inp.iterdir() if p.suffix.lower() in exts]
 
@@ -119,10 +122,7 @@ def main():
                 except Exception:
                     expected = None
             if expected is None:
-                results["items"].append({
-                    "image": str(img),
-                    "skipped": "no expected ground-truth (.txt)"
-                })
+                results["items"].append({"image": str(img), "skipped": "no expected ground-truth (.txt)"})
                 continue
         else:
             expected = expected_file.read_text(encoding="utf-8").strip()
@@ -151,14 +151,16 @@ def main():
         matched = sum(1 for e, r in zip(exp_words, rec_words) if e == r)
         word_acc = matched / max(1, len(exp_words))
 
-        results["items"].append({
-            "image": str(img),
-            "expected": expected,
-            "recognized": rec,
-            "char_levenshtein": char_dist,
-            "char_accuracy": round(char_acc, 4),
-            "word_accuracy": round(word_acc, 4),
-        })
+        results["items"].append(
+            {
+                "image": str(img),
+                "expected": expected,
+                "recognized": rec,
+                "char_levenshtein": char_dist,
+                "char_accuracy": round(char_acc, 4),
+                "word_accuracy": round(word_acc, 4),
+            }
+        )
 
         total_char_acc += char_acc
         total_word_acc += word_acc
@@ -183,15 +185,17 @@ def main():
             writer = csv.writer(cf)
             writer.writerow(["image", "expected", "recognized", "char_accuracy", "word_accuracy", "error", "skipped"])
             for it in results["items"]:
-                writer.writerow([
-                    it.get("image"),
-                    it.get("expected"),
-                    it.get("recognized"),
-                    it.get("char_accuracy"),
-                    it.get("word_accuracy"),
-                    it.get("error", ""),
-                    it.get("skipped", ""),
-                ])
+                writer.writerow(
+                    [
+                        it.get("image"),
+                        it.get("expected"),
+                        it.get("recognized"),
+                        it.get("char_accuracy"),
+                        it.get("word_accuracy"),
+                        it.get("error", ""),
+                        it.get("skipped", ""),
+                    ]
+                )
         print("WROTE", csv_out)
 
 
