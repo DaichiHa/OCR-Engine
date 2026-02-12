@@ -1,0 +1,3 @@
+image,expected,recognized,char_accuracy,word_accuracy,error,skipped
+ops\small_eval_out\sample.png,SAMPLE TEXT 123,"SAMPLETEXT123
+",1.0,1.0,,

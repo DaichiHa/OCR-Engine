@@ -1,0 +1,17 @@
+{
+  "summary": {
+    "mean_char_accuracy": 1.0,
+    "mean_word_accuracy": 1.0,
+    "evaluated_count": 1
+  },
+  "items": [
+    {
+      "image": "ops\\small_eval_out\\sample.png",
+      "expected": "SAMPLE TEXT 123",
+      "recognized": "SAMPLETEXT123\n",
+      "char_levenshtein": 0,
+      "char_accuracy": 1.0,
+      "word_accuracy": 1.0
+    }
+  ]
+}

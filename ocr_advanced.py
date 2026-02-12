@@ -106,7 +106,7 @@ if __name__ == "__main__":
             os.path.join(base_dir, "page_011.png"),
             "jpn",
             6,
-        )
+        ),
         # Tables usually better with psm 6 or 4 in horizontal mode if they are
         # standard tables. Vertical PDF tables are trickier.
     ]
@@ -120,12 +120,16 @@ if __name__ == "__main__":
             text, conf, debug_process_path = ocr_page_advanced(path, lang=lang, psm=psm)
 
             header = (
-                "\n" + "=" * 70 + "\n"
-                + label + "\n"
+                "\n"
+                + "=" * 70
+                + "\n"
+                + label
+                + "\n"
                 + f"Lang: {lang}, PSM: {psm}\n"
                 + f"Confidence: {conf:.2f}%\n"
                 + f"Processed Image: {debug_process_path}\n"
-                + "=" * 70 + "\n"
+                + "=" * 70
+                + "\n"
             )
             print(header)
             print(text[:500])  # Preview

@@ -1,0 +1,8 @@
+{
+  "expected": "SAMPLE TEXT 123",
+  "recognized_raw": "SAMPLETEXT123\n",
+  "recognized_normalized": "SAMPLETEXT123",
+  "char_levenshtein": 2,
+  "char_accuracy": 0.8667,
+  "word_accuracy": 0.0
+}
