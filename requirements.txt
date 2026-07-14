@@ -54,5 +54,8 @@ beautifulsoup4>=4.11.0
 # Audio processing (if needed for Whisper integration)
 # whisper>=1.0.0  # Uncomment if needed
 
+
 # Optional: Additional Qwen models
 # qwen-vl-utils  # Uncomment if specific Qwen utilities needed
+
+pdfplumber>=0.11
